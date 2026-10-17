@@ -4,162 +4,174 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Achintya Mishra — Equity Research</title>
-<meta name="description" content="Equity research candidate, data science + finance. StockStalker: nine research modules, one tear sheet, on historical NSE data.">
+<meta name="description" content="Equity research candidate, data science + finance. StockStalker: a command-line research pipeline on NSE data, plus eight research projects with honest, reproducible findings.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Achintya Mishra — Equity Research">
-<meta property="og:description" content="Equity research candidate, data science + finance. StockStalker: nine research modules, one tear sheet, on historical NSE data.">
+<meta property="og:description" content="StockStalker research pipeline and eight NSE research projects, findings included even when they failed.">
 <meta property="og:url" content="https://achintya1311.github.io/">
 <meta property="og:image" content="https://achintya1311.github.io/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Achintya Mishra — Equity Research">
-<meta name="twitter:description" content="Equity research candidate, data science + finance. StockStalker: nine research modules, one tear sheet, on historical NSE data.">
+<meta name="twitter:description" content="StockStalker research pipeline and eight NSE research projects, findings included even when they failed.">
 <meta name="twitter:image" content="https://achintya1311.github.io/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="hero">
-  <div class="wrap">
-    <h1>Achintya Mishra</h1>
-    <p class="tagline">Equity research candidate &middot; data science + finance</p>
-    <div class="pills">
-      <span class="pill">NISM Series XV &middot; Research Analyst</span>
-      <span class="pill">NISM Series VIII &middot; Equity Derivatives</span>
+  <div class="wrap hero-grid">
+    <div>
+      <p class="kicker">Equity research &middot; data science + finance</p>
+      <h1>Achintya Mishra</h1>
+      <p class="lede">I build research tools on Indian market data and report what they find, including when the result is &ldquo;this doesn&rsquo;t work&rdquo;.</p>
+      <div class="actions">
+        <a class="button primary" href="https://github.com/Achintya1311">GitHub</a>
+        <a class="button" href="research/craft.pdf">Research paper (PDF)</a>
+      </div>
     </div>
-    <a class="button" href="https://github.com/Achintya1311">GitHub</a>
+    <dl class="facts">
+      <div><dt>Certified</dt><dd>NISM XV &middot; Research Analyst</dd><dd>NISM VIII &middot; Equity Derivatives</dd></div>
+      <div><dt>Built</dt><dd>8 research repos, 1 pipeline</dd></div>
+      <div><dt>Data</dt><dd>NSE, IIM-A factors, public filings</dd></div>
+    </dl>
   </div>
 </header>
 
 <main>
 
-  <section id="stockstalker" class="wrap">
-    <h2>StockStalker</h2>
-    <p>One command reads nine research modules for one stock into a single tear sheet.</p>
-    <nav class="pipeline" aria-label="StockStalker pipeline">
-      <a class="pipe" href="https://github.com/Achintya1311/STOCKSTALKER">screen</a>
-      <span class="arrow" aria-hidden="true">&rarr;</span>
-      <a class="pipe" href="https://github.com/Achintya1311/reverse-dcf-engine">valuation</a>
-      <span class="sep" aria-hidden="true">&middot;</span>
-      <a class="pipe" href="https://github.com/Achintya1311/three-statement-model">model</a>
-      <span class="sep" aria-hidden="true">&middot;</span>
-      <a class="pipe" href="https://github.com/Achintya1311/monte-carlo-risk-lab">risk</a>
-      <span class="sep" aria-hidden="true">&middot;</span>
-      <a class="pipe" href="https://github.com/Achintya1311/fama-french-factor-model">factors</a>
-      <span class="sep" aria-hidden="true">&middot;</span>
-      <a class="pipe" href="https://github.com/Achintya1311/implied-vol-surface">options</a>
-      <span class="sep" aria-hidden="true">&middot;</span>
-      <a class="pipe" href="https://github.com/Achintya1311/headline-sentiment-vs-price">sentiment</a>
-      <span class="arrow" aria-hidden="true">&rarr;</span>
-      <a class="pipe" href="https://github.com/Achintya1311/STOCKSTALKER">tear sheet</a>
-    </nav>
+  <section id="stockstalker" class="wrap section">
+    <div class="section-head">
+      <h2>StockStalker</h2>
+      <p>A command-line research pipeline. One command collects every module&rsquo;s findings for a researched stock into a single tear sheet. Today that stock is Gulf Oil Lubricants, where every module has been run; extending the price-based modules to any NSE stock is in progress.</p>
+    </div>
+    <ol class="pipeline">
+      <li><a href="https://github.com/Achintya1311/STOCKSTALKER"><span class="step">Screen</span><span class="what">Trend, momentum, volume, liquidity</span></a></li>
+      <li><a href="https://github.com/Achintya1311/reverse-dcf-engine"><span class="step">Valuation</span><span class="what">Reverse DCF: what the price assumes</span></a></li>
+      <li><a href="https://github.com/Achintya1311/three-statement-model"><span class="step">Model</span><span class="what">Linked three-statement forecast</span></a></li>
+      <li><a href="https://github.com/Achintya1311/monte-carlo-risk-lab"><span class="step">Risk</span><span class="what">Monte Carlo VaR, Kupiec backtest</span></a></li>
+      <li><a href="https://github.com/Achintya1311/fama-french-factor-model"><span class="step">Factors</span><span class="what">Indian Fama-French + momentum</span></a></li>
+      <li><a href="https://github.com/Achintya1311/implied-vol-surface"><span class="step">Options</span><span class="what">Implied vol from real NSE chains</span></a></li>
+      <li><a href="https://github.com/Achintya1311/headline-sentiment-vs-price"><span class="step">Sentiment</span><span class="what">Headlines vs returns, leak-tested</span></a></li>
+    </ol>
     <p class="note">A full initiation note built on this pipeline is available on request.</p>
   </section>
 
-  <!-- Section 2b: stockstalker-lab's picks scoreboard goes here once it ships. Owned by stockstalker-lab/SPEC.md. Never built, edited or removed by this routine. -->
+  <!-- Section 2b: stockstalker-lab's picks scoreboard goes here once it ships. Owned by stockstalker-lab/SPEC.md. Never built, edited or removed by the fix routine. -->
 
-  <section id="findings" class="wrap">
-    <h2>Findings</h2>
+  <section id="findings" class="wrap section">
+    <div class="section-head">
+      <h2>Findings</h2>
+      <p>One question per project, the answer it produced, and the evidence. Several answers are negative; they stay.</p>
+    </div>
     <div class="grid">
 
       <article class="card">
-        <p class="q">At a given share price, what growth, margin and reinvestment does a textbook-consistent reverse DCF say must be assumed &mdash; and is that combination even reachable under the model?</p>
-        <p class="a">No constant growth rate reproduces the committed price at all &mdash; the model&rsquo;s own ceiling is &#8377;962.08/share (10-year framing) or &#8377;715.52/share (perpetual framing), both below it.</p>
-        <img class="chart" src="assets/charts/reverse-dcf.png" width="900" height="450" loading="lazy" alt="Tornado chart: how far GULFOILLUB's implied 10-year revenue growth moves when each DCF assumption (reinvestment rate, WACC, terminal growth, EBIT margin) is shocked to its historical range.">
-        <a class="repo" href="https://github.com/Achintya1311/reverse-dcf-engine">Reverse DCF engine &rarr;</a>
+        <h3>Reverse DCF</h3>
+        <p class="stat">&#8377;962 <span>model ceiling, below the market price</span></p>
+        <p class="a">Once growth and reinvestment are tied together through return on capital, no constant growth rate reproduces the market price. The terminal-value step is being made consistent next.</p>
+        <figure class="fig"><img src="assets/charts/reverse-dcf.png" width="900" height="450" loading="lazy" alt="Tornado chart of how implied 10-year growth moves when each DCF input is shocked across its historical range."></figure>
+        <a class="repo" href="https://github.com/Achintya1311/reverse-dcf-engine">reverse-dcf-engine &rarr;</a>
       </article>
 
       <article class="card">
-        <p class="q">Of the ten growth/margin/rate assumptions a three-statement forecast depends on, which ones actually move the FY-final net debt/EBITDA result?</p>
-        <p class="a">Dividend payout ranks #1 (0.34x impact) and domestic revenue growth #2 (0.21x), ahead of capex margin, NWC margin, tax rate and the rest (down to 0.01x).</p>
-        <p class="chart-note">No chart: this repo's output is a live-formula Excel workbook, not an image.</p>
-        <a class="repo" href="https://github.com/Achintya1311/three-statement-model">Three-statement model &rarr;</a>
+        <h3>Three-statement model</h3>
+        <p class="stat">#1 <span>dividend payout drives net debt/EBITDA most</span></p>
+        <p class="a">Of ten forecast assumptions, payout (0.34&times; impact) and domestic growth (0.21&times;) matter most; the balance sheet balances every forecast year, enforced by a test.</p>
+        <p class="fig-note">Output is a live-formula Excel workbook, so there is no chart.</p>
+        <a class="repo" href="https://github.com/Achintya1311/three-statement-model">three-statement-model &rarr;</a>
       </article>
 
       <article class="card">
-        <p class="q">Is the subject&rsquo;s own return alpha, or just factor exposure in disguise?</p>
-        <p class="a">Against IIM-A Indian factors (2014&ndash;2025): beta 0.80, SMB 0.47, alpha t&nbsp;=&nbsp;1.0, not significant.</p>
-        <img class="chart" src="assets/charts/factor-model.png" width="900" height="780" loading="lazy" alt="Rolling 60-month FF3 factor loadings with a 95% confidence band for the HiTec industry portfolio, the repo's own illustration of the rolling-loadings method; the subject's own IIM-A regression numbers are in the finding above.">
-        <a class="repo" href="https://github.com/Achintya1311/fama-french-factor-model">Factor model &rarr;</a>
+        <h3>Factor exposure</h3>
+        <p class="stat">t = 1.0 <span>alpha not significant</span></p>
+        <p class="a">Against IIM Ahmedabad&rsquo;s Indian factors (2014&ndash;2025): beta 0.80 and a clear small-cap tilt (SMB 0.47). The apparent excess return is mostly exposure.</p>
+        <figure class="fig"><img src="assets/charts/factor-model.png" width="900" height="780" loading="lazy" alt="Rolling 60-month factor loadings with 95% bands, shown on an industry portfolio to illustrate the method."><figcaption>Method illustrated on an industry portfolio.</figcaption></figure>
+        <a class="repo" href="https://github.com/Achintya1311/fama-french-factor-model">fama-french-factor-model &rarr;</a>
       </article>
 
       <article class="card">
-        <p class="q">Does a Gaussian (parametric) 1-day Value-at-Risk model actually hold up against the real exception rate, once it&rsquo;s backtested rather than just computed?</p>
-        <p class="a">The Kupiec test rejects the 1-day parametric VaR at 99% confidence (10/500 exceptions vs. 5.0 expected, LR&nbsp;=&nbsp;3.914, p&nbsp;=&nbsp;0.048).</p>
-        <img class="chart" src="assets/charts/risk-lab.png" width="900" height="643" loading="lazy" alt="Histogram of the simulated 1,000,000-path 20-day maximum drawdown distribution for RELIANCE, with the median and worst simulated path marked.">
-        <a class="repo" href="https://github.com/Achintya1311/monte-carlo-risk-lab">Monte Carlo risk lab &rarr;</a>
+        <h3>Risk</h3>
+        <p class="stat">10 vs 5 <span>VaR breaches vs expected at 99%</span></p>
+        <p class="a">The textbook normal-distribution VaR fails its own backtest: Kupiec rejects it (p = 0.048). The tails are fatter than the model assumes.</p>
+        <figure class="fig"><img src="assets/charts/risk-lab.png" width="900" height="643" loading="lazy" alt="Histogram of a million simulated 20-day maximum drawdowns, with the median and worst path marked."></figure>
+        <a class="repo" href="https://github.com/Achintya1311/monte-carlo-risk-lab">monte-carlo-risk-lab &rarr;</a>
       </article>
 
       <article class="card">
-        <p class="q">On real (not synthetic) NSE option chains, how often do raw quotes violate a no-arbitrage bound before any filtering? <span class="tag">NISM VIII</span></p>
-        <p class="a">43/218 RELIANCE and 196/704 NIFTY contracts break the no-arbitrage floor before filtering &mdash; a floor violation is routine on real noise, not rare.</p>
-        <img class="chart" src="assets/charts/iv-surface.png" width="900" height="562" loading="lazy" alt="Fitted implied volatility smile across strikes for RELIANCE's real captured option chain, one curve per expiry.">
-        <a class="repo" href="https://github.com/Achintya1311/implied-vol-surface">Implied volatility surface &rarr;</a>
+        <h3>Options <span class="tag">NISM VIII</span></h3>
+        <p class="stat">196 / 704 <span>NIFTY quotes break no-arbitrage before filtering</span></p>
+        <p class="a">On real NSE option chains (43 of 218 for RELIANCE too), raw quotes violate no-arbitrage bounds routinely, so filtering is not optional.</p>
+        <figure class="fig"><img src="assets/charts/iv-surface.png" width="900" height="562" loading="lazy" alt="Implied volatility smile across strikes from a real captured option chain, one curve per expiry."></figure>
+        <a class="repo" href="https://github.com/Achintya1311/implied-vol-surface">implied-vol-surface &rarr;</a>
       </article>
 
       <article class="card">
-        <p class="q">Does scored headline sentiment correlate with a stock&rsquo;s own contemporaneous or next-day return, once the timestamp alignment is leak-free?</p>
-        <p class="a">Not on this sample: contemporaneous r&nbsp;=&nbsp;&minus;0.185, 95% CI [&minus;0.555, +0.246], n&nbsp;=&nbsp;23 &mdash; a CI that comfortably contains zero.</p>
-        <img class="chart" src="assets/charts/sentiment.png" width="900" height="240" loading="lazy" alt="Cumulative return around the 3 highest-magnitude headlines, with the aligned trading session marked.">
-        <a class="repo" href="https://github.com/Achintya1311/headline-sentiment-vs-price">Headline sentiment vs price &rarr;</a>
+        <h3>Headline sentiment</h3>
+        <p class="stat">r = &minus;0.19 <span>no reliable link to returns (n = 23)</span></p>
+        <p class="a">With leak-free timestamps, headline tone doesn&rsquo;t track same-day returns; the 95% interval spans zero. A daily collector is growing the sample.</p>
+        <figure class="fig"><img src="assets/charts/sentiment.png" width="900" height="240" loading="lazy" alt="Cumulative return around the three strongest-sentiment headlines, with the aligned session marked."></figure>
+        <a class="repo" href="https://github.com/Achintya1311/headline-sentiment-vs-price">headline-sentiment-vs-price &rarr;</a>
       </article>
 
       <article class="card">
-        <p class="q">Does the daily trend/momentum/volume screen beat simply buying and holding, once realistic Indian delivery-equity trading costs are included?</p>
-        <p class="a">Only 1 of 3 names still beats buy-and-hold after costs (mean &minus;17.75% vs. &minus;23.72%) &mdash; down from 2 of 3 before costs.</p>
-        <img class="chart" src="assets/charts/stockstalker-screen.png" width="900" height="550" loading="lazy" alt="GULFOILLUB's price rebased to 100 against its listed lubricant peers, from the front-door tear sheet.">
-        <a class="repo" href="https://github.com/Achintya1311/STOCKSTALKER">StockStalker screen &rarr;</a>
+        <h3>Technical screen</h3>
+        <p class="stat">1 of 3 <span>names beat buy-and-hold after costs</span></p>
+        <p class="a">Including Indian delivery costs (STT, stamp duty, slippage), the trend/momentum/volume screen mostly loses to simply holding.</p>
+        <figure class="fig"><img src="assets/charts/stockstalker-screen.png" width="900" height="550" loading="lazy" alt="A stock's price rebased to 100 against its listed peers, from the tear sheet."></figure>
+        <a class="repo" href="https://github.com/Achintya1311/STOCKSTALKER">STOCKSTALKER &rarr;</a>
       </article>
 
       <article class="card">
-        <p class="q">Does mean-variance optimization actually beat a naive equal-weight portfolio out-of-sample, and does that hold once the universe is bigger than 3 names?</p>
-        <p class="a">Widening the universe fixes the 3-ticker single-name corner (9/11 folds &rarr; 1/126), but equal-weight now beats the optimizer out-of-sample (+426.96% vs. +309.00% compounded, 126 folds) &mdash; neither result is statistically significant (t&nbsp;=&nbsp;&minus;0.50).</p>
-        <img class="chart" src="assets/charts/markowitz.png" width="900" height="675" loading="lazy" alt="Efficient frontier, tangency portfolio and capital market line for the 29-name large-cap universe (Day 9 rerun).">
-        <a class="repo" href="https://github.com/Achintya1311/markowitz-portfolio-optimizer">Markowitz portfolio optimizer &rarr;</a>
+        <h3>Portfolio optimisation</h3>
+        <p class="stat">t = &minus;0.50 <span>no edge over equal weight, 126 folds</span></p>
+        <p class="a">On 29 large caps, mean-variance optimisation doesn&rsquo;t beat a naive equal-weight portfolio out of sample; estimation error eats the theoretical gain.</p>
+        <figure class="fig"><img src="assets/charts/markowitz.png" width="900" height="675" loading="lazy" alt="Efficient frontier, tangency portfolio and capital market line for 29 large-cap stocks."></figure>
+        <a class="repo" href="https://github.com/Achintya1311/markowitz-portfolio-optimizer">markowitz-portfolio-optimizer &rarr;</a>
       </article>
 
     </div>
   </section>
 
-  <section id="research" class="wrap">
-    <h2>Research</h2>
-    <article class="card research">
-      <h3>How Test-Set Peeking Inflates Benchmark Comparisons</h3>
+  <section id="research" class="wrap section">
+    <div class="section-head"><h2>Research</h2></div>
+    <article class="card wide">
       <p class="meta">Submitted to a conference, 2026</p>
-      <p>Comparing a new method against the &ldquo;best single model&rdquo; picked after looking at the test score gives that pick an unfair, partly-luck advantage. CRAFT, a machine-learning pipeline built for a larger project, is used to measure how large that advantage is, against a stable cross-validation baseline that never looks at the test score. Across 163 public benchmark collections, swapping which model is compared against changes which one looks ahead in 31% of cases.</p>
-      <a class="repo" href="research/craft.pdf">Read the PDF &rarr;</a>
+      <h3>How Test-Set Peeking Inflates Benchmark Comparisons</h3>
+      <p>Choosing the &ldquo;best single model&rdquo; after looking at its test score gives it a partly-luck advantage. Using CRAFT, a machine-learning pipeline, the paper measures that advantage against a cross-validation baseline that never sees the test score. Across 163 public benchmark collections, changing the comparison model changes which method looks ahead in 31% of cases.</p>
+      <a class="repo" href="research/craft.pdf">Read the paper (PDF) &rarr;</a>
     </article>
   </section>
 
-  <section id="certifications" class="wrap">
-    <h2>Certifications</h2>
-    <ul class="certs">
-      <li><strong>NISM Series XV &middot; Research Analyst</strong> &mdash; the valuation and research-report method behind the reverse DCF and three-statement model.</li>
-      <li><strong>NISM Series VIII &middot; Equity Derivatives</strong> &mdash; the options and risk work behind the implied volatility surface and the Monte Carlo risk lab.</li>
-    </ul>
+  <section id="wrong" class="wrap section">
+    <div class="section-head">
+      <h2>What I got wrong</h2>
+      <p>Mistakes found by testing my own work, and what changed.</p>
+    </div>
+    <ol class="log">
+      <li><strong>Reverse DCF.</strong> Held one year&rsquo;s reinvestment rate flat for ten years. Growth and reinvestment move together through return on capital, so v2 derives one from the other. <a href="https://github.com/Achintya1311/reverse-dcf-engine">See the fix &rarr;</a></li>
+      <li><strong>Screen.</strong> Expected it to beat buy-and-hold. After real Indian trading costs, only 1 of 3 names does. <a href="https://github.com/Achintya1311/STOCKSTALKER">See the test &rarr;</a></li>
+      <li><strong>Risk.</strong> Expected a 99% VaR model to hold at its own confidence level. The Kupiec backtest rejects it. <a href="https://github.com/Achintya1311/monte-carlo-risk-lab">See the backtest &rarr;</a></li>
+    </ol>
   </section>
 
-  <section id="wrong" class="wrap">
-    <h2>What I got wrong</h2>
-    <ul class="wrong-list">
-      <li>Assumed reinvestment stayed flat at one historical fiscal year&rsquo;s rate for ten years. Growth and reinvestment move together through ROIC, so v2 derives one from the other instead. <a href="https://github.com/Achintya1311/reverse-dcf-engine">reverse-dcf-engine &rarr;</a></li>
-      <li>Expected the trend/momentum/volume screen to beat buy-and-hold. After real Indian trading costs, only 1 of 3 names still does. <a href="https://github.com/Achintya1311/STOCKSTALKER">STOCKSTALKER &rarr;</a></li>
-      <li>Expected a 99% Value-at-Risk model to hold up at its own confidence level. The Kupiec backtest rejects it. <a href="https://github.com/Achintya1311/monte-carlo-risk-lab">monte-carlo-risk-lab &rarr;</a></li>
-    </ul>
-  </section>
-
-  <section id="other" class="wrap">
-    <h2>Other</h2>
-    <p><a href="https://github.com/Achintya1311/Market-Making-Betting-Game-Simulator">Market-making betting game simulator &rarr;</a> &mdash; expected value, optimal stopping, quoting and inventory skew.</p>
+  <section id="other" class="wrap section">
+    <div class="section-head"><h2>Also</h2></div>
+    <p><a href="https://github.com/Achintya1311/Market-Making-Betting-Game-Simulator">Market-making simulator &rarr;</a> Expected value, optimal stopping, quoting and inventory skew.</p>
   </section>
 
 </main>
 
-<footer class="wrap">
-  <a href="https://github.com/Achintya1311">GitHub</a>
-  <p class="updated">Updated 17 Oct 2026</p>
-  <p class="disclaimer">Educational research on historical data. Not investment advice. Not a SEBI-registered research analyst.</p>
+<footer>
+  <div class="wrap foot">
+    <a href="https://github.com/Achintya1311">github.com/Achintya1311</a>
+    <p class="updated">Updated 17 Oct 2026</p>
+    <p class="disclaimer">Educational research on historical data. Not investment advice. Not a SEBI-registered research analyst.</p>
+  </div>
 </footer>
 
 </body>
