@@ -212,6 +212,23 @@ section:last-of-type { border-bottom: none; }
   font-size: 0.9rem;
 }
 
+.card .chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin: 8px 0 10px;
+  background: #fff;
+}
+
+.card .chart-note {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-style: italic;
+  margin: 8px 0 10px;
+}
+
 .tag {
   display: inline-block;
   font-size: 0.7rem;

@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Achintya Mishra — Equity Research</title>
 <meta name="description" content="Equity research candidate, data science + finance. StockStalker: nine research modules, one tear sheet, on historical NSE data.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Achintya Mishra — Equity Research">
+<meta property="og:description" content="Equity research candidate, data science + finance. StockStalker: nine research modules, one tear sheet, on historical NSE data.">
+<meta property="og:url" content="https://achintya1311.github.io/">
+<meta property="og:image" content="https://achintya1311.github.io/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Achintya Mishra — Equity Research">
+<meta name="twitter:description" content="Equity research candidate, data science + finance. StockStalker: nine research modules, one tear sheet, on historical NSE data.">
+<meta name="twitter:image" content="https://achintya1311.github.io/assets/og-image.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -55,48 +66,56 @@
       <article class="card">
         <p class="q">At a given share price, what growth, margin and reinvestment does a textbook-consistent reverse DCF say must be assumed &mdash; and is that combination even reachable under the model?</p>
         <p class="a">No constant growth rate reproduces the committed price at all &mdash; the model&rsquo;s own ceiling is &#8377;962.08/share (10-year framing) or &#8377;715.52/share (perpetual framing), both below it.</p>
+        <img class="chart" src="assets/charts/reverse-dcf.png" width="900" height="450" loading="lazy" alt="Tornado chart: how far GULFOILLUB's implied 10-year revenue growth moves when each DCF assumption (reinvestment rate, WACC, terminal growth, EBIT margin) is shocked to its historical range.">
         <a class="repo" href="https://github.com/Achintya1311/reverse-dcf-engine">Reverse DCF engine &rarr;</a>
       </article>
 
       <article class="card">
         <p class="q">Of the ten growth/margin/rate assumptions a three-statement forecast depends on, which ones actually move the FY-final net debt/EBITDA result?</p>
         <p class="a">Dividend payout ranks #1 (0.34x impact) and domestic revenue growth #2 (0.21x), ahead of capex margin, NWC margin, tax rate and the rest (down to 0.01x).</p>
+        <p class="chart-note">No chart: this repo's output is a live-formula Excel workbook, not an image.</p>
         <a class="repo" href="https://github.com/Achintya1311/three-statement-model">Three-statement model &rarr;</a>
       </article>
 
       <article class="card">
         <p class="q">Is the subject&rsquo;s own return alpha, or just factor exposure in disguise?</p>
         <p class="a">Against IIM-A Indian factors (2014&ndash;2025): beta 0.80, SMB 0.47, alpha t&nbsp;=&nbsp;1.0, not significant.</p>
+        <img class="chart" src="assets/charts/factor-model.png" width="900" height="780" loading="lazy" alt="Rolling 60-month FF3 factor loadings with a 95% confidence band for the HiTec industry portfolio, the repo's own illustration of the rolling-loadings method; the subject's own IIM-A regression numbers are in the finding above.">
         <a class="repo" href="https://github.com/Achintya1311/fama-french-factor-model">Factor model &rarr;</a>
       </article>
 
       <article class="card">
         <p class="q">Does a Gaussian (parametric) 1-day Value-at-Risk model actually hold up against the real exception rate, once it&rsquo;s backtested rather than just computed?</p>
         <p class="a">The Kupiec test rejects the 1-day parametric VaR at 99% confidence (10/500 exceptions vs. 5.0 expected, LR&nbsp;=&nbsp;3.914, p&nbsp;=&nbsp;0.048).</p>
+        <img class="chart" src="assets/charts/risk-lab.png" width="900" height="643" loading="lazy" alt="Histogram of the simulated 1,000,000-path 20-day maximum drawdown distribution for RELIANCE, with the median and worst simulated path marked.">
         <a class="repo" href="https://github.com/Achintya1311/monte-carlo-risk-lab">Monte Carlo risk lab &rarr;</a>
       </article>
 
       <article class="card">
         <p class="q">On real (not synthetic) NSE option chains, how often do raw quotes violate a no-arbitrage bound before any filtering? <span class="tag">NISM VIII</span></p>
         <p class="a">43/218 RELIANCE and 196/704 NIFTY contracts break the no-arbitrage floor before filtering &mdash; a floor violation is routine on real noise, not rare.</p>
+        <img class="chart" src="assets/charts/iv-surface.png" width="900" height="562" loading="lazy" alt="Fitted implied volatility smile across strikes for RELIANCE's real captured option chain, one curve per expiry.">
         <a class="repo" href="https://github.com/Achintya1311/implied-vol-surface">Implied volatility surface &rarr;</a>
       </article>
 
       <article class="card">
         <p class="q">Does scored headline sentiment correlate with a stock&rsquo;s own contemporaneous or next-day return, once the timestamp alignment is leak-free?</p>
         <p class="a">Not on this sample: contemporaneous r&nbsp;=&nbsp;&minus;0.185, 95% CI [&minus;0.555, +0.246], n&nbsp;=&nbsp;23 &mdash; a CI that comfortably contains zero.</p>
+        <img class="chart" src="assets/charts/sentiment.png" width="900" height="240" loading="lazy" alt="Cumulative return around the 3 highest-magnitude headlines, with the aligned trading session marked.">
         <a class="repo" href="https://github.com/Achintya1311/headline-sentiment-vs-price">Headline sentiment vs price &rarr;</a>
       </article>
 
       <article class="card">
         <p class="q">Does the daily trend/momentum/volume screen beat simply buying and holding, once realistic Indian delivery-equity trading costs are included?</p>
         <p class="a">Only 1 of 3 names still beats buy-and-hold after costs (mean &minus;17.75% vs. &minus;23.72%) &mdash; down from 2 of 3 before costs.</p>
+        <img class="chart" src="assets/charts/stockstalker-screen.png" width="900" height="550" loading="lazy" alt="GULFOILLUB's price rebased to 100 against its listed lubricant peers, from the front-door tear sheet.">
         <a class="repo" href="https://github.com/Achintya1311/STOCKSTALKER">StockStalker screen &rarr;</a>
       </article>
 
       <article class="card">
         <p class="q">Does mean-variance optimization actually beat a naive equal-weight portfolio out-of-sample, and does that hold once the universe is bigger than 3 names?</p>
         <p class="a">Widening the universe fixes the 3-ticker single-name corner (9/11 folds &rarr; 1/126), but equal-weight now beats the optimizer out-of-sample (+426.96% vs. +309.00% compounded, 126 folds) &mdash; neither result is statistically significant (t&nbsp;=&nbsp;&minus;0.50).</p>
+        <img class="chart" src="assets/charts/markowitz.png" width="900" height="675" loading="lazy" alt="Efficient frontier, tangency portfolio and capital market line for the 29-name large-cap universe (Day 9 rerun).">
         <a class="repo" href="https://github.com/Achintya1311/markowitz-portfolio-optimizer">Markowitz portfolio optimizer &rarr;</a>
       </article>
 
