@@ -128,8 +128,8 @@
 
       <article class="card">
         <h3>Portfolio optimisation</h3>
-        <p class="stat">t = &minus;0.50 <span>no edge over equal weight, 126 folds</span></p>
-        <p class="a">On 29 large caps, mean-variance optimisation doesn&rsquo;t beat a naive equal-weight portfolio out of sample; estimation error eats the theoretical gain.</p>
+        <p class="stat">+427% vs +252% <span>equal-weight beats the optimizer after costs, 126 folds</span></p>
+        <p class="a">On 29 large caps, equal-weight clearly beats mean-variance optimisation out of sample (+427% vs +309% gross); realistic transaction costs widen the gap further, since the optimizer&rsquo;s own turnover costs more than the raw cost-rate difference suggests. Robust across risk-free rates and training windows.</p>
         <figure class="fig"><img src="assets/charts/markowitz.png" width="900" height="675" loading="lazy" alt="Efficient frontier, tangency portfolio and capital market line for 29 large-cap stocks."></figure>
         <a class="repo" href="https://github.com/Achintya1311/markowitz-portfolio-optimizer">markowitz-portfolio-optimizer &rarr;</a>
       </article>
@@ -169,7 +169,7 @@
 <footer>
   <div class="wrap foot">
     <a href="https://github.com/Achintya1311">github.com/Achintya1311</a>
-    <p class="updated">Updated 18 Oct 2026</p>
+    <p class="updated">Updated 22 Oct 2026</p>
     <p class="disclaimer">Educational research on historical data. Not investment advice. Not a SEBI-registered research analyst.</p>
   </div>
 </footer>
