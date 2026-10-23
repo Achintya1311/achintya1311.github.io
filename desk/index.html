@@ -31,6 +31,7 @@
     <div class="nav-h">Research</div>
     <a class="nav" href="#findings"><svg><use href="#i-grid"/></svg><span class="lbl">Findings</span></a>
     <a class="nav" href="#wrong"><svg><use href="#i-warn"/></svg><span class="lbl">What I got wrong</span></a>
+    <a class="nav" href="#picks"><svg><use href="#i-chart"/></svg><span class="lbl">Picks</span></a>
     <a class="nav" href="#lab"><svg><use href="#i-flask"/></svg><span class="lbl">Picks lab</span></a>
     <div class="nav-h">Elsewhere</div>
     <a class="nav" href="../index.html"><svg><use href="#i-file"/></svg><span class="lbl">Classic page</span></a>
@@ -73,6 +74,13 @@
     <section class="view" id="wrong">
       <div class="top"><div><h1>What I got wrong</h1><p>Mistakes found by testing my own work, and what changed.</p></div></div>
       <div class="panel"><ul class="list" id="wrong-all"></ul></div>
+    </section>
+
+    <section class="view" id="picks">
+      <div class="top"><div><h1>Picks</h1><p id="picks-sub">Loading the lab's latest picks…</p></div></div>
+      <div class="chips"><div class="seg" id="hz" style="margin-left:0"><button data-h="day" aria-pressed="true">Day</button><button data-h="week" aria-pressed="false">Week</button></div></div>
+      <div id="picks-body"><div class="empty">Loading…</div></div>
+      <p class="note" id="picks-note"></p>
     </section>
 
     <section class="view" id="lab">
@@ -120,6 +128,44 @@
   const wrong = [...doc.querySelectorAll('#wrong .log li')].map(li => li.innerHTML.replace(/href="(?!http)/g, 'href="../'));
   $('#wrong-all').innerHTML = wrong.map((x, i) => `<li><span class="ico num">${i + 1}</span><div class="tx">${x}</div></li>`).join('');
   $('#wrong-short').innerHTML = wrong.slice(0, 3).map((x, i) => `<li><span class="ico num">${i + 1}</span><div class="tx">${(t => t.length > 95 ? t.slice(0, 95) + '…' : t)(x.replace(/<[^>]+>/g, ''))}</div></li>`).join('');
+})();
+
+// ---- Picks: the lab's JSON, rendered as charts. Shapes only: bars and zone are scaled 0-100, no prices.
+(async () => {
+  const $ = (s, r = document) => r.querySelector(s), esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const REPO = 'Achintya1311/stockstalker-lab', RAW = `https://raw.githubusercontent.com/${REPO}/main/`;
+  const J = async u => { const r = await fetch(u); if (!r.ok) throw 0; return r.json(); };
+  let root = 'live', dry = false;
+  const latest = async h => {
+    for (const base of ['live', 'reports/live_dryrun']) {
+      try {
+        const list = await J(`https://api.github.com/repos/${REPO}/contents/${base}/${h}`);
+        const names = list.map(f => f.name).filter(n => n.endsWith('.json')).sort();
+        if (names.length) { root = base; dry = base !== 'live'; return await J(`${RAW}${base}/${h}/${names[names.length - 1]}`); }
+      } catch {}
+    }
+    throw 0;
+  };
+  const chart = c => {
+    if (!c || !c.bars) return '';
+    const W = 320, H = 150, n = c.bars.length, bw = W / n, y = v => (100 - v) / 100 * (H - 8) + 4;
+    let z = '';
+    if (c.zone) { const zx = c.zone.from * bw; z = `<rect x="${zx}" y="${y(c.zone.high)}" width="${W - zx}" height="${Math.max(y(c.zone.low) - y(c.zone.high), 1.5)}" fill="${c.zone.side === 'demand' ? 'var(--up)' : 'var(--down)'}" opacity=".22"/>`; }
+    const bars = c.bars.map(([o, h, l, cl], i) => { const x = i * bw + bw / 2, up = cl >= o, col = up ? 'var(--up)' : 'var(--down)';
+      return `<line x1="${x}" x2="${x}" y1="${y(h)}" y2="${y(l)}" stroke="${col}" stroke-width="1"/><rect x="${x - bw * .32}" y="${y(Math.max(o, cl))}" width="${bw * .64}" height="${Math.max(Math.abs(y(o) - y(cl)), 1)}" fill="${col}"/>`; }).join('');
+    return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Recent price bars${c.zone ? ' with the nearest order-block zone' : ''}">${z}${bars}</svg>`;
+  };
+  const table = (title, cls, word, picks) => `<div class="panel"><h2>${title}</h2><div class="tiles">${picks.length ? picks.map(p => `<div class="tile ${cls}" style="grid-template-columns:auto minmax(0,1fr)"><span class="badge">${word}</span><span><strong>${esc(p.symbol)}</strong><small>${esc(p.strategy || '')}</small></span>${p.chart ? `<span style="grid-column:1/-1">${chart(p.chart)}${p.chart.zone ? `<small>Shaded: nearest ${p.chart.zone.side} order-block zone${p.chart.zone.retested ? ', retested' : ''} (chart structure, not the reason for the pick)</small>` : ''}</span>` : ''}<small style="grid-column:1/-1">${esc(p.reasoning || '')}</small>${p.move != null ? `<span class="num ${p.right ? 'g' : 'r'}" style="grid-column:1/-1">Open ${esc(p.open)} · Close ${esc(p.close)} · Move ${esc(p.move)}%</span>` : ''}</div>`).join('') : '<p class="note">No picks.</p>'}</div></div>`;
+  const draw = async h => {
+    try {
+      const d = await latest(h), t = d.tables || {};
+      $('#picks-sub').textContent = `${h === 'day' ? 'Day' : 'Week'} picks for session ${d.session}${dry ? ' (dry run: the lab has not gone live yet, these are not published picks)' : ''}`;
+      $('#picks-body').innerHTML = `<div class="two">${table('Bullish picks', 'up', 'BULLISH', t.bullish || [])}${table('Bearish picks', 'dn', 'BEARISH', t.bearish || [])}</div>`;
+      $('#picks-note').textContent = d.disclaimer || '';
+    } catch { $('#picks-sub').textContent = 'Could not load the lab’s picks right now.'; $('#picks-body').innerHTML = `<div class="empty">See the <a href="https://github.com/${REPO}">lab repo</a>.</div>`; }
+  };
+  $('#hz').addEventListener('click', e => { const b = e.target.closest('button'); if (b) draw(b.dataset.h); });
+  draw('day');
 })();
 </script>
 </body>
