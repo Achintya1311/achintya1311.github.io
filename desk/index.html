@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Research Desk — Achintya Mishra</title>
+<meta name="description" content="Interactive view of Achintya Mishra's equity research portfolio: findings with charts, the StockStalker pipeline, and what went wrong.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="desk.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M6 16V9M11 16V5M16 16v-4M21 16V8"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 19V5M9 7h6"/></symbol>
+<symbol id="i-flask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 001.3 2.2h12.4a1.5 1.5 0 001.3-2.2L14 9V3M7.5 15h9"/></symbol>
+<symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2zM12 10v5M12 18v.5"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6zM14 3v5h5M9 13h7M9 17h7"/></symbol>
+<symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></symbol>
+<symbol id="i-side" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 6l-6 6 6 6M19 6l-6 6 6 6"/></symbol>
+</defs></svg>
+
+<div class="shell" data-name="Research Desk">
+  <nav class="side" aria-label="Sections">
+    <div class="brand"><b>AM</b><span class="lbl">Research Desk</span><button class="tog" data-tog aria-label="Collapse sidebar"><svg width="16" height="16"><use href="#i-side"/></svg></button></div>
+    <a class="nav" href="#home"><svg><use href="#i-home"/></svg><span class="lbl">Home</span></a>
+    <div class="nav-h">Research</div>
+    <a class="nav" href="#findings"><svg><use href="#i-grid"/></svg><span class="lbl">Findings</span></a>
+    <a class="nav" href="#wrong"><svg><use href="#i-warn"/></svg><span class="lbl">What I got wrong</span></a>
+    <a class="nav" href="#lab"><svg><use href="#i-flask"/></svg><span class="lbl">Picks lab</span></a>
+    <div class="nav-h">Elsewhere</div>
+    <a class="nav" href="../index.html"><svg><use href="#i-file"/></svg><span class="lbl">Classic page</span></a>
+    <a class="nav" href="https://github.com/Achintya1311"><svg><use href="#i-code"/></svg><span class="lbl">GitHub</span></a>
+    <div class="grow"></div>
+    <div class="pill"><span class="dot live"></span><span class="lbl">Historical data only</span>
+      <span class="theme"><button data-t="light" aria-label="Light theme" aria-pressed="false"><svg width="14" height="14"><use href="#i-sun"/></svg></button><button data-t="dark" aria-label="Dark theme" aria-pressed="true"><svg width="14" height="14"><use href="#i-moon"/></svg></button></span></div>
+    <div class="me"><span class="av"></span><div>Achintya Mishra<small>NISM XV · VIII</small></div></div>
+  </nav>
+  <main>
+    <section class="view" id="home">
+      <div class="top"><div><h1 id="hello">Research desk</h1><p>Equity research on Indian market data, findings included even when they failed.</p></div><a class="btn" href="../research/craft.pdf">Research paper</a></div>
+      <div class="cols">
+        <div class="stack">
+          <div class="panel"><h2>At a glance</h2>
+            <div class="stats"><div class="stat"><b>8</b><span>research repos</span></div><div class="stat"><b id="n-find">–</b><span>findings</span></div><div class="stat"><b id="n-neg">–</b><span>negative results kept</span></div><div class="stat"><b>2</b><span>NISM certificates</span></div></div></div>
+          <div class="panel"><h2>StockStalker pipeline <a href="#lab">Picks lab →</a></h2>
+            <ol class="list" id="pipe"></ol></div>
+          <div class="panel"><h2>Latest findings <a href="#findings">Open findings →</a></h2><ul class="list" id="latest"><li class="tx">Loading…</li></ul></div>
+        </div>
+        <div class="stack">
+          <div class="panel"><h2>Quick links</h2>
+            <a class="act" href="#findings"><span class="ico"><svg width="16" height="16"><use href="#i-grid"/></svg></span><span>Browse findings<small>charts, full-screen</small></span></a>
+            <a class="act" href="https://github.com/Achintya1311/STOCKSTALKER"><span class="ico"><svg width="16" height="16"><use href="#i-code"/></svg></span><span>StockStalker<small>command-line pipeline</small></span></a>
+            <a class="act" href="https://github.com/Achintya1311/stockstalker-lab"><span class="ico"><svg width="16" height="16"><use href="#i-flask"/></svg></span><span>Picks lab<small>strategies tested on unseen data</small></span></a>
+            <a class="act" href="../research/craft.pdf"><span class="ico"><svg width="16" height="16"><use href="#i-book"/></svg></span><span>Research paper<small>PDF</small></span></a></div>
+          <div class="panel"><h2>What I got wrong <a href="#wrong">All →</a></h2><ul class="list" id="wrong-short"></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="findings">
+      <div class="top"><div><h1>Findings</h1><p>One question per project, the answer, and the evidence. Click a card for the chart.</p></div></div>
+      <div class="feed-wrap">
+        <div class="chips" id="chips"></div>
+        <div class="masonry" id="feed" data-feed><div class="empty" id="feed-empty">Loading findings…</div></div>
+      </div>
+    </section>
+
+    <section class="view" id="wrong">
+      <div class="top"><div><h1>What I got wrong</h1><p>Mistakes found by testing my own work, and what changed.</p></div></div>
+      <div class="panel"><ul class="list" id="wrong-all"></ul></div>
+    </section>
+
+    <section class="view" id="lab">
+      <div class="top"><div><h1>Picks lab</h1><p>An autonomous lab testing rule-based NSE F&amp;O strategies against the market's own base rate.</p></div><a class="btn ghost" href="https://github.com/Achintya1311/stockstalker-lab">Repo</a></div>
+      <div class="panel"><p>Each strategy is replayed day by day from a blank state, scored only on data it has never seen, and kept only if it beats the share of stocks that moved the same way anyway. Every pick is shown, losers included.</p>
+        <p class="note">The live scoreboard is published by the lab's own workflow from 2 Nov 2026 and is not duplicated here. Model output in testing. Not investment advice or a recommendation. Not a SEBI-registered research analyst.</p></div>
+    </section>
+    <p class="note">Educational research on historical data. Not investment advice. Not a SEBI-registered research analyst.</p>
+  </main>
+</div>
+<script src="desk.js"></script>
+<script>
+(async () => {
+  const $ = (s, r = document) => r.querySelector(s), esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const h = new Date().getHours(); $('#hello').textContent = (h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening') + ', welcome';
+  // pipeline: [step, what, repo]
+  $('#pipe').innerHTML = [['Screen','Trend, momentum, volume, liquidity','STOCKSTALKER'],['Valuation','Reverse DCF: what the price assumes','reverse-dcf-engine'],['Model','Linked three-statement forecast','three-statement-model'],['Risk','Monte Carlo VaR, Kupiec backtest','monte-carlo-risk-lab'],['Factors','Indian Fama-French + momentum','fama-french-factor-model'],['Options','Implied vol from real NSE chains','implied-vol-surface'],['Sentiment','Headlines vs returns, leak-tested','headline-sentiment-vs-price']]
+    .map(([a, b, r], i) => `<li><span class="ico num">${i + 1}</span><div class="tx"><a href="https://github.com/Achintya1311/${r}">${a}</a><small>${b}</small></div></li>`).join('');
+  // categories + whether the result went against the first expectation (neg=1)
+  const META = { 'Reverse DCF': ['valuation', 0], 'Three-statement model': ['valuation', 0], 'Factor exposure': ['factors', 1], 'Risk': ['risk', 1], 'Options': ['options', 0], 'Headline sentiment': ['sentiment', 1], 'Technical screen': ['screen', 1], 'Portfolio optimisation': ['portfolio', 1] };
+  const LABEL = { valuation: 'Valuation', factors: 'Factors', risk: 'Risk', options: 'Options', sentiment: 'Sentiment', screen: 'Screen', portfolio: 'Portfolio' };
+  let doc;
+  try { doc = new DOMParser().parseFromString(await (await fetch('../index.html')).text(), 'text/html'); }
+  catch { $('#feed-empty').innerHTML = 'Could not load findings here. <a href="../index.html#findings">Open the classic page</a>.'; return; }
+  const cards = [...doc.querySelectorAll('#findings .card')].map((c, i) => {
+    const h3 = c.querySelector('h3'), tagEl = h3.querySelector('.tag'), tag = tagEl ? tagEl.textContent : '';
+    if (tagEl) tagEl.remove();
+    const title = h3.textContent.trim(), st = c.querySelector('.stat'), sp = st.querySelector('span'), sub = sp.textContent.trim();
+    sp.remove(); const big = st.textContent.trim();
+    const im = c.querySelector('img'), repo = c.querySelector('.repo'), a = c.querySelector('.a');
+    const [cat, neg] = META[title] || ['other', 0];
+    return { i, title, tag, big, sub, text: a ? a.textContent.trim() : '', src: im ? '../' + im.getAttribute('src') : '', alt: im ? im.alt : '', repo: repo ? repo.href : '', repoName: repo ? repo.textContent.replace('→', '').trim() : '', cat, neg };
+  });
+  $('#n-find').textContent = cards.length; $('#n-neg').textContent = cards.filter(c => c.neg).length;
+  $('#latest').innerHTML = cards.slice(0, 4).map(c => `<li><span class="ico num">${esc(c.cat[0].toUpperCase())}</span><div class="tx"><b>${esc(c.title)}</b> <span class="num ${c.neg ? 'r' : 'g'}">${esc(c.big)}</span><small>${esc(c.sub)}</small></div></li>`).join('');
+  const cats = [...new Set(cards.map(c => c.cat))];
+  $('#chips').innerHTML = '<button class="chip" data-cat="all" aria-pressed="true">All</button>' + cats.map(k => `<button class="chip" data-cat="${k}" aria-pressed="false">${LABEL[k] || k}</button>`).join('') +
+    '<div class="seg"><button data-sort="new" aria-pressed="true">Pipeline order</button><button data-sort="neg" aria-pressed="false">Negative results first</button></div>';
+  $('#feed').innerHTML = cards.map(c => `<article class="card" tabindex="0" role="button" data-lb data-i="${c.i}" data-neg="${c.neg}" data-cat="${c.cat}" data-imgs="${esc(c.src)}">
+    ${c.src ? `<div class="img"><img src="${esc(c.src)}" alt="${esc(c.alt)}" loading="lazy"></div>` : ''}
+    <div class="big">${esc(c.big)}<span>${esc(c.sub)}</span></div>
+    <div class="meta"><b>${esc(c.title)}</b><span class="tag ${c.neg ? 'bad' : ''}">${c.neg ? 'did not hold' : 'result'}</span></div>
+    <p>${esc(c.text.length > 150 ? c.text.slice(0, 150) + '…' : c.text)}</p>
+    <div class="lb-side" hidden><h3>${esc(c.title)} ${c.tag ? `<span class="tag">${esc(c.tag)}</span>` : ''}</h3><div class="big" style="padding:0">${esc(c.big)}<span>${esc(c.sub)}</span></div><p>${esc(c.text)}</p>${c.repo ? `<p><a href="${esc(c.repo)}">${esc(c.repoName)} →</a></p>` : ''}</div></article>`).join('');
+  const wrong = [...doc.querySelectorAll('#wrong .log li')].map(li => li.innerHTML.replace(/href="(?!http)/g, 'href="../'));
+  $('#wrong-all').innerHTML = wrong.map((x, i) => `<li><span class="ico num">${i + 1}</span><div class="tx">${x}</div></li>`).join('');
+  $('#wrong-short').innerHTML = wrong.slice(0, 3).map((x, i) => `<li><span class="ico num">${i + 1}</span><div class="tx">${(t => t.length > 95 ? t.slice(0, 95) + '…' : t)(x.replace(/<[^>]+>/g, ''))}</div></li>`).join('');
+})();
+</script>
+</body>
+</html>
