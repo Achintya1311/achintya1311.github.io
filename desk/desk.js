@@ -9,7 +9,7 @@
   $$('.theme button').forEach(b => b.onclick = () => setTheme(b.dataset.t));
   // sidebar
   if (store.get('desk-side') === '1') shell.classList.add('collapsed');
-  $$('[data-tog]').forEach(b => b.setAttribute('aria-expanded', String(!shell.classList.contains('collapsed'))); b.onclick = () => { shell.classList.toggle('collapsed'); store.set('desk-side', shell.classList.contains('collapsed') ? '1' : '0'); b.setAttribute('aria-expanded', String(!shell.classList.contains('collapsed'))); });
+  $$('[data-tog]').forEach(b => { b.setAttribute('aria-expanded', String(!shell.classList.contains('collapsed'))); b.onclick = () => { shell.classList.toggle('collapsed'); store.set('desk-side', shell.classList.contains('collapsed') ? '1' : '0'); b.setAttribute('aria-expanded', String(!shell.classList.contains('collapsed'))); }; });
   // views by hash
   const show = () => {
     const v = location.hash.slice(1) || $('.view').id;
