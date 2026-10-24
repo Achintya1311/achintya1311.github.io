@@ -103,6 +103,11 @@ def check_desk_files(errors):
             for n, line in enumerate(f.read_text().splitlines(), 1):
                 for hit in banned_hits(line):
                     errors.append(f"{f.relative_to(ROOT)}:{n}: banned wording '{hit}'")
+    import shutil, subprocess
+    if shutil.which("node"):
+        for f in sorted(DESK.glob("*.js")):
+            if subprocess.run(["node", "--check", str(f)], capture_output=True).returncode:
+                errors.append(f"{f.relative_to(ROOT)}: JavaScript syntax error")
     if total > 1_000_000:
         errors.append(f"desk/ is {total} bytes, over 1 MB")
     page = (DESK / "index.html").read_text()
