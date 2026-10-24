@@ -26,6 +26,7 @@
 <symbol id="i-side" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 6l-6 6 6 6M19 6l-6 6 6 6"/></symbol>
 </defs></svg>
 
+<a class="skip" href="#main">Skip to content</a>
 <div class="shell" data-name="Research Desk">
   <nav class="side" aria-label="Sections">
     <div class="brand"><b>AM</b><span class="lbl">Research Desk</span><button class="tog" data-tog aria-label="Collapse sidebar"><svg width="16" height="16"><use href="#i-side"/></svg></button></div>
@@ -45,7 +46,7 @@
       <span class="theme"><button data-t="light" aria-label="Light theme" aria-pressed="false"><svg width="14" height="14"><use href="#i-sun"/></svg></button><button data-t="dark" aria-label="Dark theme" aria-pressed="true"><svg width="14" height="14"><use href="#i-moon"/></svg></button></span></div>
     <div class="me"><span class="av"></span><div>Achintya Mishra<small>NISM XV · VIII</small></div></div>
   </nav>
-  <main>
+  <main id="main" tabindex="-1">
     <section class="view" id="home">
       <div class="top"><div><h1 id="hello">Good evening</h1><p id="today"></p></div><a class="btn" href="../research/craft.pdf">Research paper</a></div>
       <div class="hcols">
@@ -190,7 +191,7 @@
     if (!e) return '<div class="ev"><b>Evidence:</b> no train replay of this strategy is on file, so the page makes no edge claim for it.</div>';
     return `<div class="ev"><b>Train evidence (2015 to 2020):</b> edge ${fp(e.mean)} pts, 95% interval ${fp(e.lo)} to ${fp(e.hi)}; ${e.superior ? '<span class="g">survives the many-trials correction</span>' : '<span class="r">does not survive the many-trials correction</span>'}.</div>`;
   };
-  const table = (title, cls, word, picks) => `<div class="panel"><h2>${title}</h2><div class="tiles">${picks.length ? picks.map(p => `<div class="tile ${cls}" style="grid-template-columns:auto minmax(0,1fr)"><span class="badge">${word}</span><span><strong>${esc(p.symbol)}</strong><small>${esc(p.strategy || '')}${rankTag(p, word)}</small></span>${p.chart ? `<span style="grid-column:1/-1">${chart(p.chart)}${p.chart.zone ? `<small>Shaded: nearest ${p.chart.zone.side} order-block zone${p.chart.zone.retested ? ', retested' : ''} (chart structure, not the reason for the pick)</small>` : ''}</span>` : ''}<small style="grid-column:1/-1">${esc(p.reasoning || '')}</small>${strip(p, word)}${p.move != null ? `<span class="num ${p.right ? 'g' : 'r'}" style="grid-column:1/-1">Open ${esc(p.open)} · Close ${esc(p.close)} · Move ${esc(p.move)}%</span>` : ''}</div>`).join('') : '<p class="note">No picks.</p>'}</div></div>`;
+  const table = (title, cls, word, picks) => `<div class="panel"><h2>${title}</h2><div class="tiles">${picks.length ? picks.map(p => `<div class="tile ${cls}" style="grid-template-columns:auto minmax(0,1fr)"><span class="badge">${word}</span><span><strong>${esc(p.symbol)}</strong><small>${esc(p.strategy || '')}${rankTag(p, word)}</small></span>${p.chart ? `<span style="grid-column:1/-1">${chart(p.chart)}${p.chart.zone ? `<small>Shaded: nearest ${p.chart.zone.side} order-block zone${p.chart.zone.retested ? ', retested' : ''}. Chart structure only, not the reason for the pick. Not a level to act on.</small>` : ''}</span>` : ''}<small style="grid-column:1/-1">${esc(p.reasoning || '')}</small>${strip(p, word)}${p.move != null ? `<span class="num ${p.right ? 'g' : 'r'}" style="grid-column:1/-1">Open ${esc(p.open)} · Close ${esc(p.close)} · Move ${esc(p.move)}%</span>` : ''}</div>`).join('') : '<p class="note">No picks.</p>'}</div></div>`;
   const draw = async h => {
     try {
       const d = await latest(h), t = d.tables || {};

@@ -15,11 +15,13 @@
     const v = location.hash.slice(1) || $('.view').id;
     const t = $('#' + CSS.escape(v)) && $('#' + CSS.escape(v)).classList.contains('view') ? v : $('.view').id;
     $$('.view').forEach(e => e.classList.toggle('on', e.id === t));
-    $$('.nav[href^="#"]').forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + t));
+    $$('.nav[href^="#"]').forEach(a => { const on = a.getAttribute('href') === '#' + t; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); });
     document.title = ($('.nav.on .lbl') ? $('.nav.on .lbl').textContent + ' · ' : '') + (shell.dataset.name || 'Desk');
     window.scrollTo(0, 0);
   };
   addEventListener('hashchange', show); show();
+  // skip link: focus main without touching the hash, which drives the views
+  $('.skip').onclick = e => { e.preventDefault(); $('main').focus(); };
   // chips + segmented sort, applied per feed
   const feeds = () => $$('[data-feed]');
   const apply = f => {
