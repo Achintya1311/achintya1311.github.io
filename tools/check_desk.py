@@ -99,13 +99,17 @@ def check_desk_files(errors):
         if not f.is_file():
             continue
         total += f.stat().st_size
-        if f.suffix in (".html", ".js"):
+        if f.suffix in (".html", ".js", ".css"):
             for n, line in enumerate(f.read_text().splitlines(), 1):
                 for hit in banned_hits(line):
                     errors.append(f"{f.relative_to(ROOT)}:{n}: banned wording '{hit}'")
     if total > 1_000_000:
         errors.append(f"desk/ is {total} bytes, over 1 MB")
     page = (DESK / "index.html").read_text()
+    if 'class="skip"' not in page:
+        errors.append("desk/index.html: no skip link")
+    if re.search(r'<a class="nav"(?![^>]*aria-label)', page):
+        errors.append("desk/index.html: nav link without aria-label")
     if "zone" in page and ZONE_CAPTION not in page:
         errors.append(f"desk/index.html draws the order-block zone without the caption '{ZONE_CAPTION}'")
     t = Tags()

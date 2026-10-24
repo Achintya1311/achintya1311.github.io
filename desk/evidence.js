@@ -137,7 +137,7 @@
     $('#xr-sub').textContent = `Session ${r.data.session}${r.dry ? ' (dry run: the lab has not gone live yet)' : ''} · data as of ${x.asof} · ${x.n} stocks in the universe`;
     const score = s => Math.max(s.b ?? -1, s.d ?? -1), side = s => (s.b ?? -1) >= (s.d ?? -1) ? 'b' : 'd';
     const bull = x.stocks.filter(s => s.b != null && side(s) === 'b').sort((a, c) => c.b - a.b), bear = x.stocks.filter(s => s.d != null && side(s) === 'd').sort((a, c) => c.d - a.d), none = x.stocks.filter(s => s.b == null && s.d == null);
-    const dot = (s, k) => `<span class="dot-s ${k}" tabindex="0" data-s="${esc(s.s)}" title="${esc(s.s)} · ${k === 'up' ? 'bullish rank ' + s.b : k === 'dn' ? 'bearish rank ' + s.d : 'not scored'}" style="opacity:${k === 'no' ? .3 : (.3 + .7 * score(s) / 100).toFixed(2)}"></span>`;
+    const dot = (s, k) => `<span class="dot-s ${k}" tabindex="0" role="img" aria-label="${esc(s.s)}, ${k === 'up' ? 'bullish rank ' + s.b : k === 'dn' ? 'bearish rank ' + s.d : 'not scored'}" data-s="${esc(s.s)}" title="${esc(s.s)} · ${k === 'up' ? 'bullish rank ' + s.b : k === 'dn' ? 'bearish rank ' + s.d : 'not scored'}" style="opacity:${k === 'no' ? .3 : (.3 + .7 * score(s) / 100).toFixed(2)}"></span>`;
     $('#xr-body').innerHTML = `
       <div class="stats"><div class="stat"><b class="g">${b.up}</b><span>stocks closed above their open</span></div><div class="stat"><b class="r">${b.down}</b><span>closed below their open</span></div><div class="stat"><b>${bull.length}</b><span>ranked bullish</span></div><div class="stat"><b>${bear.length}</b><span>ranked bearish</span></div></div>
       <div class="two"><div class="panel"><h2>Breadth: last session's moves across the universe</h2>${histogram(b)}</div>
@@ -147,7 +147,7 @@
       <div class="panel"><h2>Bullish ranks</h2><div class="dots">${bull.map(s => dot(s, 'up')).join('') || '<span class="muted">none</span>'}</div>
         <h2 style="margin-top:16px">Bearish ranks</h2><div class="dots">${bear.map(s => dot(s, 'dn')).join('') || '<span class="muted">none</span>'}</div>
         <h2 style="margin-top:16px">Not scored</h2><div class="dots">${none.map(s => dot(s, 'no')).join('') || '<span class="muted">none</span>'}</div>
-        <p class="note" id="xr-hit"></p></div>`;
+        <p class="note" id="xr-hit" aria-live="polite"></p></div>`;
     $('#xr-find').oninput = e => {
       const q = e.target.value.trim().toUpperCase(); let hit = null;
       document.querySelectorAll('.dot-s').forEach(d => { const m = q && d.dataset.s.includes(q); d.classList.toggle('hit', !!m); if (m && !hit) hit = d; });

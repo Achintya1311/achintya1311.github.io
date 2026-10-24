@@ -9,7 +9,7 @@
   $$('.theme button').forEach(b => b.onclick = () => setTheme(b.dataset.t));
   // sidebar
   if (store.get('desk-side') === '1') shell.classList.add('collapsed');
-  $$('[data-tog]').forEach(b => b.onclick = () => { shell.classList.toggle('collapsed'); store.set('desk-side', shell.classList.contains('collapsed') ? '1' : '0'); });
+  $$('[data-tog]').forEach(b => b.setAttribute('aria-expanded', String(!shell.classList.contains('collapsed'))); b.onclick = () => { shell.classList.toggle('collapsed'); store.set('desk-side', shell.classList.contains('collapsed') ? '1' : '0'); b.setAttribute('aria-expanded', String(!shell.classList.contains('collapsed'))); });
   // views by hash
   const show = () => {
     const v = location.hash.slice(1) || $('.view').id;
@@ -36,13 +36,13 @@
     feeds().forEach(f => f.parentElement.contains(c) && apply(f));
   });
   // lightbox: any [data-lb] element; images from data-imgs ("a|b"), side panel from its .lb-side child
-  const lb = document.createElement('div'); lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true');
+  const lb = document.createElement('div'); lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Chart viewer');
   lb.innerHTML = '<div class="stage"><span class="ct"></span><button class="x" aria-label="Close">✕</button><button class="nv pv" aria-label="Previous">‹</button><img alt=""><button class="nv nx" aria-label="Next">›</button><div class="th"></div></div><aside></aside>';
   document.body.appendChild(lb);
   let imgs = [], at = 0, opener = null;
   const img = $('img', lb);
   const draw = () => {
-    img.src = imgs[at]; img.classList.remove('z'); img.alt = '';
+    img.src = imgs[at]; img.classList.remove('z'); { const o = opener && opener.querySelector('img'); img.alt = (o && o.alt) || 'Chart'; }
     $('.ct', lb).textContent = imgs.length > 1 ? `${at + 1} / ${imgs.length}` : '';
     $$('.nv', lb).forEach(b => b.hidden = imgs.length < 2);
     $$('.th button', lb).forEach((b, i) => b.classList.toggle('on', i === at));
@@ -52,7 +52,7 @@
   $('.x', lb).onclick = close; $('.pv', lb).onclick = () => go(-1); $('.nx', lb).onclick = () => go(1);
   img.onclick = () => img.classList.toggle('z'); img.ondblclick = () => img.classList.toggle('z');
   lb.addEventListener('click', e => { if (e.target === $('.stage', lb)) close(); });
-  document.addEventListener('keydown', e => { if (!lb.classList.contains('on')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') go(-1); if (e.key === 'ArrowRight') go(1); });
+  document.addEventListener('keydown', e => { if (!lb.classList.contains('on')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') go(-1); if (e.key === 'ArrowRight') go(1); if (e.key === 'Tab') { const f = $$('button', lb).filter(x => !x.hidden); if (!f.length) return; const i = f.indexOf(document.activeElement); e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); } });
   window.deskOpen = el => {
     opener = el; imgs = (el.dataset.imgs || '').split('|').filter(Boolean); if (!imgs.length) return; at = 0;
     const side = $('.lb-side', el); $('aside', lb).innerHTML = (side ? side.innerHTML : '') + '<div class="ft">' + (imgs.length > 1 ? '← → images · ' : '') + 'click image to zoom · Esc to close</div>';

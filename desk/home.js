@@ -17,7 +17,7 @@
     const W = 760, H = 120, n = b.counts.length, mx = Math.max(...b.counts, 1), mid = b.edges_pct.indexOf(0) + 1;
     const xs = b.counts.map((_, i) => (i + .5) * W / n), ys = b.counts.map(c => H - 22 - c / mx * (H - 40));
     const path = (a, z) => { let d = `M${xs[a]},${ys[a]}`; for (let i = a + 1; i <= z; i++) { const cx = (xs[i - 1] + xs[i]) / 2; d += ` C${cx},${ys[i - 1]} ${cx},${ys[i]} ${xs[i]},${ys[i]}`; } return d; };
-    const mx0 = mid * W / n, ticks = ['-4%', '-2%', '0', '+2%', '+4%'];
+    const mx0 = mid * W / n, ticks = [[-4, '-4%'], [-2, '-2%'], [0, '0'], [2, '+2%'], [4, '+4%']];
     const left = path(0, mid - 1), right = path(mid, n - 1);
     return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Distribution of the last session's open-to-close moves across the universe">
       <defs><linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--down)" stop-opacity=".45"/><stop offset="1" stop-color="var(--down)" stop-opacity="0"/></linearGradient>
@@ -25,7 +25,7 @@
       <path d="${left} L${xs[mid - 1]},${H - 22} L${xs[0]},${H - 22}Z" fill="url(#gd)"/><path d="${left}" fill="none" stroke="var(--down)" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
       <path d="${right} L${xs[n - 1]},${H - 22} L${xs[mid]},${H - 22}Z" fill="url(#gu)"/><path d="${right}" fill="none" stroke="var(--up)" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
       <line x1="${mx0}" x2="${mx0}" y1="4" y2="${H - 22}" stroke="currentColor" opacity=".55" vector-effect="non-scaling-stroke"/><circle cx="${mx0}" cy="${H - 22}" r="3" fill="var(--bg)" stroke="currentColor"/>
-      ${ticks.map((t, i) => `<text x="${6 + i * (W - 40) / 4}" y="${H - 6}" font-size="10" fill="currentColor" opacity=".55">${t}</text>`).join('')}</svg>`;
+      ${ticks.filter(([e]) => b.edges_pct.indexOf(e) >= 0).map(([e, t]) => `<text x="${(b.edges_pct.indexOf(e) + 1) * W / n}" text-anchor="middle" y="${H - 6}" font-size="10" fill="currentColor" opacity=".55">${t}</text>`).join('')}</svg>`;
   }
 
   // candles with a dotted average, from the lab's scaled chart payload
@@ -65,7 +65,7 @@
     if (!ev) { $('#strat').innerHTML = '<p class="note">Could not load the evidence file.</p>'; return; }
     const g = ev['day/bearish'], rows = Object.entries(g.experiments).map(([id, e]) => ({ id, ...e })).sort((a, b) => b.mean - a.mean);
     const sup = g.joint.stepm, nsup = sup.length, nfail = rows.length - nsup;
-    $('#strat').innerHTML = `<div class="strip"><span class="a">SURVIVE ${nsup}</span><span class="ticks">${rows.map(r => `<i class="${sup.includes(r.id) ? 's' : r.hi < 0 ? 'f' : ''}" title="${esc(window.deskPretty(r.id))}"></i>`).join('')}</span><span class="b">FAIL ${nfail}</span></div>${bars(rows.slice(0, 8), sup)}<p class="note">Day horizon, bearish picks, train 2015 to 2020.</p>`;
+    $('#strat').innerHTML = `<div class="strip"><span class="a">SURVIVE ${nsup}</span><span class="ticks">${rows.map(r => `<i class="${sup.includes(r.id) ? 's' : r.hi < 0 ? 'f' : ''}" title="${esc(window.deskPretty(r.id))}"></i>`).join('')}</span><span class="b">NOT SURVIVING ${nfail}</span></div>${bars(rows.slice(0, 8), sup)}<p class="note">Train 2015 to 2020, day horizon, bearish side. These are lab experiments; the current picks use a provisional blended score with no replay on file.</p>`;
     const tot = Object.values(ev).reduce((n, v) => n + v.joint.stepm.length, 0), all = Object.values(ev).reduce((n, v) => n + Object.keys(v.experiments).length, 0);
     $('#surv-line').textContent = `${tot} of ${all} results survive the many-trials test`;
     $('#surv-bar').style.width = (tot / all * 100).toFixed(0) + '%';
