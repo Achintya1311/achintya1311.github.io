@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="desk.css">
+<link rel="stylesheet" href="evidence.css">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -31,6 +32,8 @@
     <div class="nav-h">Research</div>
     <a class="nav" href="#findings"><svg><use href="#i-grid"/></svg><span class="lbl">Findings</span></a>
     <a class="nav" href="#wrong"><svg><use href="#i-warn"/></svg><span class="lbl">What I got wrong</span></a>
+    <a class="nav" href="#evidence"><svg><use href="#i-flask"/></svg><span class="lbl">Evidence</span></a>
+    <a class="nav" href="#xray"><svg><use href="#i-grid"/></svg><span class="lbl">Market X-Ray</span></a>
     <a class="nav" href="#picks"><svg><use href="#i-chart"/></svg><span class="lbl">Picks</span></a>
     <a class="nav" href="#lab"><svg><use href="#i-flask"/></svg><span class="lbl">Picks lab</span></a>
     <div class="nav-h">Elsewhere</div>
@@ -83,6 +86,24 @@
       <p class="note" id="picks-note"></p>
     </section>
 
+    <section class="view" id="evidence">
+      <div class="top"><div><h1>Evidence</h1><p>What the lab measured, with the failures included. Train years 2015 to 2020, hit rate against the market's own base rate.</p></div><a class="btn ghost" href="https://github.com/Achintya1311/stockstalker-lab/blob/main/reports/evidence_train.md">Full report</a></div>
+      <div class="stats" id="ev-sum"></div>
+      <div class="chips" id="ev-chips"></div>
+      <div id="ev-body"><div class="empty">Loading the lab's results…</div></div>
+      <div class="panel" style="margin-top:18px"><h2>How to read this</h2>
+        <p><b>Edge</b> is how much more often a strategy's picks moved the right way than the market's own base rate for that day. It is not a return: after Indian trading costs the average move of these picks is close to zero, so a hit-rate edge is a research finding, not a claim about money made.</p>
+        <p><b>Why there is a correction.</b> The lab tried many variants. Run enough of them and some look good by luck. The joint test (Hansen SPA), the stepwise test (Romano-Wolf StepM) and the model confidence set (MCS) ask whether anything is left once the number of tries is accounted for. Intervals come from a block bootstrap over dates, so days that move together are not counted as independent.</p>
+        <p><b>Limits.</b> Train years only, so nothing here is validated on unseen data yet. The weekly horizon shows no surviving result. Results can change as the lab adds experiments; this page reads the lab's file each time.</p>
+        <p class="note">Educational research on historical data. Not investment advice. Not a SEBI-registered research analyst.</p></div>
+    </section>
+
+    <section class="view" id="xray">
+      <div class="top"><div><h1>Market X-Ray</h1><p id="xr-sub">Loading the universe…</p></div></div>
+      <div id="xr-body"><div class="empty">Loading…</div></div>
+      <p class="note">Model output in testing. Not investment advice or a recommendation. Not a SEBI-registered research analyst. Ranks only, no prices or levels.</p>
+    </section>
+
     <section class="view" id="lab">
       <div class="top"><div><h1>Picks lab</h1><p>An autonomous lab testing rule-based NSE F&amp;O strategies against the market's own base rate.</p></div><a class="btn ghost" href="https://github.com/Achintya1311/stockstalker-lab">Repo</a></div>
       <div class="panel"><p>Each strategy is replayed day by day from a blank state, scored only on data it has never seen, and kept only if it beats the share of stocks that moved the same way anyway. Every pick is shown, losers included.</p>
@@ -92,6 +113,7 @@
   </main>
 </div>
 <script src="desk.js"></script>
+<script src="evidence.js"></script>
 <script>
 (async () => {
   const $ = (s, r = document) => r.querySelector(s), esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -155,10 +177,19 @@
       return `<line x1="${x}" x2="${x}" y1="${y(h)}" y2="${y(l)}" stroke="${col}" stroke-width="1"/><rect x="${x - bw * .32}" y="${y(Math.max(o, cl))}" width="${bw * .64}" height="${Math.max(Math.abs(y(o) - y(cl)), 1)}" fill="${col}"/>`; }).join('');
     return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Recent price bars${c.zone ? ' with the nearest order-block zone' : ''}">${z}${bars}</svg>`;
   };
-  const table = (title, cls, word, picks) => `<div class="panel"><h2>${title}</h2><div class="tiles">${picks.length ? picks.map(p => `<div class="tile ${cls}" style="grid-template-columns:auto minmax(0,1fr)"><span class="badge">${word}</span><span><strong>${esc(p.symbol)}</strong><small>${esc(p.strategy || '')}</small></span>${p.chart ? `<span style="grid-column:1/-1">${chart(p.chart)}${p.chart.zone ? `<small>Shaded: nearest ${p.chart.zone.side} order-block zone${p.chart.zone.retested ? ', retested' : ''} (chart structure, not the reason for the pick)</small>` : ''}</span>` : ''}<small style="grid-column:1/-1">${esc(p.reasoning || '')}</small>${p.move != null ? `<span class="num ${p.right ? 'g' : 'r'}" style="grid-column:1/-1">Open ${esc(p.open)} · Close ${esc(p.close)} · Move ${esc(p.move)}%</span>` : ''}</div>`).join('') : '<p class="note">No picks.</p>'}</div></div>`;
+  let EV = null, HZ = 'day', RK = {};
+  const fp = x => (x >= 0 ? '+' : '') + (x * 100).toFixed(2);
+  const rankTag = (p, word) => { const r = RK[p.symbol], v = r && (word === 'BULLISH' ? r.b : r.d); return v != null ? ` · rank p${v}` : ''; };
+  const strip = (p, word) => {
+    const e = window.deskEv(EV, p.strategy, HZ, word === 'BULLISH' ? 'bullish' : 'bearish');
+    if (!e) return '<div class="ev"><b>Evidence:</b> no train replay of this strategy is on file, so the page makes no edge claim for it.</div>';
+    return `<div class="ev"><b>Train evidence (2015 to 2020):</b> edge ${fp(e.mean)} pts, 95% interval ${fp(e.lo)} to ${fp(e.hi)}; ${e.superior ? '<span class="g">survives the many-trials correction</span>' : '<span class="r">does not survive the many-trials correction</span>'}.</div>`;
+  };
+  const table = (title, cls, word, picks) => `<div class="panel"><h2>${title}</h2><div class="tiles">${picks.length ? picks.map(p => `<div class="tile ${cls}" style="grid-template-columns:auto minmax(0,1fr)"><span class="badge">${word}</span><span><strong>${esc(p.symbol)}</strong><small>${esc(p.strategy || '')}${rankTag(p, word)}</small></span>${p.chart ? `<span style="grid-column:1/-1">${chart(p.chart)}${p.chart.zone ? `<small>Shaded: nearest ${p.chart.zone.side} order-block zone${p.chart.zone.retested ? ', retested' : ''} (chart structure, not the reason for the pick)</small>` : ''}</span>` : ''}<small style="grid-column:1/-1">${esc(p.reasoning || '')}</small>${strip(p, word)}${p.move != null ? `<span class="num ${p.right ? 'g' : 'r'}" style="grid-column:1/-1">Open ${esc(p.open)} · Close ${esc(p.close)} · Move ${esc(p.move)}%</span>` : ''}</div>`).join('') : '<p class="note">No picks.</p>'}</div></div>`;
   const draw = async h => {
     try {
       const d = await latest(h), t = d.tables || {};
+      HZ = h; EV = await window.deskEvLoad(); RK = Object.fromEntries(((d.xray && d.xray.stocks) || []).map(s => [s.s, s]));
       $('#picks-sub').textContent = `${h === 'day' ? 'Day' : 'Week'} picks for session ${d.session}${dry ? ' (dry run: the lab has not gone live yet, these are not published picks)' : ''}`;
       $('#picks-body').innerHTML = `<div class="two">${table('Bullish picks', 'up', 'BULLISH', t.bullish || [])}${table('Bearish picks', 'dn', 'BEARISH', t.bearish || [])}</div>`;
       $('#picks-note').textContent = d.disclaimer || '';

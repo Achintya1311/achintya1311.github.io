@@ -1,0 +1,21 @@
+/* Evidence, X-Ray and board additions to desk.css */
+:root { --amber: #e0a526; }
+:root[data-theme=light] { --amber: #9a6a00; }
+.muted { color: var(--muted); }
+#ev-body > * + *, #xr-body > * + * { margin-top: 18px; }
+#ev-sum { margin-bottom: 16px; }
+table.t.ab td:first-child small { display: block; color: var(--muted); font: 400 .74rem var(--sans); }
+table.t.ab td, table.t.ab th { text-align: left; }
+table.t.ab td.num { font-family: var(--mono); }
+.scroll { overflow-x: auto; }
+svg.ch.wide { min-width: 640px; }
+.dots { display: flex; flex-wrap: wrap; gap: 6px; }
+.dot-s { width: 14px; height: 14px; border-radius: 4px; background: var(--muted); display: inline-block; }
+.dot-s.up { background: var(--up); }
+.dot-s.dn { background: var(--down); }
+.dot-s.no { background: var(--muted); }
+.dot-s.hit { outline: 2px solid var(--ink); outline-offset: 2px; opacity: 1 !important; transform: scale(1.35); }
+.find { width: 100%; margin-top: 8px; background: var(--surface2); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font: inherit; }
+.ev { grid-column: 1 / -1; font-size: .8rem; border-top: 1px solid var(--line); padding-top: 8px; margin-top: 4px; color: var(--muted); }
+.ev b { color: var(--ink); }
+.ev .g, .ev .r { font-weight: 600; }
