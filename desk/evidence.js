@@ -23,6 +23,8 @@
     return null;
   })());
 
+  window.deskLatest = latest;
+
   // ---------- naming ----------
   const family = id => /^(o0)/.test(id) ? 'ob' : /^(e1|e2|d01c)/.test(id) ? 'conf' : /^d01-/.test(id) ? 'oi' : 'rule';
   const pretty = id => id.replace(/-(day|week)$/, '').replace(/^([a-z]\d+[a-z]?)-?/, (m, a) => a.toUpperCase() + ' ').replace(/-/g, ' ').trim();
@@ -76,6 +78,8 @@
     });
     return s + '</svg></div>';
   }
+
+  window.deskForest = forest; window.deskFamily = family; window.deskPretty = pretty;
 
   function verdict(g) {
     const p = g.joint.spa.consistent, n = g.joint.stepm.length;
