@@ -19,3 +19,5 @@ svg.ch.wide { min-width: 640px; }
 .ev { grid-column: 1 / -1; font-size: .8rem; border-top: 1px solid var(--line); padding-top: 8px; margin-top: 4px; color: var(--muted); }
 .ev b { color: var(--ink); }
 .ev .g, .ev .r { font-weight: 600; }
+
+.tag.work { background: rgba(224, 165, 38, .14); color: var(--amber); }

@@ -67,7 +67,7 @@
           <a class="scard" href="#picks"><span class="ico"><svg width="16" height="16"><use href="#i-book"/></svg></span><div><b>Pick record</b><small>Hits and misses against the market's base rate start at go-live on 2 Nov 2026. Every pick stays, misses included.</small></div></a>
           <a class="scard learn" href="#evidence"><div class="thumb"><svg width="22" height="22"><use href="#i-flask"/></svg></div><div><span class="kick">START HERE</span><b>What survived the test</b><small id="surv-line">Evidence from the lab</small><i class="prog"><s id="surv-bar"></s></i></div></a>
           <div class="qa">
-            <a href="#findings"><span class="ico"><svg width="16" height="16"><use href="#i-grid"/></svg></span><span><b>Browse findings</b><small>charts, negative results kept</small></span></a>
+            <a href="#findings"><span class="ico"><svg width="16" height="16"><use href="#i-grid"/></svg></span><span><b>Browse findings</b><small>charts, with every follow-up</small></span></a>
             <a href="#xray"><span class="ico"><svg width="16" height="16"><use href="#i-grid"/></svg></span><span><b>Market X-Ray</b><small>every stock's rank today</small></span></a>
             <a href="#wrong"><span class="ico"><svg width="16" height="16"><use href="#i-warn"/></svg></span><span><b>What I got wrong</b><small>mistakes found by testing</small></span></a>
             <a href="https://github.com/Achintya1311/stockstalker-lab"><span class="ico"><svg width="16" height="16"><use href="#i-code"/></svg></span><span><b>The lab on GitHub</b><small>code, ledger, every trial</small></span></a>
@@ -129,9 +129,18 @@
 <script>
 (async () => {
   const $ = (s, r = document) => r.querySelector(s), esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  // categories + whether the result went against the first expectation (neg=1)
-  const META = { 'Reverse DCF': ['valuation', 0], 'Three-statement model': ['valuation', 0], 'Factor exposure': ['factors', 1], 'Risk': ['risk', 1], 'Options': ['options', 0], 'Headline sentiment': ['sentiment', 1], 'Technical screen': ['screen', 1], 'Portfolio optimisation': ['portfolio', 1] };
-  const LABEL = { valuation: 'Valuation', factors: 'Factors', risk: 'Risk', options: 'Options', sentiment: 'Sentiment', screen: 'Screen', portfolio: 'Portfolio' };
+  // category, status tag, tone (ok | work), and the follow-up written after the first result. Hand-kept: the repos do not carry these.
+  const MR = 'https://github.com/Achintya1311/';
+  const META = {
+    'Reverse DCF': ['valuation', 'method result', 'ok', ''],
+    'Three-statement model': ['valuation', 'check passes', 'ok', ''],
+    'Factor exposure': ['factors', 'underpowered, being re-asked', 'work', 'One stock with 137 months can only detect an alpha of about 30% a year, so "not significant" is an answer to a question the data could not settle. The fix queued is a pre-registered test across 150+ F&O stocks (joint alpha test, false-discovery control, share of variance explained by factors).'],
+    'Risk': ['risk', 'fixed: passes out of sample', 'ok', 'Update 24 Oct 2026: the Gaussian VaR failing was real and its cause is constant volatility. A rolling GARCH(1,1)-t model passes Kupiec and Christoffersen at 95% and 99% on GULFOILLUB over 2,506 out-of-sample days (99% breaches 21 vs 25.1 expected), while the constant-volatility control fails (42). Criteria were committed before the run.'],
+    'Options': ['options', 'method result', 'ok', ''],
+    'Headline sentiment': ['sentiment', 'underpowered, gate set', 'work', 'With 23 to 42 headlines the test can only see correlations above about 0.4, so the result is "underpowered", not "no link". The pre-registered gate is 1,000 headlines over 30 sessions and 3 sources, with the data growing daily; the correlation is not read until then.'],
+    'Technical screen': ['screen', 're-tested in the lab', 'work', 'Three stocks in-sample was a monitor, not a test. The same screen idea is now evaluated on the 213-stock F&O universe against the market base rate with block-bootstrap intervals and a correction for the number of strategies tried: see the Evidence page. Train-split results only so far.'],
+    'Portfolio optimisation': ['portfolio', 'equal weight not beaten (pre-registered)', 'ok', 'Update 24 Oct 2026: five rules were walk-forwarded with drift-aware costs. None beats 1/N net of costs. Minimum variance cuts volatility and drawdown but loses Sharpe and fails its criteria; inverse volatility ties 1/N. Matches the published 1/N result. Criteria were committed first.']
+  };  const LABEL = { valuation: 'Valuation', factors: 'Factors', risk: 'Risk', options: 'Options', sentiment: 'Sentiment', screen: 'Screen', portfolio: 'Portfolio' };
   let doc;
   try { doc = new DOMParser().parseFromString(await (await fetch('../index.html')).text(), 'text/html'); }
   catch { $('#feed-empty').innerHTML = 'Could not load findings here. <a href="../index.html#findings">Open the classic page</a>.'; return; }
@@ -141,18 +150,18 @@
     const title = h3.textContent.trim(), st = c.querySelector('.stat'), sp = st.querySelector('span'), sub = sp.textContent.trim();
     sp.remove(); const big = st.textContent.trim();
     const im = c.querySelector('img'), repo = c.querySelector('.repo'), a = c.querySelector('.a');
-    const [cat, neg] = META[title] || ['other', 0];
-    return { i, title, tag, big, sub, text: a ? a.textContent.trim() : '', src: im ? '../' + im.getAttribute('src') : '', alt: im ? im.alt : '', repo: repo ? repo.href : '', repoName: repo ? repo.textContent.replace('→', '').trim() : '', cat, neg };
+    const [cat, status, tone, upd] = META[title] || ['other', 'result', 'ok', ''], neg = upd ? 1 : 0;
+    return { i, title, tag, status, tone, upd, big, sub, text: a ? a.textContent.trim() : '', src: im ? '../' + im.getAttribute('src') : '', alt: im ? im.alt : '', repo: repo ? repo.href : '', repoName: repo ? repo.textContent.replace('→', '').trim() : '', cat, neg };
   });
   const cats = [...new Set(cards.map(c => c.cat))];
   $('#chips').innerHTML = '<button class="chip" data-cat="all" aria-pressed="true">All</button>' + cats.map(k => `<button class="chip" data-cat="${k}" aria-pressed="false">${LABEL[k] || k}</button>`).join('') +
-    '<div class="seg"><button data-sort="new" aria-pressed="true">Pipeline order</button><button data-sort="neg" aria-pressed="false">Negative results first</button></div>';
+    '<div class="seg"><button data-sort="new" aria-pressed="true">Pipeline order</button><button data-sort="neg" aria-pressed="false">Recently re-tested first</button></div>';
   $('#feed').innerHTML = cards.map(c => `<article class="card" tabindex="0" role="button" data-lb data-i="${c.i}" data-neg="${c.neg}" data-cat="${c.cat}" data-imgs="${esc(c.src)}">
     ${c.src ? `<div class="img"><img src="${esc(c.src)}" alt="${esc(c.alt)}" loading="lazy"></div>` : ''}
     <div class="big">${esc(c.big)}<span>${esc(c.sub)}</span></div>
-    <div class="meta"><b>${esc(c.title)}</b><span class="tag ${c.neg ? 'bad' : ''}">${c.neg ? 'did not hold' : 'result'}</span></div>
+    <div class="meta"><b>${esc(c.title)}</b><span class="tag ${c.tone === 'work' ? 'work' : ''}">${esc(c.status)}</span></div>
     <p>${esc(c.text.length > 150 ? c.text.slice(0, 150) + '…' : c.text)}</p>
-    <div class="lb-side" hidden><h3>${esc(c.title)} ${c.tag ? `<span class="tag">${esc(c.tag)}</span>` : ''}</h3><div class="big" style="padding:0">${esc(c.big)}<span>${esc(c.sub)}</span></div><p>${esc(c.text)}</p>${c.repo ? `<p><a href="${esc(c.repo)}">${esc(c.repoName)} →</a></p>` : ''}</div></article>`).join('');
+    <div class="lb-side" hidden><h3>${esc(c.title)} ${c.tag ? `<span class="tag">${esc(c.tag)}</span>` : ''}</h3><div class="big" style="padding:0">${esc(c.big)}<span>${esc(c.sub)}</span></div><p>${esc(c.text)}</p>${c.upd ? `<p><b>What changed.</b> ${esc(c.upd)}</p>` : ''}${c.repo ? `<p><a href="${esc(c.repo)}">${esc(c.repoName)} →</a></p>` : ''}</div></article>`).join('');
   const wrong = [...doc.querySelectorAll('#wrong .log li')].map(li => li.innerHTML.replace(/href="(?!http)/g, 'href="../'));
   $('#wrong-all').innerHTML = wrong.map((x, i) => `<li><span class="ico num">${i + 1}</span><div class="tx">${x}</div></li>`).join('');
 })();
