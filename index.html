@@ -129,8 +129,8 @@
 
       <article class="card">
         <h3>Portfolio optimisation</h3>
-        <p class="stat">+427% vs +252% <span>equal-weight beats the optimizer after costs, 126 folds</span></p>
-        <p class="a">On 29 large caps, equal-weight clearly beats mean-variance optimisation out of sample (+427% vs +309% gross); realistic transaction costs widen the gap further, since the optimizer&rsquo;s own turnover costs more than the raw cost-rate difference suggests. Robust across risk-free rates and training windows.</p>
+        <p class="stat">+420% vs +256% <span>equal weight vs max-Sharpe, both after costs, 126 folds</span></p>
+        <p class="a">On 29 large caps, equal weight clearly beats mean-variance optimisation out of sample: +427% vs +309% before costs, +420% vs +256% after costs, with both portfolios paying to rebalance. Costs widen the gap, since the optimizer&rsquo;s own turnover (54% per fold vs 5%) costs more than the raw cost-rate difference suggests. Robust across risk-free rates and training windows.</p>
         <figure class="fig"><img src="assets/charts/markowitz.png" width="900" height="675" loading="lazy" alt="Efficient frontier, tangency portfolio and capital market line for 29 large-cap stocks."></figure>
         <a class="repo" href="https://github.com/Achintya1311/markowitz-portfolio-optimizer">markowitz-portfolio-optimizer &rarr;</a>
       </article>
