@@ -132,6 +132,17 @@
   const $ = (s, r = document) => r.querySelector(s), esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   // categories + whether the result went against the first expectation (neg=1)
   const META = { 'Reverse DCF': ['valuation', 0], 'Three-statement model': ['valuation', 0], 'Factor exposure': ['factors', 1], 'Risk': ['risk', 1], 'Options': ['options', 0], 'Headline sentiment': ['sentiment', 1], 'Technical screen': ['screen', 1], 'Portfolio optimisation': ['portfolio', 1] };
+  // neutral status label + one factual line per card, restated from the root page's own card text (W14)
+  const STATUS = {
+    'Reverse DCF': ['Result', 'With growth and reinvestment tied through return on capital, no constant growth rate reproduces the market price.'],
+    'Three-statement model': ['Held up', 'The balance sheet balances every forecast year, enforced by a test.'],
+    'Factor exposure': ['Not significant', 'Alpha t = 1.0: the apparent excess return is mostly factor exposure (beta 0.80, small-cap loading 0.47).'],
+    'Risk': ['Model rejected', 'On RELIANCE the normal-distribution 99% VaR had 10 breaches against 5 expected (p = 0.048): the tails are fatter than assumed.'],
+    'Options': ['Filtering needed', '196 of 704 NIFTY quotes broke no-arbitrage bounds before filtering.'],
+    'Headline sentiment': ['No link found', 'r = −0.23 with n = 42, and the 95% interval spans zero; a daily collector is growing the sample.'],
+    'Technical screen': ['Mostly below holding', 'After Indian delivery costs, 1 of 3 names beats buy-and-hold.'],
+    'Portfolio optimisation': ['Equal-weight ahead', 'Equal-weight beat mean-variance optimisation out of sample over 126 folds (+427% vs +309% before costs); costs widen the gap.']
+  };
   const LABEL = { valuation: 'Valuation', factors: 'Factors', risk: 'Risk', options: 'Options', sentiment: 'Sentiment', screen: 'Screen', portfolio: 'Portfolio' };
   let doc;
   try { doc = new DOMParser().parseFromString(await (await fetch('../index.html')).text(), 'text/html'); }
@@ -151,7 +162,8 @@
   $('#feed').innerHTML = cards.map(c => `<article class="card" tabindex="0" role="button" data-lb data-i="${c.i}" data-neg="${c.neg}" data-cat="${c.cat}" data-imgs="${esc(c.src)}">
     ${c.src ? `<div class="img"><img src="${esc(c.src)}" alt="${esc(c.alt)}" loading="lazy"></div>` : ''}
     <div class="big">${esc(c.big)}<span>${esc(c.sub)}</span></div>
-    <div class="meta"><b>${esc(c.title)}</b><span class="tag ${c.neg ? 'bad' : ''}">${c.neg ? 'did not hold' : 'result'}</span></div>
+    <div class="meta"><b>${esc(c.title)}</b><span class="tag neu">${esc((STATUS[c.title] || ['Result'])[0])}</span></div>
+    ${STATUS[c.title] ? `<p class="chg">${esc(STATUS[c.title][1])}</p>` : ''}
     <p>${esc(c.text.length > 150 ? c.text.slice(0, 150) + '…' : c.text)}</p>
     <div class="lb-side" hidden><h3>${esc(c.title)} ${c.tag ? `<span class="tag">${esc(c.tag)}</span>` : ''}</h3><div class="big" style="padding:0">${esc(c.big)}<span>${esc(c.sub)}</span></div><p>${esc(c.text)}</p>${c.repo ? `<p><a href="${esc(c.repo)}">${esc(c.repoName)} →</a></p>` : ''}</div></article>`).join('');
   const wrong = [...doc.querySelectorAll('#wrong .log li')].map(li => li.innerHTML.replace(/href="(?!http)/g, 'href="../'));
