@@ -65,6 +65,18 @@ def check_lab(errors):
     for k in ("day/bullish", "day/bearish", "week/bullish", "week/bearish"):
         if "experiments" not in ev.get(k, {}):
             errors.append(f"lab evidence_train.json: {k}.experiments missing")
+            continue
+        # fields desk/evidence.js and desk/home.js dereference (W13)
+        j = ev[k].get("joint", {})
+        for f in ("stepm", "mcs", "n_models", "block"):
+            if f not in j:
+                errors.append(f"lab evidence_train.json: {k}.joint.{f} missing")
+        for f in ("lower", "consistent", "upper"):
+            if not isinstance(j.get("spa", {}).get(f), (int, float)):
+                errors.append(f"lab evidence_train.json: {k}.joint.spa.{f} missing or not a number")
+        for i, e in ev[k]["experiments"].items():
+            if not all(isinstance(e.get(f), (int, float)) for f in ("mean", "lo", "hi")):
+                errors.append(f"lab evidence_train.json: {k}.{i} lacks numeric mean/lo/hi")
     for h in ("day", "week"):
         d = None
         for base in ("live", "reports/live_dryrun"):
@@ -81,6 +93,16 @@ def check_lab(errors):
         for k in ("session", "tables", "disclaimer"):
             if k not in d:
                 errors.append(f"lab {h} picks: field '{k}' missing")
+        x = d.get("xray")
+        if x:
+            for f in ("asof", "n", "stocks", "breadth", "bullish_strategy", "bearish_strategy"):
+                if f not in x:
+                    errors.append(f"lab {h} xray: field '{f}' missing")
+            b = x.get("breadth", {})
+            if len(b.get("counts", [])) != len(b.get("edges_pct", [])) + 1 or 0 not in b.get("edges_pct", []):
+                errors.append(f"lab {h} xray.breadth: counts/edges_pct inconsistent or no 0 edge")
+        elif h == "day":
+            errors.append("lab day picks: no xray block (X-Ray and Home breadth read it)")
         for side in ("bullish", "bearish"):
             for p in d.get("tables", {}).get(side, []):
                 if "symbol" not in p:
