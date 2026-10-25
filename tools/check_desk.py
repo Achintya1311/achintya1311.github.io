@@ -108,6 +108,15 @@ def check_desk_files(errors):
         for f in sorted(DESK.glob("*.js")):
             if subprocess.run(["node", "--check", str(f)], capture_output=True).returncode:
                 errors.append(f"{f.relative_to(ROOT)}: JavaScript syntax error")
+        import tempfile, os
+        for f in sorted(DESK.glob("*.html")):
+            for k, m in enumerate(re.finditer(r"<script>(.*?)</script>", f.read_text(), re.S), 1):
+                with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False) as t:
+                    t.write(m.group(1))
+                bad = subprocess.run(["node", "--check", t.name], capture_output=True).returncode
+                os.unlink(t.name)
+                if bad:
+                    errors.append(f"{f.relative_to(ROOT)}: inline script {k} has a JavaScript syntax error")
     if total > 1_000_000:
         errors.append(f"desk/ is {total} bytes, over 1 MB")
     page = (DESK / "index.html").read_text()
