@@ -53,6 +53,7 @@
         <div class="hmain">
           <div class="hero">
             <div class="hero-top"><span class="status"><i class="dot live"></i><span id="mkt-state">Closed</span></span><span class="asof">MARKET BREADTH <small id="asof"></small></span></div>
+            <p id="counts" class="counts" aria-live="polite"></p>
             <div id="depth" class="depth"></div>
             <div class="tb">
               <div class="tb-col up"><h3><svg width="14" height="14"><use href="#i-chart"/></svg> TOP BULLISH</h3><div id="top-bull" class="trows"></div></div>
@@ -106,7 +107,7 @@
       <div class="panel" style="margin-top:18px"><h2>How to read this</h2>
         <p><b>Edge</b> is how much more often a strategy's picks moved the right way than the market's own base rate for that day. It is not a return: after Indian trading costs the average move of these picks is close to zero, so a hit-rate edge is a research finding, not a claim about money made.</p>
         <p><b>Why there is a correction.</b> The lab tried many variants. Run enough of them and some look good by luck. The joint test (Hansen SPA), the stepwise test (Romano-Wolf StepM) and the model confidence set (MCS) ask whether anything is left once the number of tries is accounted for. Intervals come from a block bootstrap over dates, so days that move together are not counted as independent.</p>
-        <p><b>Limits.</b> Train years only, so nothing here is validated on unseen data yet. The weekly horizon shows no surviving result. Results can change as the lab adds experiments; this page reads the lab's file each time.</p>
+        <p><b>Limits.</b> Train years only, so nothing here is validated on unseen data yet. Among the weekly variants in the lab's evidence file, none survives. That file is rebuilt by the lab's own workflow and can lag behind its newest experiments, which are not counted here until the next successful build. This page reads the lab's file each time.</p>
         <p class="note">Educational research on historical data. Not investment advice. Not a SEBI-registered research analyst.</p></div>
     </section>
 
@@ -132,6 +133,17 @@
   const $ = (s, r = document) => r.querySelector(s), esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   // categories + whether the result went against the first expectation (neg=1)
   const META = { 'Reverse DCF': ['valuation', 0], 'Three-statement model': ['valuation', 0], 'Factor exposure': ['factors', 1], 'Risk': ['risk', 1], 'Options': ['options', 0], 'Headline sentiment': ['sentiment', 1], 'Technical screen': ['screen', 1], 'Portfolio optimisation': ['portfolio', 1] };
+  // neutral status label + one factual line per card, restated from the root page's own card text (W14)
+  const STATUS = {
+    'Reverse DCF': ['Result', 'With growth and reinvestment tied through return on capital, no constant growth rate reproduces the market price.'],
+    'Three-statement model': ['Held up', 'The balance sheet balances every forecast year, enforced by a test.'],
+    'Factor exposure': ['Not significant', 'Alpha t = 1.0: the apparent excess return is mostly factor exposure (beta 0.80, small-cap loading 0.47).'],
+    'Risk': ['Model rejected', 'On RELIANCE the normal-distribution 99% VaR had 10 breaches against 5 expected (p = 0.048): the tails are fatter than assumed.'],
+    'Options': ['Filtering needed', '196 of 704 NIFTY quotes broke no-arbitrage bounds before filtering.'],
+    'Headline sentiment': ['No link found', 'r = −0.23 with n = 42, and the 95% interval spans zero; a daily collector is growing the sample.'],
+    'Technical screen': ['Mostly below holding', 'After Indian delivery costs, 1 of 3 names beats buy-and-hold.'],
+    'Portfolio optimisation': ['Equal-weight ahead', 'Equal-weight beat mean-variance optimisation out of sample over 126 folds (+427% vs +309% before costs); costs widen the gap.']
+  };
   const LABEL = { valuation: 'Valuation', factors: 'Factors', risk: 'Risk', options: 'Options', sentiment: 'Sentiment', screen: 'Screen', portfolio: 'Portfolio' };
   let doc;
   try { doc = new DOMParser().parseFromString(await (await fetch('../index.html')).text(), 'text/html'); }
@@ -151,7 +163,8 @@
   $('#feed').innerHTML = cards.map(c => `<article class="card" tabindex="0" role="button" data-lb data-i="${c.i}" data-neg="${c.neg}" data-cat="${c.cat}" data-imgs="${esc(c.src)}">
     ${c.src ? `<div class="img"><img src="${esc(c.src)}" alt="${esc(c.alt)}" loading="lazy"></div>` : ''}
     <div class="big">${esc(c.big)}<span>${esc(c.sub)}</span></div>
-    <div class="meta"><b>${esc(c.title)}</b><span class="tag ${c.neg ? 'bad' : ''}">${c.neg ? 'did not hold' : 'result'}</span></div>
+    <div class="meta"><b>${esc(c.title)}</b><span class="tag neu">${esc((STATUS[c.title] || ['Result'])[0])}</span></div>
+    ${STATUS[c.title] ? `<p class="chg">${esc(STATUS[c.title][1])}</p>` : ''}
     <p>${esc(c.text.length > 150 ? c.text.slice(0, 150) + '…' : c.text)}</p>
     <div class="lb-side" hidden><h3>${esc(c.title)} ${c.tag ? `<span class="tag">${esc(c.tag)}</span>` : ''}</h3><div class="big" style="padding:0">${esc(c.big)}<span>${esc(c.sub)}</span></div><p>${esc(c.text)}</p>${c.repo ? `<p><a href="${esc(c.repo)}">${esc(c.repoName)} →</a></p>` : ''}</div></article>`).join('');
   const wrong = [...doc.querySelectorAll('#wrong .log li')].map(li => li.innerHTML.replace(/href="(?!http)/g, 'href="../'));
@@ -188,7 +201,7 @@
   const rankTag = (p, word) => { const r = RK[p.symbol], v = r && (word === 'BULLISH' ? r.b : r.d); return v != null ? ` · rank p${v}` : ''; };
   const strip = (p, word) => {
     const e = window.deskEv(EV, p.strategy, HZ, word === 'BULLISH' ? 'bullish' : 'bearish');
-    if (!e) return '<div class="ev"><b>Evidence:</b> this strategy's train replay is a separate lab report, not in the evidence file this page reads, so the page makes no edge claim for it.</div>';
+    if (!e) return '<div class="ev"><b>Evidence:</b> this strategy\'s train replay is a separate lab report, not in the evidence file this page reads, so the page makes no edge claim for it.</div>';
     return `<div class="ev"><b>Train evidence (2015 to 2020):</b> edge ${fp(e.mean)} pts, 95% interval ${fp(e.lo)} to ${fp(e.hi)}; ${e.superior ? '<span class="g">survives the many-trials correction</span>' : '<span class="r">does not survive the many-trials correction</span>'}.</div>`;
   };
   const table = (title, cls, word, picks) => `<div class="panel"><h2>${title}</h2><div class="tiles">${picks.length ? picks.map(p => `<div class="tile ${cls}" style="grid-template-columns:auto minmax(0,1fr)"><span class="badge">${word}</span><span><strong>${esc(p.symbol)}</strong><small>${esc(p.strategy || '')}${rankTag(p, word)}</small></span>${p.chart ? `<span style="grid-column:1/-1">${chart(p.chart)}${p.chart.zone ? `<small>Shaded: nearest ${p.chart.zone.side} order-block zone${p.chart.zone.retested ? ', retested' : ''}. Chart structure only, not the reason for the pick. Not a level to act on.</small>` : ''}</span>` : ''}<small style="grid-column:1/-1">${esc(p.reasoning || '')}</small>${strip(p, word)}${p.move != null ? `<span class="num ${p.right ? 'g' : 'r'}" style="grid-column:1/-1">Open ${esc(p.open)} · Close ${esc(p.close)} · Move ${esc(p.move)}%</span>` : ''}</div>`).join('') : '<p class="note">No picks.</p>'}</div></div>`;

@@ -87,6 +87,8 @@ svg.ch{width:100%;height:auto;display:block}
 .card p{margin:0;padding:2px 14px 14px;color:var(--ink);font-size:.88rem;overflow-wrap:anywhere}
 .tag{font-size:.75rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
 .tag.bad{background:var(--down-soft);color:var(--down)}
+.tag.neu{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}
+.card p.chg{color:var(--muted);font-size:.8rem;margin-top:0}
 .empty{color:var(--muted);padding:30px;text-align:center;border:1px dashed var(--line);border-radius:14px}
 table.t{width:100%;border-collapse:collapse;font-size:.88rem} .t th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);font-weight:600}
 .t td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right;font-family:var(--mono)} .t th:first-child,.t td:first-child,.t th:nth-child(2),.t td:nth-child(2){text-align:left}

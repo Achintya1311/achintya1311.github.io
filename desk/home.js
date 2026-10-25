@@ -25,7 +25,7 @@
       <path d="${left} L${xs[mid - 1]},${H - 22} L${xs[0]},${H - 22}Z" fill="url(#gd)"/><path d="${left}" fill="none" stroke="var(--down)" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
       <path d="${right} L${xs[n - 1]},${H - 22} L${xs[mid]},${H - 22}Z" fill="url(#gu)"/><path d="${right}" fill="none" stroke="var(--up)" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
       <line x1="${mx0}" x2="${mx0}" y1="4" y2="${H - 22}" stroke="currentColor" opacity=".55" vector-effect="non-scaling-stroke"/><circle cx="${mx0}" cy="${H - 22}" r="3" fill="var(--bg)" stroke="currentColor"/>
-      ${ticks.filter(([e]) => b.edges_pct.indexOf(e) >= 0).map(([e, t]) => `<text x="${(b.edges_pct.indexOf(e) + 1) * W / n}" text-anchor="middle" y="${H - 6}" font-size="10" fill="currentColor" opacity=".55">${t}</text>`).join('')}</svg>`;
+      </svg><div class="ax" aria-hidden="true">${ticks.filter(([e]) => b.edges_pct.indexOf(e) >= 0).map(([e, t]) => `<span style="left:${(b.edges_pct.indexOf(e) + 1) / n * 100}%">${t}</span>`).join('')}</div>`;
   }
 
   // candles with a dotted average, from the lab's scaled chart payload
@@ -49,6 +49,7 @@
     const d = r.data, x = d.xray, rk = {};
     ((x && x.stocks) || []).forEach(s => rk[s.s] = s);
     if (x) { $('#depth').innerHTML = depth(x.breadth); $('#asof').textContent = 'as of ' + x.asof + (r.dry ? ' · dry run' : ''); }
+    if (x && x.breadth && x.breadth.n) $('#counts').innerHTML = `<span class="g">▲ ${Number(x.breadth.up)}</span> <span class="r">▼ ${Number(x.breadth.down)}</span><small>stocks up / down in the last session, by price move, not picks</small>`;
     $('#top-bull').innerHTML = (d.tables.bullish || []).slice(0, 3).map(p => tile(p, rk[p.symbol] && rk[p.symbol].b, 'up')).join('') || '<p class="note">No picks.</p>';
     $('#top-bear').innerHTML = (d.tables.bearish || []).slice(0, 3).map(p => tile(p, rk[p.symbol] && rk[p.symbol].d, 'dn')).join('') || '<p class="note">No picks.</p>';
   }
@@ -65,7 +66,7 @@
     if (!ev) { $('#strat').innerHTML = '<p class="note">Could not load the evidence file.</p>'; return; }
     const g = ev['day/bearish'], rows = Object.entries(g.experiments).map(([id, e]) => ({ id, ...e })).sort((a, b) => b.mean - a.mean);
     const sup = g.joint.stepm, nsup = sup.length, nfail = rows.length - nsup;
-    $('#strat').innerHTML = `<div class="strip"><span class="a">SURVIVE ${nsup}</span><span class="ticks">${rows.map(r => `<i class="${sup.includes(r.id) ? 's' : r.hi < 0 ? 'f' : ''}" title="${esc(window.deskPretty(r.id))}"></i>`).join('')}</span><span class="b">NOT SURVIVING ${nfail}</span></div>${bars(rows.slice(0, 8), sup)}<p class="note">Train 2015 to 2020, day horizon, bearish side. These are lab experiments; the current picks use a provisional blended score whose train replay is a separate lab report, not part of this chart.</p>`;
+    $('#strat').innerHTML = `<div class="strip"><span class="a">SURVIVE ${nsup}</span><span class="ticks">${rows.map(r => `<i class="${sup.includes(r.id) ? 's' : r.hi < 0 ? 'f' : ''}" title="${esc(window.deskPretty(r.id))}"></i>`).join('')}</span><span class="b">NOT SURVIVING ${nfail}</span></div>${bars(rows.slice(0, 8), sup)}<p class="note">Train 2015 to 2020, day horizon, bearish side. Here ${nsup} of ${rows.length} variants survive; across all four horizon and side groups the lab counts ${Object.values(ev).reduce((n, v) => n + v.joint.stepm.length, 0)} of ${Object.values(ev).reduce((n, v) => n + Object.keys(v.experiments).length, 0)}. These are lab experiments; the current picks use a provisional blended score whose train replay is a separate lab report, not part of this chart.</p>`;
     const tot = Object.values(ev).reduce((n, v) => n + v.joint.stepm.length, 0), all = Object.values(ev).reduce((n, v) => n + Object.keys(v.experiments).length, 0);
     $('#surv-line').textContent = `${tot} of ${all} results survive the many-trials test`;
     $('#surv-bar').style.width = (tot / all * 100).toFixed(0) + '%';

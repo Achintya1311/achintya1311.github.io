@@ -81,10 +81,13 @@
 
   window.deskForest = forest; window.deskFamily = family; window.deskPretty = pretty;
 
+  // a bootstrap p-value is never exactly zero: print '< 0.001' below the grid
+  const pf = v => v < 0.001 ? '< 0.001' : '= ' + v.toFixed(3);
+
   function verdict(g) {
-    const p = g.joint.spa.consistent, n = g.joint.stepm.length;
-    if (p < 0.05 && n) return `<b class="g">Something real survives.</b> Across all ${g.joint.n_models} variants tried, the joint test gives p = ${p.toFixed(3)}, and ${n} ${n === 1 ? 'variant is' : 'variants are'} individually superior after correcting for how many were tried.`;
-    return `<b class="r">Nothing survives.</b> Across ${g.joint.n_models} variants the joint test gives p = ${p.toFixed(3)}: the best-looking results here are what luck produces when this many are tried.`;
+    const n = g.joint.stepm.length, ps = pf(g.joint.spa.consistent);
+    if (n) return `<b class="g">Some variants survive.</b> Across all ${g.joint.n_models} variants tried, the joint test gives p ${ps}, and ${n} ${n === 1 ? 'variant is' : 'variants are'} individually superior after correcting for how many were tried.`;
+    return `<b class="r">Nothing survives.</b> Across ${g.joint.n_models} variants the joint test gives p ${ps}: the best-looking results here are what luck produces when this many are tried.`;
   }
 
   function drawEvidence(ev, key) {
@@ -102,7 +105,7 @@
       : ob.length ? 'At least one order-block variant has an interval above zero here; it still needs validation on unseen years.' : 'No order-block replay is in this group yet.';
     $('#ev-body').innerHTML = `
       <div class="panel"><h2>${hz} horizon, ${side} picks</h2><p>${verdict(g)}</p>
-        <p class="note">Joint test (Hansen SPA): lower ${g.joint.spa.lower.toFixed(3)}, consistent ${g.joint.spa.consistent.toFixed(3)}, upper ${g.joint.spa.upper.toFixed(3)}. The model confidence set keeps ${g.joint.mcs.length} of ${g.joint.n_models}. Block length ${g.joint.block}.</p></div>
+        <p class="note">Joint test (Hansen SPA): p lower ${pf(g.joint.spa.lower)}, consistent ${pf(g.joint.spa.consistent)}, upper ${pf(g.joint.spa.upper)}. The model confidence set keeps ${g.joint.mcs.length} of ${g.joint.n_models}. Block length ${g.joint.block}.</p></div>
       <div class="panel"><h2>Edge over the market base rate, 95% interval</h2>${forest(rows, g.joint)}
         <p class="note"><span class="g">Green</span> survives the correction for many trials. <span style="color:var(--amber)">Amber</span> is an order-block or confluence variant. <span class="r">Red</span> loses to the market line with an interval entirely below zero. Grey is not distinguishable from zero.</p></div>
       <div class="panel"><h2>Do order blocks help? The ablation</h2><p>${esc(obVerdict)}</p>
