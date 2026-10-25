@@ -65,7 +65,7 @@
     if (!ev) { $('#strat').innerHTML = '<p class="note">Could not load the evidence file.</p>'; return; }
     const g = ev['day/bearish'], rows = Object.entries(g.experiments).map(([id, e]) => ({ id, ...e })).sort((a, b) => b.mean - a.mean);
     const sup = g.joint.stepm, nsup = sup.length, nfail = rows.length - nsup;
-    $('#strat').innerHTML = `<div class="strip"><span class="a">SURVIVE ${nsup}</span><span class="ticks">${rows.map(r => `<i class="${sup.includes(r.id) ? 's' : r.hi < 0 ? 'f' : ''}" title="${esc(window.deskPretty(r.id))}"></i>`).join('')}</span><span class="b">NOT SURVIVING ${nfail}</span></div>${bars(rows.slice(0, 8), sup)}<p class="note">Train 2015 to 2020, day horizon, bearish side. These are lab experiments; the current picks use a provisional blended score with no replay on file.</p>`;
+    $('#strat').innerHTML = `<div class="strip"><span class="a">SURVIVE ${nsup}</span><span class="ticks">${rows.map(r => `<i class="${sup.includes(r.id) ? 's' : r.hi < 0 ? 'f' : ''}" title="${esc(window.deskPretty(r.id))}"></i>`).join('')}</span><span class="b">NOT SURVIVING ${nfail}</span></div>${bars(rows.slice(0, 8), sup)}<p class="note">Train 2015 to 2020, day horizon, bearish side. These are lab experiments; the current picks use a provisional blended score whose train replay is a separate lab report, not part of this chart.</p>`;
     const tot = Object.values(ev).reduce((n, v) => n + v.joint.stepm.length, 0), all = Object.values(ev).reduce((n, v) => n + Object.keys(v.experiments).length, 0);
     $('#surv-line').textContent = `${tot} of ${all} results survive the many-trials test`;
     $('#surv-bar').style.width = (tot / all * 100).toFixed(0) + '%';
