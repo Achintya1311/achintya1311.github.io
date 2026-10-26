@@ -46,6 +46,9 @@ def banned_hits(text):
     return BANNED.findall(re.sub(r"\.\w+|stop-color|stop-opacity", " ", text))
 
 
+from html import unescape as html_unescape
+
+
 def check_root_contract(errors):
     html = (ROOT / "index.html").read_text()
     sec = re.search(r'id="findings".*?</section>', html, re.S)
@@ -55,6 +58,16 @@ def check_root_contract(errors):
     for i, c in enumerate(cards):
         if "<h3" not in c or 'class="stat"' not in c or "<span" not in c:
             errors.append(f"root index.html: finding card {i + 1} lacks h3 / .stat / span the desk parses")
+    # every root card title must be keyed in the desk's META and STATUS maps, or it falls to 'other' (W40)
+    page = (DESK / "index.html").read_text()
+    for c in cards:
+        m = re.search(r"<h3[^>]*>(.*?)</h3>", c, re.S)
+        title = re.sub(r"<span.*?</span>|<[^>]+>", "", m.group(1)).strip() if m else ""
+        title = html_unescape(title)
+        for name in ("META", "STATUS"):
+            block = re.search(rf"const {name} = \{{(.*?)\}};", page, re.S)
+            if title and (not block or f"'{title}'" not in block.group(1)):
+                errors.append(f"desk/index.html: {name} has no entry for root card '{title}'")
     wrong = re.search(r'id="wrong".*?class="log".*?</(?:ol|ul)>', html, re.S)
     if not wrong or "<li" not in wrong.group(0):
         errors.append('root index.html: no #wrong .log li for "What I got wrong"')
