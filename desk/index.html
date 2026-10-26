@@ -60,6 +60,7 @@
               <div class="tb-col dn"><h3>TOP BEARISH</h3><div id="top-bear" class="trows"></div></div>
             </div>
           </div>
+          <div class="hcard hnew"><h2>Newest findings <a href="#findings">Open Findings →</a></h2><div id="home-find" class="hfind"><p class="note">Loading findings…</p></div></div>
           <div class="hrow">
             <div class="hcard"><h2>Strategies tested <a href="#evidence">Open Evidence →</a></h2><div id="strat"></div></div>
             <div class="hcard"><h2>Lab journal this week <a href="https://github.com/Achintya1311/stockstalker-lab/blob/main/state/journal.md">Open journal →</a></h2><div id="journal" class="jr"></div></div>
@@ -145,18 +146,9 @@
     'Portfolio optimisation': ['Equal-weight ahead', 'On 29 large caps, equal weight beat mean-variance optimisation out of sample over 126 folds (+427% vs +309% before costs); costs widen the gap.']
   };
   const LABEL = { valuation: 'Valuation', factors: 'Factors', risk: 'Risk', options: 'Options', sentiment: 'Sentiment', screen: 'Screen', portfolio: 'Portfolio' };
-  let doc;
-  try { doc = new DOMParser().parseFromString(await (await fetch('../index.html')).text(), 'text/html'); }
+  let doc, cards;
+  try { const r = await window.deskRoot(); doc = r.doc; cards = r.cards.map(c => { const [cat, neg] = META[c.title] || ['other', 0]; return { ...c, cat, neg }; }); }
   catch { $('#feed-empty').innerHTML = 'Could not load findings here. <a href="../index.html#findings">Open the classic page</a>.'; return; }
-  const cards = [...doc.querySelectorAll('#findings .card')].map((c, i) => {
-    const h3 = c.querySelector('h3'), tagEl = h3.querySelector('.tag'), tag = tagEl ? tagEl.textContent : '';
-    if (tagEl) tagEl.remove();
-    const title = h3.textContent.trim(), st = c.querySelector('.stat'), sp = st.querySelector('span'), sub = sp.textContent.trim();
-    sp.remove(); const big = st.textContent.trim();
-    const note = (c.querySelector('.fig-note') || {}).textContent || '', im = c.querySelector('img'), repo = c.querySelector('.repo'), a = c.querySelector('.a');
-    const [cat, neg] = META[title] || ['other', 0];
-    return { i, title, tag, big, sub, text: a ? a.textContent.trim() : '', src: im ? '../' + im.getAttribute('src') : '', alt: im ? im.alt : '', note: note.trim(), repo: repo ? repo.href : '', repoName: repo ? repo.textContent.replace('→', '').trim() : '', cat, neg };
-  });
   const cats = [...new Set(cards.map(c => c.cat))];
   $('#chips').innerHTML = '<button class="chip" data-cat="all" aria-pressed="true">All</button>' + cats.map(k => `<button class="chip" data-cat="${k}" aria-pressed="false">${LABEL[k] || k}</button>`).join('') +
     '<div class="seg"><button data-sort="new" aria-pressed="true">Pipeline order</button><button data-sort="neg" aria-pressed="false">Negative results first</button></div>';

@@ -82,5 +82,14 @@
     } catch { $('#journal').innerHTML = `<p class="note">Could not load the journal. <a href="https://github.com/${REPO}/blob/main/state/journal.md">Open it on GitHub</a>.</p>`; }
   }
 
-  top(); strategies(); journal();
+  // 4 newest findings = first four cards in the root page's order (no date field exists); title, stat, thumbnail only
+  async function findings() {
+    const box = $('#home-find');
+    try {
+      const { cards } = await window.deskRoot();
+      box.innerHTML = cards.slice(0, 4).map(c => `<a class="hf" href="#findings"><span class="hf-t">${esc(c.title)}</span><span class="hf-s">${esc(c.big)}</span><span class="hf-u">${esc(c.sub)}</span>${c.src ? `<span class="fc-th"><img src="${esc(c.src)}" alt="" width="96" height="72" loading="lazy"></span>` : '<span class="fc-th ph" aria-hidden="true">Workbook</span>'}</a>`).join('');
+    } catch { box.innerHTML = '<p class="note">Could not load findings here. <a href="../index.html#findings">Open the classic page</a>.</p>'; }
+  }
+
+  top(); strategies(); journal(); findings();
 })();

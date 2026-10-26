@@ -1,3 +1,19 @@
+/* Root page cards, parsed once and shared by Findings and Home (DD2: the root index.html is the only source). */
+window.deskRoot = (() => {
+  let p;
+  return () => p || (p = fetch('../index.html').then(r => { if (!r.ok) throw 0; return r.text(); }).then(t => {
+    const doc = new DOMParser().parseFromString(t, 'text/html');
+    const cards = [...doc.querySelectorAll('#findings .card')].map((c, i) => {
+      const h3 = c.querySelector('h3'), tagEl = h3.querySelector('.tag'), tag = tagEl ? tagEl.textContent : '';
+      if (tagEl) tagEl.remove();
+      const title = h3.textContent.trim(), st = c.querySelector('.stat'), sp = st.querySelector('span'), sub = sp.textContent.trim();
+      sp.remove(); const big = st.textContent.trim();
+      const note = (c.querySelector('.fig-note') || {}).textContent || '', im = c.querySelector('img'), repo = c.querySelector('.repo'), a = c.querySelector('.a');
+      return { i, title, tag, big, sub, text: a ? a.textContent.trim() : '', src: im ? '../' + im.getAttribute('src') : '', alt: im ? im.alt : '', note: note.trim(), repo: repo ? repo.href : '', repoName: repo ? repo.textContent.replace('→', '').trim() : '' };
+    });
+    return { doc, cards };
+  }));
+})();
 /* Desk core: theme, sidebar, hash views, filter chips, lightbox. No dependencies. */
 (() => {
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];

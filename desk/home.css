@@ -75,3 +75,14 @@
 .counts small { display: block; font: 400 .75rem var(--sans); color: var(--muted); margin-top: 4px; }
 .depth .ax { position: relative; height: 16px; font: .75rem var(--mono); color: var(--muted); }
 .depth .ax span { position: absolute; transform: translateX(-50%); }
+
+/* Newest findings strip (findings-feed.md "Home version") */
+.hfind { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hf { display: grid; grid-template-columns: minmax(0, 1fr) 96px; grid-template-areas: "t th" "s th" "u th"; column-gap: 12px; align-content: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--ink); background: var(--surface); min-width: 0; }
+.hf:hover { border-color: var(--accent); }
+.hf:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hf-t { grid-area: t; font-weight: 600; font-size: .92rem; line-height: 1.3; }
+.hf-s { grid-area: s; font: 500 1.15rem/1.25 var(--mono); color: var(--accent); margin-top: 4px; overflow-wrap: anywhere; }
+.hf-u { grid-area: u; font-size: .78rem; color: var(--muted); margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.hf .fc-th { grid-area: th; }
+@media (max-width: 760px) { .hfind { grid-template-columns: 1fr; } }
