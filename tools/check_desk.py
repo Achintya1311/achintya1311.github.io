@@ -73,6 +73,14 @@ def check_root_contract(errors):
         card = next((c for c in cards if re.search(rf"<h3[^>]*>\s*{re.escape(name)}\b", c)), None)
         if card and token not in card:
             errors.append(f"root index.html: '{name}' card no longer names {token}; update the desk's STATUS line to match")
+    # numbers in a desk STATUS one-liner must also appear in the root card it summarises (W61)
+    status = re.search(r"const STATUS = \{(.*?)\};", page, re.S)
+    for key, line in re.findall(r"'([^']+)': \['[^']*', '([^']*)'\]", status.group(1) if status else ""):
+        card = next((c for c in cards if re.search(rf"<h3[^>]*>\s*{re.escape(key)}\b", c)), "")
+        text = html_unescape(re.sub(r"<[^>]+>", " ", card)).replace("\u2212", "-")
+        for tok in re.findall(r"[-\u2212]?\d[\d,.]*\d%?|\d{2,}%?", line):
+            if tok.replace("\u2212", "-").rstrip(".,") not in text:
+                errors.append(f"desk/index.html: STATUS '{key}' says {tok}, which the root card does not")
     wrong = re.search(r'id="wrong".*?class="log".*?</(?:ol|ul)>', html, re.S)
     if not wrong or "<li" not in wrong.group(0):
         errors.append('root index.html: no #wrong .log li for "What I got wrong"')
@@ -92,6 +100,10 @@ def check_lab(errors):
         for f in ("lower", "consistent", "upper"):
             if not isinstance(j.get("spa", {}).get(f), (int, float)):
                 errors.append(f"lab evidence_train.json: {k}.joint.spa.{f} missing or not a number")
+        # optional: identical-pick twins, read by the Evidence SPA note (W39, W68)
+        tw = j.get("twins", {})
+        if not isinstance(tw, dict) or any(not isinstance(v, str) or v not in ev[k]["experiments"] for v in tw.values()):
+            errors.append(f"lab evidence_train.json: {k}.joint.twins is not a map onto experiment ids")
         for i, e in ev[k]["experiments"].items():
             if not all(isinstance(e.get(f), (int, float)) for f in ("mean", "lo", "hi")):
                 errors.append(f"lab evidence_train.json: {k}.{i} lacks numeric mean/lo/hi")
