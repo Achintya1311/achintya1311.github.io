@@ -20,7 +20,7 @@
 <symbol id="i-flask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 001.3 2.2h12.4a1.5 1.5 0 001.3-2.2L14 9V3M7.5 15h9"/></symbol>
 <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2zM12 10v5M12 18v.5"/></symbol>
 <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6zM14 3v5h5M9 13h7M9 17h7"/></symbol>
-<symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+<symbol id="i-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol><symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></symbol>
 <symbol id="i-side" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 6l-6 6 6 6M19 6l-6 6 6 6"/></symbol>
@@ -40,7 +40,7 @@
     <a class="nav" href="#lab" aria-label="Picks lab"><svg><use href="#i-code"/></svg><span class="lbl">Picks lab</span></a>
     <div class="nav-h">Elsewhere</div>
     <a class="nav" href="../index.html" aria-label="Classic page"><svg><use href="#i-file"/></svg><span class="lbl">Classic page</span></a>
-    <a class="nav" href="https://github.com/Achintya1311" aria-label="GitHub"><svg><use href="#i-code"/></svg><span class="lbl">GitHub</span></a>
+    <a class="nav" href="https://github.com/Achintya1311" aria-label="GitHub"><svg><use href="#i-ext"/></svg><span class="lbl">GitHub</span></a>
     <div class="grow"></div>
     <div class="pill"><span class="dot"></span><span class="lbl">Historical data only</span>
       <span class="theme"><button data-t="light" aria-label="Light theme" aria-pressed="false"><svg width="14" height="14"><use href="#i-sun"/></svg></button><button data-t="dark" aria-label="Dark theme" aria-pressed="true"><svg width="14" height="14"><use href="#i-moon"/></svg></button></span></div>
@@ -80,10 +80,10 @@
     </section>
 
     <section class="view" id="findings">
-      <div class="top"><div><h1>Findings</h1><p>One question per project, the answer, and the evidence. Click a card for the chart.</p></div></div>
+      <div class="top"><div><h1>Findings</h1><p>One question per project, the answer, and the evidence. Open a finding for the full chart.</p></div></div>
       <div class="feed-wrap">
         <div class="chips" id="chips"></div>
-        <div class="masonry" id="feed" data-feed><div class="empty" id="feed-empty">Loading findings…</div></div>
+        <div class="feed" id="feed" data-feed><div class="empty" id="feed-empty">Loading findings…</div></div>
       </div>
     </section>
 
@@ -135,14 +135,14 @@
   const META = { 'Reverse DCF': ['valuation', 0], 'Three-statement model': ['valuation', 0], 'Factor exposure': ['factors', 1], 'Risk': ['risk', 1], 'Options': ['options', 0], 'Headline sentiment': ['sentiment', 1], 'Technical screen': ['screen', 1], 'Portfolio optimisation': ['portfolio', 1] };
   // neutral status label + one factual line per card, restated from the root page's own card text (W14)
   const STATUS = {
-    'Reverse DCF': ['Result', 'With growth and reinvestment tied through return on capital, no constant growth rate reproduces the market price.'],
+    'Reverse DCF': ['Result', 'For GULFOILLUB, once growth and reinvestment are tied through return on capital, no constant growth rate reproduces its price.'],
     'Three-statement model': ['Held up', 'The balance sheet balances every forecast year, enforced by a test.'],
     'Factor exposure': ['Not significant', 'Alpha t = 1.0: the apparent excess return is mostly factor exposure (beta 0.80, small-cap loading 0.47).'],
-    'Risk': ['Model rejected', 'On RELIANCE the normal-distribution 99% VaR had 10 breaches against 5 expected (p = 0.048): the tails are fatter than assumed.'],
-    'Options': ['Filtering needed', '196 of 704 NIFTY quotes broke no-arbitrage bounds before filtering.'],
+    'Risk': ['Model rejected', 'On RELIANCE over 500 days, the normal-distribution 99% loss line was crossed 10 times against about 5 expected (p = 0.048, just past the 5% bar): the tails are fatter than assumed.'],
+    'Options': ['Filtering needed', 'On one 16 Oct 2026 snapshot, 196 of 704 NIFTY quotes broke no-arbitrage bounds before filtering; one snapshot cannot show whether this persists.'],
     'Headline sentiment': ['No link found', 'r = −0.23 with n = 42, and the 95% interval spans zero; a daily collector is growing the sample.'],
-    'Technical screen': ['Mostly below holding', 'After Indian delivery costs, 1 of 3 names beats buy-and-hold.'],
-    'Portfolio optimisation': ['Equal-weight ahead', 'Equal-weight beat mean-variance optimisation out of sample over 126 folds (+427% vs +309% before costs); costs widen the gap.']
+    'Technical screen': ['Mostly below holding', 'After Indian delivery costs, 1 of 3 names beats buy-and-hold; with three names, one result as good as the best happens by chance about 27% of the time.'],
+    'Portfolio optimisation': ['Equal-weight ahead', 'On 29 large caps, equal weight beat mean-variance optimisation out of sample over 126 folds (+427% vs +309% before costs); costs widen the gap.']
   };
   const LABEL = { valuation: 'Valuation', factors: 'Factors', risk: 'Risk', options: 'Options', sentiment: 'Sentiment', screen: 'Screen', portfolio: 'Portfolio' };
   let doc;
@@ -153,20 +153,22 @@
     if (tagEl) tagEl.remove();
     const title = h3.textContent.trim(), st = c.querySelector('.stat'), sp = st.querySelector('span'), sub = sp.textContent.trim();
     sp.remove(); const big = st.textContent.trim();
-    const im = c.querySelector('img'), repo = c.querySelector('.repo'), a = c.querySelector('.a');
+    const note = (c.querySelector('.fig-note') || {}).textContent || '', im = c.querySelector('img'), repo = c.querySelector('.repo'), a = c.querySelector('.a');
     const [cat, neg] = META[title] || ['other', 0];
-    return { i, title, tag, big, sub, text: a ? a.textContent.trim() : '', src: im ? '../' + im.getAttribute('src') : '', alt: im ? im.alt : '', repo: repo ? repo.href : '', repoName: repo ? repo.textContent.replace('→', '').trim() : '', cat, neg };
+    return { i, title, tag, big, sub, text: a ? a.textContent.trim() : '', src: im ? '../' + im.getAttribute('src') : '', alt: im ? im.alt : '', note: note.trim(), repo: repo ? repo.href : '', repoName: repo ? repo.textContent.replace('→', '').trim() : '', cat, neg };
   });
   const cats = [...new Set(cards.map(c => c.cat))];
   $('#chips').innerHTML = '<button class="chip" data-cat="all" aria-pressed="true">All</button>' + cats.map(k => `<button class="chip" data-cat="${k}" aria-pressed="false">${LABEL[k] || k}</button>`).join('') +
     '<div class="seg"><button data-sort="new" aria-pressed="true">Pipeline order</button><button data-sort="neg" aria-pressed="false">Negative results first</button></div>';
-  $('#feed').innerHTML = cards.map(c => `<article class="card" tabindex="0" role="button" data-lb data-i="${c.i}" data-neg="${c.neg}" data-cat="${c.cat}" data-imgs="${esc(c.src)}">
-    ${c.src ? `<div class="img"><img src="${esc(c.src)}" alt="${esc(c.alt)}" loading="lazy"></div>` : ''}
-    <div class="big">${esc(c.big)}<span>${esc(c.sub)}</span></div>
-    <div class="meta"><b>${esc(c.title)}</b><span class="tag neu">${esc((STATUS[c.title] || ['Result'])[0])}</span></div>
-    ${STATUS[c.title] ? `<p class="chg">${esc(STATUS[c.title][1])}</p>` : ''}
-    <p>${esc(c.text.length > 150 ? c.text.slice(0, 150) + '…' : c.text)}</p>
-    <div class="lb-side" hidden><h3>${esc(c.title)} ${c.tag ? `<span class="tag">${esc(c.tag)}</span>` : ''}</h3><div class="big" style="padding:0">${esc(c.big)}<span>${esc(c.sub)}</span></div><p>${esc(c.text)}</p>${c.repo ? `<p><a href="${esc(c.repo)}">${esc(c.repoName)} →</a></p>` : ''}</div></article>`).join('');
+  $('#feed').innerHTML = cards.map(c => { const st = STATUS[c.title] || ['Result', '']; return `<article class="card fc" data-lb data-seq data-i="${c.i}" data-neg="${c.neg}" data-cat="${c.cat}" data-imgs="${esc(c.src)}" data-note="${esc(c.note)}">
+    <span class="fc-cat">${esc(LABEL[c.cat] || 'Finding')}</span>
+    <h3 class="fc-t"><button type="button" class="open" aria-haspopup="dialog">${esc(c.title)}</button></h3>
+    <p class="fc-stat">${esc(c.big)}</p>
+    ${c.src ? `<div class="fc-th"><img src="${esc(c.src)}" alt="${esc(c.alt)}" width="96" height="72" loading="lazy"></div>` : '<div class="fc-th ph" aria-hidden="true">Workbook</div>'}
+    <p class="fc-sub">${esc(c.sub)}</p>
+    <p class="fc-a">${esc(c.text)}</p>
+    <p class="fc-foot"><span class="tag neu">${esc(st[0])}</span>${st[1] ? ` <span class="chg">${esc(st[1])}</span>` : ''}</p>
+    <div class="lb-side" hidden><h3>${esc(c.title)} ${c.tag ? `<span class="tag">${esc(c.tag)}</span>` : ''}</h3><div class="big" style="padding:0">${esc(c.big)}<span>${esc(c.sub)}</span></div>${st[1] ? `<p><span class="tag neu">${esc(st[0])}</span> ${esc(st[1])}</p>` : ''}<p>${esc(c.text)}</p>${c.note ? `<p class="note">${esc(c.note)}</p>` : ''}${c.repo ? `<p><a href="${esc(c.repo)}">${esc(c.repoName)} →</a></p>` : ''}</div></article>`; }).join('');
   const wrong = [...doc.querySelectorAll('#wrong .log li')].map(li => li.innerHTML.replace(/href="(?!http)/g, 'href="../'));
   $('#wrong-all').innerHTML = wrong.map((x, i) => `<li><span class="ico num">${i + 1}</span><div class="tx">${x}</div></li>`).join('');
 })();

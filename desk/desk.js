@@ -36,31 +36,40 @@
     feeds().forEach(f => f.parentElement.contains(c) && apply(f));
   });
   // lightbox: any [data-lb] element; images from data-imgs ("a|b"), side panel from its .lb-side child
-  const lb = document.createElement('div'); lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Chart viewer');
-  lb.innerHTML = '<div class="stage"><span class="ct"></span><button class="x" aria-label="Close">✕</button><button class="nv pv" aria-label="Previous">‹</button><img alt=""><button class="nv nx" aria-label="Next">›</button><div class="th"></div></div><aside></aside>';
+  const lb = document.createElement('div'); lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Finding viewer');
+  lb.innerHTML = '<div class="stage"><span class="ct" role="status" aria-live="polite"></span><button class="x" aria-label="Close">✕</button><button class="nv pv" aria-label="Previous">‹</button><img alt=""><div class="noimg" hidden>Workbook: no chart for this finding</div><button class="nv nx" aria-label="Next">›</button><div class="th"></div></div><aside></aside>';
   document.body.appendChild(lb);
-  let imgs = [], at = 0, opener = null;
-  const img = $('img', lb);
+  let imgs = [], at = 0, opener = null, seq = [], si = 0;
+  const img = $('img', lb), noimg = $('.noimg', lb);
+  const load = el => {
+    opener = el; imgs = (el.dataset.imgs || '').split('|').filter(Boolean); at = 0;
+    const side = $('.lb-side', el), hint = (seq.length > 1 ? '← → findings · ' : imgs.length > 1 ? '← → images · ' : '') + (imgs.length ? 'click image to zoom · ' : '') + 'Esc to close';
+    $('aside', lb).innerHTML = (side ? side.innerHTML : '') + '<div class="ft">' + hint + '</div>';
+    $('.th', lb).innerHTML = !seq.length && imgs.length > 1 ? imgs.map((s, i) => `<button aria-label="Image ${i + 1}"><img src="${s}" alt=""></button>`).join('') : '';
+    $$('.th button', lb).forEach((b, i) => b.onclick = () => { at = i; draw(); });
+    draw();
+  };
   const draw = () => {
-    img.src = imgs[at]; img.classList.remove('z'); { const o = opener && opener.querySelector('img'); img.alt = (o && o.alt) || 'Chart'; }
-    $('.ct', lb).textContent = imgs.length > 1 ? `${at + 1} / ${imgs.length}` : '';
-    $$('.nv', lb).forEach(b => b.hidden = imgs.length < 2);
+    const has = imgs.length > 0; img.hidden = !has; noimg.hidden = has;
+    if (has) { img.src = imgs[at]; img.classList.remove('z'); const o = opener && opener.querySelector('img'); img.alt = (o && o.alt) || 'Chart'; }
+    const t = seq.length > 1 ? `${si + 1} / ${seq.length}` : imgs.length > 1 ? `${at + 1} / ${imgs.length}` : '';
+    $('.ct', lb).textContent = t && seq.length > 1 ? t + ' · ' + (opener.querySelector('.open') || opener).textContent : t;
+    $$('.nv', lb).forEach(b => b.hidden = (seq.length || imgs.length) < 2);
     $$('.th button', lb).forEach((b, i) => b.classList.toggle('on', i === at));
   };
-  const go = d => { at = (at + d + imgs.length) % imgs.length; draw(); };
-  const close = () => { lb.classList.remove('on'); document.body.style.overflow = ''; opener && opener.focus(); };
+  const go = d => { if (seq.length > 1) { si = (si + d + seq.length) % seq.length; load(seq[si]); } else if (imgs.length > 1) { at = (at + d + imgs.length) % imgs.length; draw(); } };
+  const close = () => { lb.classList.remove('on'); shell.inert = false; document.body.style.overflow = ''; opener && opener.isConnected && (opener.querySelector('.open') || opener).focus(); };
   $('.x', lb).onclick = close; $('.pv', lb).onclick = () => go(-1); $('.nx', lb).onclick = () => go(1);
   img.onclick = () => img.classList.toggle('z'); img.ondblclick = () => img.classList.toggle('z');
   lb.addEventListener('click', e => { if (e.target === $('.stage', lb)) close(); });
-  document.addEventListener('keydown', e => { if (!lb.classList.contains('on')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') go(-1); if (e.key === 'ArrowRight') go(1); if (e.key === 'Tab') { const f = $$('button', lb).filter(x => !x.hidden); if (!f.length) return; const i = f.indexOf(document.activeElement); e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); } });
+  document.addEventListener('keydown', e => { if (!lb.classList.contains('on')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') go(-1); if (e.key === 'ArrowRight') go(1); if (e.key === 'Tab') { const f = $$('button, a[href]', lb).filter(x => !x.hidden); if (!f.length) return; const i = f.indexOf(document.activeElement); e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); } });
+  // a card with data-seq steps through the visible cards of its feed; anything else steps through its own images
   window.deskOpen = el => {
-    opener = el; imgs = (el.dataset.imgs || '').split('|').filter(Boolean); if (!imgs.length) return; at = 0;
-    const side = $('.lb-side', el); $('aside', lb).innerHTML = (side ? side.innerHTML : '') + '<div class="ft">' + (imgs.length > 1 ? '← → images · ' : '') + 'click image to zoom · Esc to close</div>';
-    $('.th', lb).innerHTML = imgs.length > 1 ? imgs.map((s, i) => `<button aria-label="Image ${i + 1}"><img src="${s}" alt=""></button>`).join('') : '';
-    $$('.th button', lb).forEach((b, i) => b.onclick = () => { at = i; draw(); });
-    lb.classList.add('on'); document.body.style.overflow = 'hidden'; draw(); $('.x', lb).focus();
+    seq = el.hasAttribute('data-seq') ? $$('[data-seq]', el.parentElement).filter(x => !x.hidden) : []; si = Math.max(0, seq.indexOf(el));
+    if (!seq.length && !(el.dataset.imgs || '')) return;
+    load(el); lb.classList.add('on'); shell.inert = true; document.body.style.overflow = 'hidden'; $('.x', lb).focus();
   };
-  document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-lb]')) window.deskOpen(e.target); });
+  document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-lb]:not(button)')) window.deskOpen(e.target); });
   document.addEventListener('click', e => { const c = e.target.closest('[data-lb]'); if (c && !e.target.closest('a')) window.deskOpen(c); });
   window.deskApply = () => feeds().forEach(apply);
 })();
