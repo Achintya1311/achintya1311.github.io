@@ -106,7 +106,7 @@
       : ob.length ? 'At least one order-block variant has an interval above zero here; it still needs validation on unseen years.' : 'No order-block replay is in this group yet.';
     $('#ev-body').innerHTML = `
       <div class="panel"><h2>${hz} horizon, ${side} picks</h2><p>${verdict(g)}</p>
-        <p class="note">Joint test (Hansen SPA): p lower ${pf(g.joint.spa.lower)}, consistent ${pf(g.joint.spa.consistent)}, upper ${pf(g.joint.spa.upper)}. The model confidence set keeps ${g.joint.mcs.length} of ${g.joint.n_models}. Block length ${g.joint.block}.</p></div>
+        <p class="note">Joint test (Hansen SPA): p lower ${pf(g.joint.spa.lower)}, consistent ${pf(g.joint.spa.consistent)}, upper ${pf(g.joint.spa.upper)}. The model confidence set keeps ${g.joint.mcs.length} of ${g.joint.n_models}. Block length ${g.joint.block}.${Object.entries(g.joint.twins || {}).map(([a, b]) => ` ${esc(pretty(a))} makes the same picks as ${esc(pretty(b))}, so the joint tests count them once.`).join('')}</p></div>
       <div class="panel"><h2>Edge over the market base rate, 95% interval</h2>${forest(rows, g.joint)}
         <p class="note"><span class="g">Green</span> survives the correction for many trials. <span style="color:var(--amber)">Amber</span> is an order-block or confluence variant. <span class="r">Red</span> loses to the market line with an interval entirely below zero. Grey is not distinguishable from zero.</p></div>
       <div class="panel"><h2>Do order blocks help? The ablation</h2><p>${esc(obVerdict)}</p>
