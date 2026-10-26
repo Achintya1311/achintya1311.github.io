@@ -74,9 +74,10 @@ window.deskRoot = (() => {
     $$('.th button', lb).forEach((b, i) => b.classList.toggle('on', i === at));
   };
   const go = d => { if (seq.length > 1) { si = (si + d + seq.length) % seq.length; load(seq[si]); } else if (imgs.length > 1) { at = (at + d + imgs.length) % imgs.length; draw(); } };
-  const close = () => { lb.classList.remove('on'); shell.inert = false; document.body.style.overflow = ''; opener && opener.isConnected && (opener.querySelector('.open') || opener).focus(); };
+  const close = () => { lb.classList.remove('on'); shell.inert = false; document.body.style.overflow = ''; opener && opener.isConnected && opener.offsetParent && (opener.querySelector('.open') || opener).focus(); };
+  addEventListener('hashchange', () => { if (lb.classList.contains('on')) close(); });
   $('.x', lb).onclick = close; $('.pv', lb).onclick = () => go(-1); $('.nx', lb).onclick = () => go(1);
-  img.onclick = () => img.classList.toggle('z'); img.ondblclick = () => img.classList.toggle('z');
+  img.onclick = () => img.classList.toggle('z');
   lb.addEventListener('click', e => { if (e.target === $('.stage', lb)) close(); });
   document.addEventListener('keydown', e => { if (!lb.classList.contains('on')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') go(-1); if (e.key === 'ArrowRight') go(1); if (e.key === 'Tab') { const f = $$('button, a[href]', lb).filter(x => !x.hidden); if (!f.length) return; const i = f.indexOf(document.activeElement); e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); } });
   // a card with data-seq steps through the visible cards of its feed; anything else steps through its own images

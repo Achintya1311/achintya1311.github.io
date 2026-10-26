@@ -123,11 +123,12 @@
     const weekNone = keys.filter(k => k.startsWith('week')).every(k => ev[k].joint.stepm.length === 0);
     // the Limits paragraph states the weekly result from the file, never a hard-coded 'none'
     const wk = keys.filter(k => k.startsWith('week')), wn = wk.reduce((n, k) => n + ev[k].joint.stepm.length, 0);
-    const wp = Math.min(...wk.filter(k => ev[k].joint.stepm.length).map(k => ev[k].joint.spa.consistent));
+    const wp = Math.min(...wk.map(k => ev[k].joint.spa.consistent));
+    const wConf = wk.some(k => ev[k].joint.stepm.length && ev[k].joint.spa.consistent < 0.05);
     const wl = $('#ev-weekline');
     if (wl) wl.textContent = !wn ? "Among the weekly variants in the lab's evidence file, none survives."
       : `Among the weekly variants in the lab's evidence file, ${wn} ${wn === 1 ? 'passes' : 'pass'} the one-by-one check` + (wp >= 0.05 ? `, but no weekly joint test is below 0.05 (p ${pf(wp)}), so this is weak evidence.` : '.');
-    $('#ev-sum').innerHTML = `<div class="stat"><b>${total}</b><span>strategy results tested</span></div><div class="stat"><b>${surv}</b><span>survive the many-trials correction</span></div><div class="stat"><b>${weekNone ? 'none' : 'some'}</b><span>at the weekly horizon</span></div><div class="stat"><b>${obN}</b><span>order-block variants tested</span></div>`;
+    $('#ev-sum').innerHTML = `<div class="stat"><b>${total}</b><span>strategy results tested</span></div><div class="stat"><b>${surv}</b><span>survive the many-trials correction</span></div><div class="stat"><b>${weekNone ? 'none' : wConf ? 'some' : wn + ' unconfirmed'}</b><span>at the weekly horizon</span></div><div class="stat"><b>${obN}</b><span>order-block variants tested</span></div>`;
     $('#ev-chips').innerHTML = keys.map((k, i) => `<button class="chip" data-k="${k}" aria-pressed="${i === 0}">${k.replace('/', ' · ')}</button>`).join('');
     $('#ev-chips').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; [...$('#ev-chips').children].forEach(c => c.setAttribute('aria-pressed', c === b)); drawEvidence(ev, b.dataset.k); };
     drawEvidence(ev, keys[0]);
