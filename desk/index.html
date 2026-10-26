@@ -107,7 +107,7 @@
       <div class="panel" style="margin-top:18px"><h2>How to read this</h2>
         <p><b>Edge</b> is how much more often a strategy's picks moved the right way than the market's own base rate for that day. It is not a return. For the lab's current blended score, the average move of its picks after Indian trading costs was slightly negative in the train years (between −0.12 and −0.54 percentage points), so a hit-rate edge is a research finding, not a claim about money made.</p>
         <p><b>Why there is a correction.</b> The lab tried many variants. Run enough of them and some look good by luck. The joint test (Hansen SPA), the stepwise test (Romano-Wolf StepM) and the model confidence set (MCS) ask whether anything is left once the number of tries is accounted for. Intervals come from a block bootstrap over dates, so days that move together are not counted as independent.</p>
-        <p><b>Limits.</b> Train years only, so nothing here is validated on unseen data yet. <span id="ev-weekline">The weekly result is read from the lab's evidence file each time.</span> That file is rebuilt by the lab's own workflow and can lag behind its newest experiments, which are not counted here until the next successful build. This page reads the lab's file each time.</p>
+        <p><b>Limits.</b> Train years only, so none of the lab's strategy results here is validated on unseen data yet. <span id="ev-weekline">The weekly result is read from the lab's evidence file each time.</span> That file is rebuilt by the lab's own workflow and can lag behind its newest experiments, which are not counted here until the next successful build. This page reads the lab's file each time.</p>
         <p class="note">Educational research on historical data. Not investment advice. Not a SEBI-registered research analyst.</p></div>
     </section>
 
@@ -135,13 +135,13 @@
   const META = { 'Reverse DCF': ['valuation', 0], 'Three-statement model': ['valuation', 0], 'Factor exposure': ['factors', 1], 'Risk': ['risk', 1], 'Options': ['options', 0], 'Headline sentiment': ['sentiment', 1], 'Technical screen': ['screen', 1], 'Portfolio optimisation': ['portfolio', 1] };
   // neutral status label + one factual line per card, restated from the root page's own card text (W14)
   const STATUS = {
-    'Reverse DCF': ['Result', 'For GULFOILLUB, once growth and reinvestment are tied through return on capital, no constant growth rate reproduces its price.'],
+    'Reverse DCF': ['Result', 'For GULFOILLUB, once growth and reinvestment are tied through return on capital, no constant growth rate reproduces its price as captured on 12 Sep 2026.'],
     'Three-statement model': ['Held up', 'The balance sheet balances every forecast year, enforced by a test.'],
-    'Factor exposure': ['Not significant', 'Alpha t = 1.0: the apparent excess return is mostly factor exposure (beta 0.80, small-cap loading 0.47).'],
-    'Risk': ['Model rejected', 'On RELIANCE over 500 days, the normal-distribution 99% loss line was crossed 10 times against about 5 expected (p = 0.048, just past the 5% bar): the tails are fatter than assumed.'],
+    'Factor exposure': ['Not significant', 'For GULFOILLUB, Aug 2014 to Dec 2025 (137 months): alpha t = 1.0, so its excess return cannot be told apart from zero and is mostly factor exposure (beta 0.80, small-cap loading 0.47).'],
+    'Risk': ['Normal model rejected', 'On RELIANCE over 500 days, the constant-volatility normal 99% loss line was crossed 10 times against about 5 expected (p = 0.048, just past the 5% bar). A later pre-registered out-of-sample test on GULFOILLUB (2,506 days) had a GARCH-t model pass and the constant-volatility normal model fail.'],
     'Options': ['Filtering needed', 'On one 16 Oct 2026 snapshot, 196 of 704 NIFTY quotes broke no-arbitrage bounds before filtering; one snapshot cannot show whether this persists.'],
     'Headline sentiment': ['No link found', 'r = −0.23 with n = 42, and the 95% interval spans zero; a daily collector is growing the sample.'],
-    'Technical screen': ['Mostly below holding', 'After Indian delivery costs, 1 of 3 names beats buy-and-hold; with three names, one result as good as the best happens by chance about 27% of the time.'],
+    'Technical screen': ['Mostly below holding', 'After Indian delivery costs, 1 of 3 names beats buy-and-hold; with three names, one result as good as the best happens by chance about a quarter of the time (27%).'],
     'Portfolio optimisation': ['Equal-weight ahead', 'On 29 large caps, equal weight beat mean-variance optimisation out of sample over 126 folds (+427% vs +309% before costs); costs widen the gap.']
   };
   const LABEL = { valuation: 'Valuation', factors: 'Factors', risk: 'Risk', options: 'Options', sentiment: 'Sentiment', screen: 'Screen', portfolio: 'Portfolio' };
