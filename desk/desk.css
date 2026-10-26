@@ -140,3 +140,7 @@ table.t{width:100%;border-collapse:collapse;font-size:.88rem} .t th{font-size:.7
 
 .fc-foot .chg{color:var(--muted);font-size:.8rem}
 @media (max-width:760px){.chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}.chips .chip{flex:none}}
+
+/* a11y (Phase A): theme toggle meets the 24px minimum target; on narrow screens the viewer's prev/next sit below the chart instead of over it */
+.theme button{min-width:24px;min-height:24px}
+@media(max-width:980px){.lb .nv{top:auto;bottom:12px;transform:none}}

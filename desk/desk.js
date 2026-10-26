@@ -59,7 +59,7 @@ window.deskRoot = (() => {
   const img = $('img', lb), noimg = $('.noimg', lb);
   const load = el => {
     opener = el; imgs = (el.dataset.imgs || '').split('|').filter(Boolean); at = 0;
-    const side = $('.lb-side', el), hint = (seq.length > 1 ? '← → findings · ' : imgs.length > 1 ? '← → images · ' : '') + (imgs.length ? 'click image to zoom · ' : '') + 'Esc to close';
+    const side = $('.lb-side', el), hint = (seq.length > 1 ? '← → findings · ' : imgs.length > 1 ? '← → images · ' : '') + (imgs.length ? 'click image or press Z to zoom · ' : '') + 'Esc to close';
     $('aside', lb).innerHTML = (side ? side.innerHTML : '') + '<div class="ft">' + hint + '</div>';
     $('.th', lb).innerHTML = !seq.length && imgs.length > 1 ? imgs.map((s, i) => `<button aria-label="Image ${i + 1}"><img src="${s}" alt=""></button>`).join('') : '';
     $$('.th button', lb).forEach((b, i) => b.onclick = () => { at = i; draw(); });
@@ -79,7 +79,7 @@ window.deskRoot = (() => {
   $('.x', lb).onclick = close; $('.pv', lb).onclick = () => go(-1); $('.nx', lb).onclick = () => go(1);
   img.onclick = () => img.classList.toggle('z');
   lb.addEventListener('click', e => { if (e.target === $('.stage', lb)) close(); });
-  document.addEventListener('keydown', e => { if (!lb.classList.contains('on')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') go(-1); if (e.key === 'ArrowRight') go(1); if (e.key === 'Tab') { const f = $$('button, a[href]', lb).filter(x => !x.hidden); if (!f.length) return; const i = f.indexOf(document.activeElement); e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); } });
+  document.addEventListener('keydown', e => { if (!lb.classList.contains('on')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') go(-1); if (e.key === 'ArrowRight') go(1); if ((e.key === 'z' || e.key === 'Z') && !e.ctrlKey && !e.metaKey && !e.altKey && img.offsetParent) img.classList.toggle('z'); if (e.key === 'Tab') { const f = $$('button, a[href]', lb).filter(x => !x.hidden); if (!f.length) return; const i = f.indexOf(document.activeElement); e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); } });
   // a card with data-seq steps through the visible cards of its feed; anything else steps through its own images
   window.deskOpen = el => {
     seq = el.hasAttribute('data-seq') ? $$('[data-seq]', el.parentElement).filter(x => !x.hidden) : []; si = Math.max(0, seq.indexOf(el));
