@@ -68,6 +68,11 @@ def check_root_contract(errors):
             block = re.search(rf"const {name} = \{{(.*?)\}};", page, re.S)
             if title and (not block or f"'{title}'" not in block.group(1)):
                 errors.append(f"desk/index.html: {name} has no entry for root card '{title}'")
+    # the desk's STATUS one-liners name these subjects; fail if the root card stops naming them (W53)
+    for name, token in (("Risk", "RELIANCE"), ("Factor exposure", "GULFOILLUB"), ("Reverse DCF", "GULFOILLUB")):
+        card = next((c for c in cards if re.search(rf"<h3[^>]*>\s*{re.escape(name)}\b", c)), None)
+        if card and token not in card:
+            errors.append(f"root index.html: '{name}' card no longer names {token}; update the desk's STATUS line to match")
     wrong = re.search(r'id="wrong".*?class="log".*?</(?:ol|ul)>', html, re.S)
     if not wrong or "<li" not in wrong.group(0):
         errors.append('root index.html: no #wrong .log li for "What I got wrong"')
