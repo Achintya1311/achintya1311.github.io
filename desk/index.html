@@ -105,9 +105,9 @@
       <div class="chips" id="ev-chips"></div>
       <div id="ev-body"><div class="empty">Loading the lab's results…</div></div>
       <div class="panel" style="margin-top:18px"><h2>How to read this</h2>
-        <p><b>Edge</b> is how much more often a strategy's picks moved the right way than the market's own base rate for that day. It is not a return: after Indian trading costs the average move of these picks is close to zero, so a hit-rate edge is a research finding, not a claim about money made.</p>
+        <p><b>Edge</b> is how much more often a strategy's picks moved the right way than the market's own base rate for that day. It is not a return. For the lab's current blended score, the average move of its picks after Indian trading costs was slightly negative in the train years (between −0.12 and −0.54 percentage points), so a hit-rate edge is a research finding, not a claim about money made.</p>
         <p><b>Why there is a correction.</b> The lab tried many variants. Run enough of them and some look good by luck. The joint test (Hansen SPA), the stepwise test (Romano-Wolf StepM) and the model confidence set (MCS) ask whether anything is left once the number of tries is accounted for. Intervals come from a block bootstrap over dates, so days that move together are not counted as independent.</p>
-        <p><b>Limits.</b> Train years only, so nothing here is validated on unseen data yet. Among the weekly variants in the lab's evidence file, none survives. That file is rebuilt by the lab's own workflow and can lag behind its newest experiments, which are not counted here until the next successful build. This page reads the lab's file each time.</p>
+        <p><b>Limits.</b> Train years only, so nothing here is validated on unseen data yet. <span id="ev-weekline">The weekly result is read from the lab's evidence file each time.</span> That file is rebuilt by the lab's own workflow and can lag behind its newest experiments, which are not counted here until the next successful build. This page reads the lab's file each time.</p>
         <p class="note">Educational research on historical data. Not investment advice. Not a SEBI-registered research analyst.</p></div>
     </section>
 

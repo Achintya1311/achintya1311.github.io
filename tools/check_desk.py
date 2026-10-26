@@ -146,6 +146,9 @@ def check_desk_files(errors):
         errors.append("desk/index.html: no skip link")
     if re.search(r'<a class="nav"(?![^>]*aria-label)', page):
         errors.append("desk/index.html: nav link without aria-label")
+    # prose must not hard-code a lab result the page also computes from the file (W30)
+    if "none survives" in page:
+        errors.append("desk/index.html: hard-codes 'none survives'; state lab results from the evidence file")
     if "zone" in page and ZONE_CAPTION not in page:
         errors.append(f"desk/index.html draws the order-block zone without the caption '{ZONE_CAPTION}'")
     t = Tags()

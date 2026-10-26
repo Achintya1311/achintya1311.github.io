@@ -86,6 +86,7 @@
 
   function verdict(g) {
     const n = g.joint.stepm.length, ps = pf(g.joint.spa.consistent);
+    if (n && g.joint.spa.consistent >= 0.05) return `<b>Mixed.</b> Of ${g.joint.n_models} variants tried, ${n} ${n === 1 ? 'passes' : 'pass'} the one-by-one check after correcting for how many were tried, but the all-variants joint test cannot rule out luck (p ${ps}). Treat ${n === 1 ? 'it' : 'them'} as unconfirmed.`;
     if (n) return `<b class="g">Some variants survive.</b> Across all ${g.joint.n_models} variants tried, the joint test gives p ${ps}, and ${n} ${n === 1 ? 'variant is' : 'variants are'} individually superior after correcting for how many were tried.`;
     return `<b class="r">Nothing survives.</b> Across ${g.joint.n_models} variants the joint test gives p ${ps}: the best-looking results here are what luck produces when this many are tried.`;
   }
@@ -120,6 +121,12 @@
     const surv = keys.reduce((n, k) => n + ev[k].joint.stepm.length, 0), total = keys.reduce((n, k) => n + Object.keys(ev[k].experiments).length, 0);
     const obN = keys.flatMap(k => Object.keys(ev[k].experiments)).filter(i => family(i) === 'ob').length;
     const weekNone = keys.filter(k => k.startsWith('week')).every(k => ev[k].joint.stepm.length === 0);
+    // the Limits paragraph states the weekly result from the file, never a hard-coded 'none'
+    const wk = keys.filter(k => k.startsWith('week')), wn = wk.reduce((n, k) => n + ev[k].joint.stepm.length, 0);
+    const wp = Math.min(...wk.filter(k => ev[k].joint.stepm.length).map(k => ev[k].joint.spa.consistent));
+    const wl = $('#ev-weekline');
+    if (wl) wl.textContent = !wn ? "Among the weekly variants in the lab's evidence file, none survives."
+      : `Among the weekly variants in the lab's evidence file, ${wn} ${wn === 1 ? 'passes' : 'pass'} the one-by-one check` + (wp >= 0.05 ? `, but no weekly joint test is below 0.05 (p ${pf(wp)}), so this is weak evidence.` : '.');
     $('#ev-sum').innerHTML = `<div class="stat"><b>${total}</b><span>strategy results tested</span></div><div class="stat"><b>${surv}</b><span>survive the many-trials correction</span></div><div class="stat"><b>${weekNone ? 'none' : 'some'}</b><span>at the weekly horizon</span></div><div class="stat"><b>${obN}</b><span>order-block variants tested</span></div>`;
     $('#ev-chips').innerHTML = keys.map((k, i) => `<button class="chip" data-k="${k}" aria-pressed="${i === 0}">${k.replace('/', ' · ')}</button>`).join('');
     $('#ev-chips').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; [...$('#ev-chips').children].forEach(c => c.setAttribute('aria-pressed', c === b)); drawEvidence(ev, b.dataset.k); };
