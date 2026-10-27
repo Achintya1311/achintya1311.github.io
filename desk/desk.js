@@ -57,7 +57,7 @@ window.deskRoot = (() => {
   });
   // lightbox: any [data-lb] element; images from data-imgs ("a|b"), side panel from its .lb-side child
   const lb = document.createElement('div'); lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Finding viewer');
-  lb.innerHTML = '<div class="stage"><span class="ct" role="status" aria-live="polite"></span><button class="x" aria-label="Close">✕</button><button class="nv pv" aria-label="Previous">‹</button><img alt=""><div class="noimg" hidden>Workbook: no chart for this finding</div><button class="nv nx" aria-label="Next">›</button><div class="th"></div></div><aside></aside>';
+  lb.innerHTML = '<div class="stage"><span class="ct" role="status" aria-live="polite"></span><button class="x" aria-label="Close">✕</button><button class="nv pv" aria-label="Previous">‹</button><img alt=""><div class="noimg" hidden>Workbook: no chart for this finding</div><button class="nv nx" aria-label="Next">›</button><div class="th"></div></div><aside tabindex="0" aria-label="About this finding"></aside>';
   document.body.appendChild(lb);
   let imgs = [], at = 0, opener = null, seq = [], si = 0;
   const img = $('img', lb), noimg = $('.noimg', lb);
@@ -83,7 +83,7 @@ window.deskRoot = (() => {
   $('.x', lb).onclick = close; $('.pv', lb).onclick = () => go(-1); $('.nx', lb).onclick = () => go(1);
   img.onclick = () => img.classList.toggle('z');
   lb.addEventListener('click', e => { if (e.target === $('.stage', lb)) close(); });
-  document.addEventListener('keydown', e => { if (!lb.classList.contains('on')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') go(-1); if (e.key === 'ArrowRight') go(1); if ((e.key === 'z' || e.key === 'Z') && !e.ctrlKey && !e.metaKey && !e.altKey && img.offsetParent) img.classList.toggle('z'); if (e.key === 'Tab') { const f = $$('button, a[href]', lb).filter(x => !x.hidden); if (!f.length) return; const i = f.indexOf(document.activeElement); e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); } });
+  document.addEventListener('keydown', e => { if (!lb.classList.contains('on')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') go(-1); if (e.key === 'ArrowRight') go(1); if ((e.key === 'z' || e.key === 'Z') && !e.ctrlKey && !e.metaKey && !e.altKey && img.offsetParent) img.classList.toggle('z'); if (e.key === 'Tab') { const f = $$('button, a[href], aside[tabindex]', lb).filter(x => !x.hidden); if (!f.length) return; const i = f.indexOf(document.activeElement); e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); } });
   // a card with data-seq steps through the visible cards of its feed; anything else steps through its own images
   window.deskOpen = el => {
     seq = el.hasAttribute('data-seq') ? $$('[data-seq]', el.parentElement).filter(x => !x.hidden) : []; si = Math.max(0, seq.indexOf(el));

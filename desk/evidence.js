@@ -74,7 +74,7 @@
     const W = 760, L = 250, R = 70, RH = 22, top = 24, H = top + rows.length * RH + 30;
     const lo = Math.max(-10, Math.min(-4, ...rows.map(r => pts(r.lo)))) - 0.5, hi = Math.min(10, Math.max(4, ...rows.map(r => pts(r.hi)))) + 0.5;
     const x = v => L + (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * (W - L - R);
-    let s = `<div class="scroll"><svg class="ch wide" viewBox="0 0 ${W} ${H}" role="img" aria-label="Edge over the market base rate with 95% intervals, one row per experiment">`;
+    let s = `<p class="hint">Swipe or scroll sideways: row names are on the left, intervals on the right.</p><div class="scroll" tabindex="0" role="region" aria-label="Edge chart, scrolls sideways"><svg class="ch wide" viewBox="0 0 ${W} ${H}" role="img" aria-label="Edge over the market base rate with 95% intervals, one row per experiment">`;
     for (let t = Math.ceil(lo / 2) * 2; t <= hi; t += 2) s += `<line x1="${x(t)}" x2="${x(t)}" y1="${top - 6}" y2="${H - 24}" stroke="currentColor" opacity="${t === 0 ? .55 : .12}"/><text x="${x(t)}" y="${H - 8}" text-anchor="middle" font-size="10" fill="currentColor" opacity=".6">${t > 0 ? '+' : ''}${t}</text>`;
     rows.forEach((r, i) => {
       const y = top + i * RH + 9, sup = joint.stepm.includes(r.id), neg = r.hi < 0, fam = family(r.id);
@@ -118,7 +118,7 @@
       <div class="panel"><h2>Edge over the market base rate, 95% interval</h2>${forest(rows, g.joint)}
         <p class="note"><span class="g">Green</span> survives the correction for many trials. <span style="color:var(--amber)">Amber</span> is an order-block or confluence variant. <span class="r">Red</span> loses to the market line with an interval entirely below zero. Grey is not distinguishable from zero.</p></div>
       <div class="panel"><h2>Do order blocks help? The ablation</h2><p>${esc(obVerdict)}</p>
-        <div class="scroll"><table class="t ab"><thead><tr><th>Strategy</th><th>Edge (pts)</th><th>95% interval</th><th>Verdict</th></tr></thead><tbody>${abl}</tbody></table></div>
+        <div class="scroll" tabindex="0" role="region" aria-label="Strategy table, scrolls sideways"><table class="t ab"><thead><tr><th>Strategy</th><th>Edge (pts)</th><th>95% interval</th><th>Verdict</th></tr></thead><tbody>${abl}</tbody></table></div>
         <p class="note">Read the rows in pairs. O00 against O01 shows what the impulse requirement adds; O04, O04A and O04B differ only in which ingredient is left out. Other rows use different base signals, so they are context, not a one-change comparison. The placebo uses the same zone logic with the impulse requirement removed.</p></div>`;
   }
 
