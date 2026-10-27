@@ -43,8 +43,8 @@
 
   // ---------- Evidence view ----------
   const ABLATION = {
-    day: ['a02-extreme-day-reversal-day', 'o00-placebo-day', 'o01-retest-day', 'o02-oi-confirmed-day', 'o03-trend-confirmed-day', 'd01-oi-buildup-day', 'd01c-day', 'e1a-day', 'e1b-day', 'e2a-day', 'e2b-day'],
-    week: ['o00-placebo-week', 'o01-retest-week', 'o03-trend-confirmed-week'],
+    day: ['a02-extreme-day-reversal-day', 'o00-placebo-day', 'o01-retest-day', 'o02-oi-confirmed-day', 'o03-trend-confirmed-day', 'o04-order-block-composite-day', 'o04a-no-volume-day', 'o04b-no-d01-day', 'd01-oi-buildup-day', 'd01c-day', 'e1a-day', 'e1b-day', 'e2a-day', 'e2b-day'],
+    week: ['o00-placebo-week', 'o01-retest-week', 'o03-trend-confirmed-week', 'o04-order-block-composite-week', 'o04a-no-volume-week', 'o04b-no-d01-week', 'o05-order-block-weekly-week'],
   };
   const NOTE = {
     'a02-extreme-day-reversal-day': 'the base signal that already works',
@@ -55,6 +55,13 @@
     'o02-oi-confirmed-day': 'order block + open interest agrees',
     'o03-trend-confirmed-day': 'order block + trend agrees',
     'o03-trend-confirmed-week': 'order block + trend agrees',
+    'o04-order-block-composite-day': 'order block, ranked by zone closeness, open interest and volume together',
+    'o04-order-block-composite-week': 'order block, ranked by zone closeness, open interest and volume together',
+    'o04a-no-volume-day': 'the same ranking without the volume part',
+    'o04a-no-volume-week': 'the same ranking without the volume part',
+    'o04b-no-d01-day': 'the same ranking without the open-interest part',
+    'o04b-no-d01-week': 'the same ranking without the open-interest part',
+    'o05-order-block-weekly-week': 'order block found on weekly bars instead of daily',
     'd01-oi-buildup-day': 'open interest as continuation',
     'd01c-day': 'open interest as reversal (the flipped sign)',
     'e1a-day': 'A02 where an order-block zone agrees',
@@ -107,12 +114,12 @@
       : ob.length ? 'At least one order-block variant has an interval above zero here; it still needs validation on unseen years.' : 'No order-block replay is in this group yet.';
     $('#ev-body').innerHTML = `
       <div class="panel"><h2>${hz} horizon, ${side} picks</h2><p>${verdict(g)}</p>
-        <p class="note">Joint test (Hansen SPA): p lower ${pf(g.joint.spa.lower)}, consistent ${pf(g.joint.spa.consistent)}, upper ${pf(g.joint.spa.upper)}. The model confidence set keeps ${g.joint.mcs.length} of ${g.joint.n_models}. Block length ${g.joint.block}.${Object.entries(g.joint.twins || {}).map(([a, b]) => ` ${esc(pretty(a))} makes the same picks as ${esc(pretty(b))}, so the joint tests count them once.`).join('')}</p></div>
+        <p class="note">In plain words: if none of the ${g.joint.n_models} variants had a real edge, a best result at least this good would turn up by chance with p ${pf(g.joint.spa.consistent)} (Hansen SPA; its looser and stricter versions give p ${pf(g.joint.spa.lower)} and p ${pf(g.joint.spa.upper)}). The model confidence set keeps ${g.joint.mcs.length} of ${g.joint.n_models} variants as not clearly worse than the best. Days are resampled ${g.joint.block > 1 ? `in blocks of ${g.joint.block} so days that move together stay together` : 'one at a time (block length 1)'}.${Object.entries(g.joint.twins || {}).map(([a, b]) => ` ${esc(pretty(a))} makes the same picks as ${esc(pretty(b))}, so the joint tests count them once.`).join('')}</p></div>
       <div class="panel"><h2>Edge over the market base rate, 95% interval</h2>${forest(rows, g.joint)}
         <p class="note"><span class="g">Green</span> survives the correction for many trials. <span style="color:var(--amber)">Amber</span> is an order-block or confluence variant. <span class="r">Red</span> loses to the market line with an interval entirely below zero. Grey is not distinguishable from zero.</p></div>
       <div class="panel"><h2>Do order blocks help? The ablation</h2><p>${esc(obVerdict)}</p>
         <div class="scroll"><table class="t ab"><thead><tr><th>Strategy</th><th>Edge (pts)</th><th>95% interval</th><th>Verdict</th></tr></thead><tbody>${abl}</tbody></table></div>
-        <p class="note">Each row changes one thing against another, so the difference is attributable. The placebo uses the same zone logic with the impulse requirement removed.</p></div>`;
+        <p class="note">Read the rows in pairs. O00 against O01 shows what the impulse requirement adds; O04, O04A and O04B differ only in which ingredient is left out. Other rows use different base signals, so they are context, not a one-change comparison. The placebo uses the same zone logic with the impulse requirement removed.</p></div>`;
   }
 
   async function evidenceView() {
