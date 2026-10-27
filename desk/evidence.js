@@ -10,7 +10,7 @@
 
   // ---------- data ----------
   let evP = null;
-  window.deskEvLoad = () => (evP = evP || J(RAW + 'reports/evidence_train.json').catch(() => null));
+  window.deskEvLoad = () => (evP = evP || J(RAW + 'reports/evidence_train.json').then(ev => Object.fromEntries(Object.entries(ev).filter(([k, v]) => /^(day|week)\/(bullish|bearish)$/.test(k) && v && v.experiments && v.joint && Array.isArray(v.joint.stepm)))).catch(() => null));
   const latestP = {};
   const latest = h => (latestP[h] = latestP[h] || (async () => {
     for (const base of ['live', 'reports/live_dryrun']) {
@@ -126,6 +126,7 @@
     const ev = await window.deskEvLoad();
     if (!ev) { $('#ev-body').innerHTML = `<div class="empty">Could not load the lab's evidence file right now. <a href="https://github.com/${REPO}/blob/main/reports/evidence_train.md">Read it on GitHub</a>.</div>`; return; }
     const keys = Object.keys(ev).sort();
+    if (!keys.length) { $('#ev-body').innerHTML = `<div class="empty">The lab's evidence file has no results in the shape this page reads. <a href="https://github.com/${REPO}/blob/main/reports/evidence_train.md">Read it on GitHub</a>.</div>`; return; }
     const surv = keys.reduce((n, k) => n + ev[k].joint.stepm.length, 0), total = keys.reduce((n, k) => n + Object.keys(ev[k].experiments).length, 0);
     const obN = new Set(keys.flatMap(k => Object.keys(ev[k].experiments)).filter(i => family(i) === 'ob' && !i.startsWith('o00')).map(i => i.replace(/-(day|week)$/, ''))).size;
     const weekNone = keys.filter(k => k.startsWith('week')).every(k => ev[k].joint.stepm.length === 0);

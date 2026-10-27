@@ -81,6 +81,21 @@ def check_root_contract(errors):
         for tok in re.findall(r"[-\u2212]?\d[\d,.]*\d%?|\d{2,}%?", line):
             if tok.replace("\u2212", "-").rstrip(".,") not in text:
                 errors.append(f"desk/index.html: STATUS '{key}' says {tok}, which the root card does not")
+    # numbers with a label must keep that label: a bare-token match passes swaps like beta 0.80 -> 0.85 (W93)
+    lines = dict(re.findall(r"'([^']+)': \['[^']*', '([^']*)'\]", status.group(1) if status else ""))
+    for key, desk_p, root_p in (
+        ("Portfolio optimisation", "(+427% vs +309% before costs)", "+427% vs +309% before costs"),
+        ("Factor exposure", "beta 0.80", "beta 0.80"),
+        ("Factor exposure", "small-cap loading 0.47", "SMB 0.47"),
+        ("Factor exposure", "0.85 sits in alpha", "attributes 0.85 to alpha"),
+        ("Technical screen", "1 of 3 names", "1 of 3"),
+    ):
+        card = next((c for c in cards if re.search(rf"<h3[^>]*>\s*{re.escape(key)}\b", c)), "")
+        text = html_unescape(re.sub(r"<[^>]+>", " ", card))
+        if desk_p not in lines.get(key, ""):
+            errors.append(f"desk/index.html: STATUS '{key}' no longer says '{desk_p}'; update the pins in tools/check_desk.py with it")
+        elif root_p not in text:
+            errors.append(f"desk/index.html: STATUS '{key}' says '{desk_p}' but the root card no longer says '{root_p}'")
     # when a root card adds a scope, the desk's STATUS line must carry it too (W88); numbers alone miss this
     for key, root_says, desk_must in (("Reverse DCF", "FY2023-24", "FY2023-24"), ("Options", "forward", "forward")):
         card = next((c for c in cards if re.search(rf"<h3[^>]*>\s*{re.escape(key)}\b", c)), "")

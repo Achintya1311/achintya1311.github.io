@@ -8,7 +8,7 @@ window.deskRoot = (() => {
       if (tagEl) tagEl.remove();
       const title = h3.textContent.trim(), st = c.querySelector('.stat'), sp = st.querySelector('span'), sub = sp.textContent.trim();
       sp.remove(); const big = st.textContent.trim();
-      const note = (c.querySelector('.fig-note') || {}).textContent || '', im = c.querySelector('img'), repo = c.querySelector('.repo'), a = c.querySelector('.a');
+      const note = (c.querySelector('.fig-note, figcaption') || {}).textContent || '', im = c.querySelector('img'), repo = c.querySelector('.repo'), a = c.querySelector('.a');
       return { i, title, tag, big, sub, text: a ? a.textContent.trim() : '', src: im ? '../' + im.getAttribute('src') : '', alt: im ? im.alt : '', note: note.trim(), repo: repo ? repo.href : '', repoName: repo ? repo.textContent.replace('→', '').trim() : '' };
     });
     return { doc, cards };

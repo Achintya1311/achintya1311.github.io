@@ -46,7 +46,7 @@
 
   async function top() {
     const r = await window.deskLatest('day');
-    if (!r) { $('#top-bull').innerHTML = $('#top-bear').innerHTML = '<p class="note">Could not load the lab’s picks.</p>'; return; }
+    if (!r) { $('#top-bull').innerHTML = $('#top-bear').innerHTML = '<p class="note">Could not load the lab’s picks.</p>'; $('#depth').innerHTML = '<p class="note">Breadth needs the lab’s picks file, which could not be loaded.</p>'; return; }
     const d = r.data, x = d.xray, rk = {};
     ((x && x.stocks) || []).forEach(s => rk[s.s] = s);
     if (x) { $('#depth').innerHTML = depth(x.breadth); $('#asof').textContent = 'as of ' + x.asof + (r.dry ? ' · dry run' : ''); }
