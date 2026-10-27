@@ -136,11 +136,11 @@
   const META = { 'Reverse DCF': ['valuation', 0], 'Three-statement model': ['valuation', 0], 'Factor exposure': ['factors', 1], 'Risk': ['risk', 1], 'Options': ['options', 0], 'Headline sentiment': ['sentiment', 1], 'Technical screen': ['screen', 1], 'Portfolio optimisation': ['portfolio', 1] };
   // neutral status label + one factual line per card, restated from the root page's own card text (W14)
   const STATUS = {
-    'Reverse DCF': ['Result', 'For GULFOILLUB, once growth and reinvestment are tied through return on capital, no constant growth rate reproduces its price as captured on 12 Sep 2026.'],
+    'Reverse DCF': ['Result', 'For GULFOILLUB, once growth and reinvestment are tied through return on capital, no constant growth rate reproduces its price when the company is valued at the FY2023-24 year end; valued at the price date instead, one does, so the answer depends on that timing convention.'],
     'Three-statement model': ['Held up', 'The balance sheet balances every forecast year, enforced by a test.'],
-    'Factor exposure': ['Not significant', 'For GULFOILLUB, Aug 2014 to Dec 2025 (137 months): alpha t = 1.0, so its excess return cannot be told apart from zero and is mostly factor exposure (beta 0.80, small-cap loading 0.47).'],
+    'Factor exposure': ['Not significant', 'For GULFOILLUB, Aug 2014 to Dec 2025 (137 months): alpha t = 1.0, so its alpha is too noisy to tell apart from zero; of 1.30 points average excess return a month, 0.85 sits in alpha and 0.45 in factor exposure (beta 0.80, small-cap loading 0.47).'],
     'Risk': ['Normal model rejected', 'The rejected model is the constant-volatility normal one; a GARCH-t model passed the same out-of-sample test.'],
-    'Options': ['Filtering needed', 'A quote-quality check: it shows whether raw option quotes can be used as they come.'],
+    'Options': ['Filtering needed', 'A quote-quality check: it shows whether raw option quotes can be used as they come. The counts depend on the forward assumed, and breaks stay routine under both forwards tried.'],
     'Headline sentiment': ['No link found', 'Same-day returns only and a small sample, so this says the link is not shown, not that there is none.'],
     'Technical screen': ['Mostly below holding', 'After Indian delivery costs, 1 of 3 names beats buy-and-hold.'],
     'Portfolio optimisation': ['Equal-weight ahead', 'On 29 large caps, equal weight beat mean-variance optimisation out of sample over 126 folds (+427% vs +309% before costs); costs widen the gap.']

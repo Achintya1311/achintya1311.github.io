@@ -81,6 +81,24 @@ def check_root_contract(errors):
         for tok in re.findall(r"[-\u2212]?\d[\d,.]*\d%?|\d{2,}%?", line):
             if tok.replace("\u2212", "-").rstrip(".,") not in text:
                 errors.append(f"desk/index.html: STATUS '{key}' says {tok}, which the root card does not")
+    # when a root card adds a scope, the desk's STATUS line must carry it too (W88); numbers alone miss this
+    for key, root_says, desk_must in (("Reverse DCF", "FY2023-24", "FY2023-24"), ("Options", "forward", "forward")):
+        card = next((c for c in cards if re.search(rf"<h3[^>]*>\s*{re.escape(key)}\b", c)), "")
+        line = dict(re.findall(r"'([^']+)': \['[^']*', '([^']*)'\]", status.group(1) if status else "")).get(key, "")
+        if root_says in card and desk_must not in line:
+            errors.append(f"desk/index.html: root '{key}' card is scoped by '{root_says}'; the desk's STATUS line must say '{desk_must}' too")
+    # the root footer date must not lag the last commit to index.html by more than a day (W85)
+    upd = re.search(r'class="updated">Updated (\d{1,2} \w{3} \d{4})<', html)
+    try:
+        import datetime, os, subprocess as sp
+        last = sp.run(["git", "log", "-1", "--format=%cd", "--date=format-local:%Y-%m-%d", "--", "index.html"], cwd=ROOT,
+                      capture_output=True, text=True, env={**os.environ, "TZ": "Asia/Kolkata"}).stdout.strip()
+    except Exception:
+        last = ""
+    if upd and last:
+        shown = datetime.datetime.strptime(upd.group(1), "%d %b %Y").date()
+        if (datetime.date.fromisoformat(last) - shown).days > 1:
+            errors.append(f"root index.html: footer says Updated {upd.group(1)} but index.html last changed {last} (IST)")
     wrong = re.search(r'id="wrong".*?class="log".*?</(?:ol|ul)>', html, re.S)
     if not wrong or "<li" not in wrong.group(0):
         errors.append('root index.html: no #wrong .log li for "What I got wrong"')
