@@ -154,7 +154,7 @@
     '<div class="seg"><button data-sort="new" aria-pressed="true">Pipeline order</button><button data-sort="neg" aria-pressed="false">Negative results first</button></div>';
   $('#feed').innerHTML = cards.map(c => { const st = STATUS[c.title] || ['Result', '']; return `<article class="card fc" data-lb data-seq data-i="${c.i}" data-neg="${c.neg}" data-cat="${c.cat}" data-imgs="${esc(c.src)}" data-note="${esc(c.note)}">
     <span class="fc-cat">${esc(LABEL[c.cat] || 'Finding')}</span>
-    <h3 class="fc-t"><button type="button" class="open" aria-haspopup="dialog">${esc(c.title)}</button></h3>
+    <h2 class="fc-t"><button type="button" class="open" aria-haspopup="dialog">${esc(c.title)}</button></h2>
     <p class="fc-stat">${esc(c.big)}</p>
     ${c.src ? `<div class="fc-th"><img src="${esc(c.src)}" alt="${esc(c.alt)}" width="96" height="72" loading="lazy"></div>` : '<div class="fc-th ph" aria-hidden="true">Workbook</div>'}
     <p class="fc-sub">${esc(c.sub)}</p>

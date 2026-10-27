@@ -27,6 +27,7 @@ window.deskRoot = (() => {
   if (store.get('desk-side') === '1') shell.classList.add('collapsed');
   $$('[data-tog]').forEach(b => { b.setAttribute('aria-expanded', String(!shell.classList.contains('collapsed'))); b.onclick = () => { shell.classList.toggle('collapsed'); store.set('desk-side', shell.classList.contains('collapsed') ? '1' : '0'); b.setAttribute('aria-expanded', String(!shell.classList.contains('collapsed'))); }; });
   // views by hash
+  let shown = false;
   const show = () => {
     const v = location.hash.slice(1) || $('.view').id;
     const t = $('#' + CSS.escape(v)) && $('#' + CSS.escape(v)).classList.contains('view') ? v : $('.view').id;
@@ -34,6 +35,9 @@ window.deskRoot = (() => {
     $$('.nav[href^="#"]').forEach(a => { const on = a.getAttribute('href') === '#' + t; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); });
     document.title = ($('.nav.on .lbl') ? $('.nav.on .lbl').textContent + ' · ' : '') + (shell.dataset.name || 'Desk');
     window.scrollTo(0, 0);
+    // move focus to the new view's heading, but not on first load (deep links, skip link)
+    if (shown) { const h = $('.view.on h1'); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }
+    shown = true;
   };
   addEventListener('hashchange', show); show();
   // skip link: focus main without touching the hash, which drives the views

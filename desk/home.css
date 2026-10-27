@@ -32,7 +32,7 @@
 .hcard h2 { font-size: .98rem; margin: 0 0 12px; font-weight: 600; display: flex; justify-content: space-between; align-items: baseline; letter-spacing: 0; text-transform: none; color: var(--ink); }
 .hcard h2 a { font-size: .76rem; color: var(--muted); text-decoration: none; font-weight: 400; }
 .hcard h2 a:hover { color: var(--accent); }
-.strip { display: flex; align-items: center; gap: 10px; font: 600 .66rem var(--mono); letter-spacing: .08em; margin-bottom: 8px; }
+.strip { display: flex; align-items: center; gap: 10px; font: 600 .75rem var(--mono); letter-spacing: .08em; margin-bottom: 8px; }
 .strip .ticks { display: flex; gap: 2px; flex: 1; }
 .strip .ticks i { flex: 1; height: 10px; border-radius: 2px; background: var(--line); }
 .strip .ticks i.s { background: var(--up); } .strip .ticks i.f { background: var(--down); }
@@ -55,7 +55,7 @@
 .scard b { display: block; font-size: .95rem; } .scard small { display: block; color: var(--muted); font-size: .8rem; line-height: 1.4; margin-top: 2px; }
 .scard.learn { grid-template-columns: 96px minmax(0, 1fr); align-items: center; }
 .thumb { height: 64px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--line); display: grid; place-items: center; color: var(--accent); }
-.kick { font: 600 .64rem var(--sans); letter-spacing: .1em; color: #4c8bf5; }
+.kick { font: 600 .75rem var(--sans); letter-spacing: .1em; color: var(--kick, #4c8bf5); }
 .prog { display: block; height: 4px; border-radius: 2px; background: var(--line); margin-top: 8px; overflow: hidden; }
 .prog s { display: block; height: 100%; background: var(--accent); }
 .qa { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 4px 16px; }
