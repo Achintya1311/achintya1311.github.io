@@ -10,6 +10,7 @@
   $('#hello').textContent = `${h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'}, Achintya`;
   $('#today').textContent = ist.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
   const mins = h * 60 + m, open = wd >= 1 && wd <= 5 && mins >= 555 && mins < 930;
+  const dot = $('#mkt-state').previousElementSibling; if (dot) dot.classList.toggle('live', open);
   $('#mkt-state').textContent = open ? 'Market open · data refreshes after the close' : `Closed · opens ${(wd === 5 && mins >= 930) || wd === 6 || wd === 0 ? 'Mon' : mins >= 930 ? 'tomorrow' : 'today 9:15'}`;
 
   // smooth area chart of breadth

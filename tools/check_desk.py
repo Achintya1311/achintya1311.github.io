@@ -128,7 +128,14 @@ def check_lab(errors):
             for f in ("asof", "n", "stocks", "breadth", "bullish_strategy", "bearish_strategy"):
                 if f not in x:
                     errors.append(f"lab {h} xray: field '{f}' missing")
+            for st in (x.get("stocks") or [])[:400]:
+                if not isinstance(st.get("s"), str) or any(st.get(k) is not None and not isinstance(st.get(k), (int, float)) for k in ("b", "d")):
+                    errors.append(f"lab {h} xray.stocks: entry {st!r} lacks s, or b/d is not a number or null")
+                    break
             b = x.get("breadth", {})
+            for f in ("up", "down", "n"):
+                if not isinstance(b.get(f), int):
+                    errors.append(f"lab {h} xray.breadth.{f} missing or not an integer")
             if len(b.get("counts", [])) != len(b.get("edges_pct", [])) + 1 or 0 not in b.get("edges_pct", []):
                 errors.append(f"lab {h} xray.breadth: counts/edges_pct inconsistent or no 0 edge")
         elif h == "day":
