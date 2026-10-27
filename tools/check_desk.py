@@ -18,6 +18,10 @@ DESK = ROOT / "desk"
 LAB = "Achintya1311/stockstalker-lab"
 RAW = f"https://raw.githubusercontent.com/{LAB}/main/"
 ZONE_CAPTION = "Not a level to act on"
+# Fields the lab writes on a pick (picks/payload.py, picks/outcomes.py). Any other p.<name> reads undefined,
+# so scored picks would show nothing. open, close and move_rs are prices, which the desk never shows.
+PICK_FIELDS = {"symbol", "strategy", "reasoning", "chart", "late", "hit", "move_pct"}
+PRICE_FIELDS = {"open", "close", "move_rs"}
 # "buy-and-hold" is a research benchmark, not a call, so it is allowed.
 BANNED = re.compile(r"\b(?:buy(?!-and-hold)|sell(?:ing)?|opportunit\w*|upside|stop[- ]?loss|entry price|price target|target price)\b|₹", re.I)
 
@@ -195,6 +199,13 @@ def check_desk_files(errors):
             for n, line in enumerate(f.read_text().splitlines(), 1):
                 for hit in banned_hits(line):
                     errors.append(f"{f.relative_to(ROOT)}:{n}: banned wording '{hit}'")
+    for f in sorted(DESK.glob("*.js")) + sorted(DESK.glob("*.html")):
+        for n, line in enumerate(f.read_text().splitlines(), 1):
+            for fld in re.findall(r"\bp\.([A-Za-z_]\w*)", line):
+                if fld in PRICE_FIELDS:
+                    errors.append(f"{f.relative_to(ROOT)}:{n}: p.{fld} is a price; the desk shows no prices")
+                elif fld not in PICK_FIELDS:
+                    errors.append(f"{f.relative_to(ROOT)}:{n}: p.{fld} is not a field the lab writes on a pick")
     import shutil, subprocess
     if shutil.which("node"):
         for f in sorted(DESK.glob("*.js")):

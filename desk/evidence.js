@@ -35,7 +35,9 @@
     if (!g) return null;
     const base = String(strategy).split('@')[0].replace(/_/g, '-');
     const code = base.split('-')[0];   // strategy modules and experiment ids share a leading code, e.g. o01, a02
-    const id = Object.keys(g.experiments).find(k => k === `${base}-${horizon}` || k.startsWith(base + '-') || (/^[a-z]\d+[a-z]?$/.test(code) && k.startsWith(code + '-')));
+    const ks = Object.keys(g.experiments), codeOk = /^[a-z]\d+[a-z]?$/.test(code);
+    // exact id first, so a loose code prefix (e2a-) never picks a sibling experiment (e2a-d01c-fallback-day)
+    const id = ks.find(k => k === `${base}-${horizon}`) || ks.find(k => k === `${code}-${horizon}`) || ks.find(k => k.startsWith(base + '-')) || (codeOk && ks.find(k => k.startsWith(code + '-')));
     if (!id) return null;
     const e = g.experiments[id];
     return { id, ...e, superior: g.joint.stepm.includes(id), spa: g.joint.spa.consistent };
