@@ -20,13 +20,18 @@
     const path = (a, z) => { let d = `M${xs[a]},${ys[a]}`; for (let i = a + 1; i <= z; i++) { const cx = (xs[i - 1] + xs[i]) / 2; d += ` C${cx},${ys[i - 1]} ${cx},${ys[i]} ${xs[i]},${ys[i]}`; } return d; };
     const mx0 = mid * W / n, ticks = [[-4, '-4%'], [-2, '-2%'], [0, '0'], [2, '+2%'], [4, '+4%']];
     const left = path(0, mid - 1), right = path(mid, n - 1);
-    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Distribution of the last session's open-to-close moves across the universe">
+    const num = v => Number.isFinite(Number(v)) ? Number(v) : null, up = num(b.up), dn = num(b.down), tot = num(b.n);
+    const label = "Distribution of the last session's open-to-close moves across the universe" + (up != null && dn != null && tot ? `: ${up} stocks up, ${dn} down, of ${tot}` : '');
+    const fmt = e => (e > 0 ? '+' : '') + Number(e) + '%', E = b.edges_pct;
+    // text twin of the chart: one row per bin, counts straight from the file (W98)
+    const table = n === E.length + 1 ? `<details class="bt"><summary>Table of the bins</summary><table><caption>Stocks by open-to-close move, last session</caption><thead><tr><th scope="col">Move</th><th scope="col">Stocks</th></tr></thead><tbody>${b.counts.map((c, i) => `<tr><th scope="row">${i === 0 ? 'Below ' + fmt(E[0]) : i === n - 1 ? 'Above ' + fmt(E[i - 1]) : fmt(E[i - 1]) + ' to ' + fmt(E[i])}</th><td>${Number(c)}</td></tr>`).join('')}</tbody></table></details>` : '';
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(label)}">
       <defs><linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--down)" stop-opacity=".45"/><stop offset="1" stop-color="var(--down)" stop-opacity="0"/></linearGradient>
       <linearGradient id="gu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--up)" stop-opacity=".45"/><stop offset="1" stop-color="var(--up)" stop-opacity="0"/></linearGradient></defs>
       <path d="${left} L${xs[mid - 1]},${H - 22} L${xs[0]},${H - 22}Z" fill="url(#gd)"/><path d="${left}" fill="none" stroke="var(--down)" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
       <path d="${right} L${xs[n - 1]},${H - 22} L${xs[mid]},${H - 22}Z" fill="url(#gu)"/><path d="${right}" fill="none" stroke="var(--up)" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
       <line x1="${mx0}" x2="${mx0}" y1="4" y2="${H - 22}" stroke="currentColor" opacity=".55" vector-effect="non-scaling-stroke"/><circle cx="${mx0}" cy="${H - 22}" r="3" fill="var(--bg)" stroke="currentColor"/>
-      </svg><div class="ax" aria-hidden="true">${ticks.filter(([e]) => b.edges_pct.indexOf(e) >= 0).map(([e, t]) => `<span style="left:${(b.edges_pct.indexOf(e) + 1) / n * 100}%">${t}</span>`).join('')}</div>`;
+      </svg><div class="ax" aria-hidden="true">${ticks.filter(([e]) => b.edges_pct.indexOf(e) >= 0).map(([e, t]) => `<span style="left:${(b.edges_pct.indexOf(e) + 1) / n * 100}%">${t}</span>`).join('')}</div>${table}`;
   }
 
   // candles with a dotted average, from the lab's scaled chart payload

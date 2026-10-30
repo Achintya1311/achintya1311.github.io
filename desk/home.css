@@ -77,6 +77,14 @@
 .counts small { display: block; font: 400 .75rem var(--sans); color: var(--muted); margin-top: 4px; }
 .depth .ax { position: relative; height: 16px; font: .75rem var(--mono); color: var(--muted); }
 .depth .ax span { position: absolute; transform: translateX(-50%); }
+.depth .bt { margin-top: 4px; font-size: .75rem; color: var(--muted); }
+.depth .bt summary { display: flex; align-items: center; width: fit-content; min-height: 44px; padding: 0 4px; cursor: pointer; }
+.depth .bt table { width: 100%; max-width: 360px; border-collapse: collapse; font: .75rem var(--mono); }
+.depth .bt caption { text-align: left; padding: 4px 0; font-family: var(--sans); }
+.depth .bt th, .depth .bt td { padding: 4px 8px; border-bottom: 1px solid var(--line); font-weight: 400; }
+.depth .bt th[scope=row], .depth .bt thead th:first-child { text-align: left; }
+.depth .bt td, .depth .bt thead th:last-child { text-align: right; }
+.depth .bt td { color: var(--ink); }
 
 /* Newest findings strip (findings-feed.md "Home version") */
 .hfind { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
