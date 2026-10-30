@@ -24,6 +24,8 @@ PICK_FIELDS = {"symbol", "strategy", "reasoning", "chart", "late", "hit", "move_
 PRICE_FIELDS = {"open", "close", "move_rs"}
 # "buy-and-hold" is a research benchmark, not a call, so it is allowed.
 BANNED = re.compile(r"\b(?:buy(?!-and-hold)|sell(?:ing)?|opportunit\w*|upside|stop[- ]?loss|entry price|price target|target price)\b|₹", re.I)
+# desk text that says the current picks come from Champion v1 (W96, W100)
+STALE_PICKS = re.compile(r"current (?:picks use|blended score)", re.I)
 
 
 class Tags(HTMLParser):
@@ -175,6 +177,12 @@ def check_lab(errors):
                     errors.append(f"lab {h} xray.breadth.{f} missing or not an integer")
             if len(b.get("counts", [])) != len(b.get("edges_pct", [])) + 1 or 0 not in b.get("edges_pct", []):
                 errors.append(f"lab {h} xray.breadth: counts/edges_pct inconsistent or no 0 edge")
+            strategies = [x.get("bullish_strategy"), x.get("bearish_strategy")]
+            if not all(str(s).startswith("champion_v1") for s in strategies):
+                for name in ("home.js", "index.html"):
+                    txt = re.sub(r"\s+", " ", (DESK / name).read_text())
+                    if STALE_PICKS.search(txt):
+                        errors.append(f"desk/{name}: says the current picks or blended score are Champion v1, but the latest lab {h} picks use {strategies}; name the strategy from the file (W96)")
         elif h == "day":
             errors.append("lab day picks: no xray block (X-Ray and Home breadth read it)")
         for side in ("bullish", "bearish"):
