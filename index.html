@@ -101,15 +101,15 @@
         <h3>Risk</h3>
         <p class="stat">10 vs 5 <span>VaR breaches vs expected at 99%</span></p>
         <p class="a">On RELIANCE, the constant-volatility normal VaR fails its own backtest: Kupiec rejects it (p = 0.048). The tails are fatter than the model assumes. Tested out of sample on GULFOILLUB (pre-registered, 2,506 test days, refit every 20 days), the constant-volatility normal model still fails at 99% (42 breaches vs about 25 expected, p = 0.002); a GARCH-t model passes (21 vs about 25, p = 0.40).</p>
-        <figure class="fig"><img src="assets/charts/risk-lab.png" width="900" height="643" loading="lazy" alt="Histogram of a million simulated 20-day maximum drawdowns on RELIANCE, with the median and worst path marked."></figure>
+        <figure class="fig"><img src="assets/charts/risk-lab.png" width="900" height="643" loading="lazy" alt="Histogram of a million simulated 20-day maximum drawdowns on RELIANCE, with the median and worst path marked."><figcaption>From <code>python -m mcsim.portfolio --drawdown-plot</code> (monte-carlo-risk-lab, main as of 8796513, 17 Oct 2026); RELIANCE daily bars 4 Sep 2024 to 4 Sep 2026.</figcaption></figure>
         <a class="repo" href="https://github.com/Achintya1311/monte-carlo-risk-lab">monte-carlo-risk-lab &rarr;</a>
       </article>
 
       <article class="card">
         <h3>Options <span class="tag">NISM VIII</span></h3>
         <p class="stat">196 / 704 <span>NIFTY quotes break no-arbitrage on 16 Oct 2026 under one assumed forward; filtering is not optional</span></p>
-        <p class="a">On one real captured NSE option chain (16 Oct 2026; for RELIANCE 25 of 218 break the floor and 18 more have no two-sided quote), raw quotes violated no-arbitrage bounds routinely within it, so filtering is not optional. Every NIFTY batch captured since breaks the floor too: 49 / 704 (21 Oct), 89 / 288 (23 Oct, one expiry, intraday) and 129 / 704 (23 Oct close). Four batches in one week show it recurs, not that it always will. The counts assume one forward (r = 6.5%, q = 0); with a forward taken from each chain&rsquo;s own put-call parity they move both ways (196 &rarr; 126 on 16 Oct, 129 &rarr; 136 on 23 Oct), and breaks stay routine either way.</p>
-        <figure class="fig"><img src="assets/charts/iv-surface.png" width="900" height="562" loading="lazy" alt="Implied volatility smile across strikes from a real captured option chain, one curve per expiry."></figure>
+        <p class="a">On one real captured NSE option chain (16 Oct 2026; for RELIANCE 25 of 218 break the floor and 18 more have no two-sided quote), raw quotes violated no-arbitrage bounds routinely within it, so filtering is not optional. Every NIFTY batch captured since breaks the floor too: 49 / 704 (21 Oct), 89 / 288 (23 Oct, one expiry, intraday), 129 / 704 (23 Oct close) and 71 / 704 (27 Oct, intraday on an expiry day; another 288 contracts expire that day and have no implied vol). Five batches in under two weeks show it recurs, not that it always will. The counts assume one forward (r = 6.5%, q = 0); with a forward taken from each chain&rsquo;s own put-call parity they move both ways (196 &rarr; 126 on 16 Oct, 129 &rarr; 136 on 23 Oct), and breaks stay routine either way.</p>
+        <figure class="fig"><img src="assets/charts/iv-surface.png" width="900" height="562" loading="lazy" alt="Implied volatility smile across strikes from a real captured option chain, one curve per expiry."><figcaption>RELIANCE, NSE chain captured 16 Oct 2026. From <code>python -m volsurface.solve --provider nse_raw --surface --plot</code> (implied-vol-surface, main as of 857e7e9).</figcaption></figure>
         <a class="repo" href="https://github.com/Achintya1311/implied-vol-surface">implied-vol-surface &rarr;</a>
       </article>
 
@@ -133,7 +133,7 @@
         <h3>Portfolio optimisation</h3>
         <p class="stat">+420% vs +256% <span>equal weight vs max-Sharpe, both after costs, 126 folds</span></p>
         <p class="a">On 29 large caps, equal weight compounded ahead of mean-variance optimisation out of sample, and none of five pre-registered rules beat it: +427% vs +309% before costs, +420% vs +256% after costs, with both portfolios paying to rebalance. Costs widen the gap, since the optimizer&rsquo;s own turnover (54% per fold vs 5%) costs more than the raw cost-rate difference suggests. The gap is not statistically significant at the 252-day training window (Sharpe difference &minus;0.37, 95% interval &minus;0.92 to +0.09); equal weight stays ahead across the risk-free rates and training windows tried, and only the 126-day window separates them clearly.</p>
-        <figure class="fig"><img src="assets/charts/markowitz.png" width="900" height="675" loading="lazy" alt="Efficient frontier, tangency portfolio and capital market line for 29 large-cap stocks."></figure>
+        <figure class="fig"><img src="assets/charts/markowitz.png" width="900" height="675" loading="lazy" alt="Efficient frontier, tangency portfolio and capital market line for 29 large-cap stocks."><figcaption>From <code>optimizer.report</code>&rsquo;s frontier plot (markowitz-portfolio-optimizer, main as of bf609d3, 17 Oct 2026); 29 large caps, daily bars 1 Jan 2015 to 15 Oct 2026.</figcaption></figure>
         <a class="repo" href="https://github.com/Achintya1311/markowitz-portfolio-optimizer">markowitz-portfolio-optimizer &rarr;</a>
       </article>
 
