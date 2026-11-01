@@ -126,6 +126,7 @@ table.t{width:100%;border-collapse:collapse;font-size:.88rem} .t th{font-size:.7
 .fc-t .open::after{content:"";position:absolute;inset:0}
 .fc-t .open:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
 .card.fc p{padding:0}
+.card.fc .fc-stat.long{font:600 .95rem/1.3 var(--sans);letter-spacing:0}
 .card.fc .fc-stat{grid-area:stat;font:500 1.35rem/1.2 var(--mono);color:var(--accent);margin:4px 0 0;overflow-wrap:anywhere}
 .card.fc .fc-sub{grid-area:sub;font-size:.8rem;color:var(--muted);margin:6px 0 0;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .card.fc .fc-a{grid-area:a;font-size:.88rem;margin:6px 0 0;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}

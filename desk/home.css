@@ -92,6 +92,7 @@
 .hf:hover { border-color: var(--accent); }
 .hf:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .hf-t { grid-area: t; font-weight: 600; font-size: .92rem; line-height: 1.3; }
+.hf-s.long { font: 600 .88rem/1.3 var(--sans); }
 .hf-s { grid-area: s; font: 500 1.15rem/1.25 var(--mono); color: var(--accent); margin-top: 4px; overflow-wrap: anywhere; }
 .hf-u { grid-area: u; font-size: .78rem; color: var(--muted); margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .hf .fc-th { grid-area: th; }
