@@ -216,7 +216,7 @@
       return `<line x1="${x}" x2="${x}" y1="${y(h)}" y2="${y(l)}" stroke="${col}" stroke-width="1"/><rect x="${x - bw * .32}" y="${y(Math.max(o, cl))}" width="${bw * .64}" height="${Math.max(Math.abs(y(o) - y(cl)), 1)}" ${up ? `fill="${col}"` : `fill="none" stroke="${col}" stroke-width="1"`}/>`; }).join('');
     return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Recent price bars, filled when the day closed above its open and hollow when below${c.zone ? ', with the nearest order-block zone' : ''}">${z}${bars}</svg>`;
   };
-  let EV = null, HZ = 'day', RK = {};
+  let EV = null, HZ = 'day', RK = {}, LBL = '';
   const fp = x => (x >= 0 ? '+' : '') + (x * 100).toFixed(2);
   const rankTag = (p, word) => { const r = RK[p.symbol], v = r && (word === 'BULLISH' ? r.b : r.d); return v != null ? ` · rank p${v}` : ''; };
   // one evidence line per strategy, under the panel heading instead of on every tile (W42); the wording follows the interval (W101)
@@ -227,7 +227,9 @@
       : e.lo > 0 ? 'positive in the train years, but not after the many-trials correction'
       : e.hi < 0 ? '<span class="r">entirely below zero: it loses to the market line</span>'
       : 'not distinguishable from zero';
-    return `<div class="ev">${nm}, train evidence 2015 to 2020: edge ${fp(e.mean)} pts, 95% interval ${fp(e.lo)} to ${fp(e.hi)}; ${how}.</div>`;
+    // the lab's own label decides 'provisional' (SPEC section 10); a train-years pass is not the lab's full test, so say so next to it (W114)
+    const prov = LBL === 'provisional' && (e.superior || e.lo > 0) ? ' This is a train-years result only: the lab still labels this strategy provisional because it has not passed all of its own tests.' : '';
+    return `<div class="ev">${nm}, train evidence 2015 to 2020: edge ${fp(e.mean)} pts, 95% interval ${fp(e.lo)} to ${fp(e.hi)}; ${how}.${prov}</div>`;
   };
   // DD9 (W110): the first pick on each side is the lead and shows its chart and reasoning; the rest are one-line rows that open on click or tap
   const result = p => p.hit != null ? `<span class="num ${p.hit ? 'g' : 'r'}" style="grid-column:1/-1">Result: ${p.hit ? 'moved the picked way' : 'moved the other way'} (open to close ${(+p.move_pct).toFixed(2)}%)${p.late ? ' · committed after the open, not counted in hit rates' : ''}</span>` : p.late ? '<span class="num" style="grid-column:1/-1">Committed after the open, not counted in hit rates</span>' : '';
@@ -241,7 +243,7 @@
   const draw = async h => {
     try {
       const d = await latest(h), t = d.tables || {};
-      HZ = h; EV = await window.deskEvLoad(); RK = Object.fromEntries(((d.xray && d.xray.stocks) || []).map(s => [s.s, s]));
+      HZ = h; LBL = d.label || ''; EV = await window.deskEvLoad(); RK = Object.fromEntries(((d.xray && d.xray.stocks) || []).map(s => [s.s, s]));
       $('#picks-sub').textContent = `${h === 'day' ? 'Day' : 'Week'} picks for session ${d.session}${dry ? ' (testing phase: these come from the lab\'s rehearsal folder, not its published picks)' : ''}`;
       $('#picks-body').innerHTML = `<div class="two">${table('Bullish picks', 'up', 'BULLISH', t.bullish || [])}${table('Bearish picks', 'dn', 'BEARISH', t.bearish || [])}</div>`;
       $('#picks-note').textContent = d.disclaimer || '';
