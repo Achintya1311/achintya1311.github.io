@@ -92,7 +92,9 @@
       s += `<line x1="${x(pts(r.lo))}" x2="${x(pts(r.hi))}" y1="${y}" y2="${y}" stroke="${col}" stroke-width="2.2"/><circle cx="${x(pts(r.mean))}" cy="${y}" r="4" fill="${col}"/>`;
       s += `<text x="${W - R + 8}" y="${y + 4}" font-size="11" class="num" fill="currentColor">${fmt(r.mean)}</text>`;
     });
-    return s + '</svg></div>';
+    s += '</svg></div>';
+    const tr = rows.map(r => `<tr><th scope="row">${esc(pretty(r.id))}</th><td class="num">${fmt(r.mean)}</td><td class="num">${fmt(r.lo)} to ${fmt(r.hi)}</td><td>${joint.stepm.includes(r.id) ? 'passes' : r.hi < 0 ? 'below zero' : 'does not pass'}</td></tr>`).join('');
+    return s + `<details class="bt"><summary>Table of this chart</summary><div class="scroll" tabindex="0" role="region" aria-label="Edge table, scrolls sideways"><table><caption>Edge over the market base rate, points, with 95% interval</caption><thead><tr><th scope="col">Variant</th><th scope="col">Edge</th><th scope="col">95% interval</th><th scope="col">Many-trials check</th></tr></thead><tbody>${tr}</tbody></table></div></details>`;
   }
 
   window.deskForest = forest; window.deskFamily = family; window.deskPretty = pretty;
@@ -153,10 +155,16 @@
   }
 
   // ---------- Market X-Ray ----------
+  const binTable = b => {
+    const E = b.edges_pct, n = b.counts.length, f = e => (e > 0 ? '+' : '') + Number(e) + '%';
+    if (n !== E.length + 1) return '';
+    return `<details class="bt"><summary>Table of the bins</summary><table><caption>Stocks by open-to-close move, last session</caption><thead><tr><th scope="col">Move</th><th scope="col">Stocks</th></tr></thead><tbody>${b.counts.map((c, i) => `<tr><th scope="row">${i === 0 ? 'Below ' + f(E[0]) : i === n - 1 ? 'Above ' + f(E[i - 1]) : f(E[i - 1]) + ' to ' + f(E[i])}</th><td>${Number(c)}</td></tr>`).join('')}</tbody></table></details>`;
+  };
+
   function histogram(b) {
     const W = 560, H = 120, n = b.counts.length, bw = W / n, mx = Math.max(...b.counts, 1), mid = b.edges_pct.indexOf(0) + 1;
     const bars = b.counts.map((c, i) => `<rect x="${i * bw + 1}" y="${H - 16 - c / mx * (H - 26)}" width="${bw - 2}" height="${c / mx * (H - 26)}" fill="${i < mid ? 'var(--down)' : 'var(--up)'}" opacity=".85"><title>${c} stocks</title></rect>`).join('');
-    return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Distribution of the last session's open-to-close moves across the universe">${bars}<line x1="${mid * bw}" x2="${mid * bw}" y1="4" y2="${H - 16}" stroke="currentColor" opacity=".5"/><text x="2" y="${H - 3}" font-size="10" fill="currentColor" opacity=".6">down more than 4%</text><text x="${W - 2}" y="${H - 3}" font-size="10" text-anchor="end" fill="currentColor" opacity=".6">up more than 4%</text></svg>`;
+    return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Distribution of the last session's open-to-close moves across the universe">${bars}<line x1="${mid * bw}" x2="${mid * bw}" y1="4" y2="${H - 16}" stroke="currentColor" opacity=".5"/><text x="2" y="${H - 3}" font-size="10" fill="currentColor" opacity=".6">down more than 4%</text><text x="${W - 2}" y="${H - 3}" font-size="10" text-anchor="end" fill="currentColor" opacity=".6">up more than 4%</text></svg>` + binTable(b);
   }
 
   async function xrayView() {
