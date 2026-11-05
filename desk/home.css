@@ -5,7 +5,7 @@
 .hero-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 12px; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .hero-top .asof { flex: 1 1 auto; text-align: right; }
 @media (max-width: 760px) { .hero-top .asof { flex-basis: 100%; text-align: left; } }
-.hero-top small { letter-spacing: 0; text-transform: none; margin-left: 6px; opacity: .8; }
+.hero-top small { letter-spacing: 0; text-transform: none; margin-left: 6px; font-size: .75rem; }
 .status { display: inline-flex; align-items: center; gap: 8px; letter-spacing: 0; text-transform: none; font-size: .78rem; }
 .depth svg { width: 100%; height: 120px; display: block; }
 .tb { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 8px; border-top: 1px solid var(--line); }
@@ -51,7 +51,7 @@
 .jr a:first-child { border-top: 0; padding-top: 0; }
 .jr .av2 { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #4c8bf5); }
 .jr b { font-size: .84rem; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.jr b .tag { font-weight: 600; } .jr b time { color: var(--muted); font-weight: 400; font-size: .74rem; }
+.jr b .tag { font-weight: 600; } .jr b time { color: var(--muted); font-weight: 400; font-size: .75rem; }
 .jr small { display: block; color: var(--muted); font-size: .82rem; line-height: 1.4; margin-top: 2px; }
 .scard { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; text-decoration: none; color: var(--ink); }
 .scard b { display: block; font-size: .95rem; } .scard small { display: block; color: var(--muted); font-size: .8rem; line-height: 1.4; margin-top: 2px; }

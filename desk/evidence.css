@@ -4,7 +4,7 @@
 .muted { color: var(--muted); }
 #ev-body > * + *, #xr-body > * + * { margin-top: 18px; }
 #ev-sum { margin-bottom: 16px; }
-table.t.ab td:first-child small { display: block; color: var(--muted); font: 400 .74rem var(--sans); }
+table.t.ab td:first-child small { display: block; color: var(--muted); font: 400 .75rem var(--sans); }
 table.t.ab td, table.t.ab th { text-align: left; }
 table.t.ab td.num { font-family: var(--mono); }
 .scroll { overflow-x: auto; }
