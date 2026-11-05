@@ -44,9 +44,28 @@
   </nav>
   <main id="main" tabindex="-1">
     <section class="view" id="home">
-      <div class="top"><div><h1 id="hello">Good evening</h1><p id="today"></p></div><a class="btn" href="../research/craft.pdf">Research paper</a></div>
+      <!-- DD1 first screen: who, what he built, both certifications, three proof sentences, three start-here links. The market sits below. -->
+      <div class="ov">
+        <p class="ov-k" id="ov-kick">Equity research candidate · data science + finance</p>
+        <h1 id="hello">Achintya Mishra</h1>
+        <p class="ov-what">I built <b>StockStalker</b>, a command-line research pipeline on Indian (NSE) market data, <span id="ov-built">plus research projects</span>, and a lab that tests rule-based strategies against the market's own base rate. Negative results are reported too.</p>
+        <p class="ov-cert" id="ov-cert">Certified: NISM Series XV · Research Analyst; NISM Series VIII · Equity Derivatives</p>
+        <h2 class="ov-h">What the testing showed</h2>
+        <ul class="proof">
+          <li id="proof-lab">The lab's evidence file is loading.</li>
+          <li data-card="Risk">Risk: a constant-volatility normal model failed its 99% test out of sample on GULFOILLUB (42 breaches vs about 25 expected); a GARCH-t model passed (21 vs about 25).</li>
+          <li data-card="Portfolio optimisation">Portfolio: on 29 large caps, equal weight compounded ahead of mean-variance optimisation out of sample over 126 folds (+420% vs +256% after costs); the gap is not statistically significant at the 252-day training window.</li>
+        </ul>
+        <nav class="start" aria-label="Start here"><a href="#findings">Browse the findings →</a><a href="#evidence">What survived the test →</a><a href="#wrong">What I got wrong →</a></nav>
+      </div>
+      <h2 class="ov-sub">Latest from the research and the lab <small id="today"></small></h2>
       <div class="hcols">
         <div class="hmain">
+          <div class="hcard hnew"><h2>Newest findings <a href="#findings">Open Findings →</a></h2><div id="home-find" class="hfind"><p class="note">Loading findings…</p></div></div>
+          <div class="hrow">
+            <div class="hcard"><h2>Strategies tested <a href="#evidence">Open Evidence →</a></h2><div id="strat"></div></div>
+            <div class="hcard"><h2>Lab journal this week <a href="https://github.com/Achintya1311/stockstalker-lab/blob/main/state/journal.md">Open journal →</a></h2><div id="journal" class="jr"></div></div>
+          </div>
           <div class="hero">
             <div class="hero-top"><span class="status"><i class="dot live"></i><span id="mkt-state">Closed</span></span><span class="asof">MARKET BREADTH <small id="asof"></small></span></div>
             <p id="counts" class="counts" aria-live="polite"></p>
@@ -55,11 +74,6 @@
               <div class="tb-col up"><h2><svg width="14" height="14" aria-hidden="true"><use href="#i-chart"/></svg> TOP BULLISH</h2><div id="top-bull" class="trows"></div></div>
               <div class="tb-col dn"><h2>TOP BEARISH</h2><div id="top-bear" class="trows"></div></div>
             </div>
-          </div>
-          <div class="hcard hnew"><h2>Newest findings <a href="#findings">Open Findings →</a></h2><div id="home-find" class="hfind"><p class="note">Loading findings…</p></div></div>
-          <div class="hrow">
-            <div class="hcard"><h2>Strategies tested <a href="#evidence">Open Evidence →</a></h2><div id="strat"></div></div>
-            <div class="hcard"><h2>Lab journal this week <a href="https://github.com/Achintya1311/stockstalker-lab/blob/main/state/journal.md">Open journal →</a></h2><div id="journal" class="jr"></div></div>
           </div>
         </div>
         <div class="hside">

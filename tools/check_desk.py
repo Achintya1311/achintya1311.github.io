@@ -124,6 +124,16 @@ def check_root_contract(errors):
             errors.append(f"desk/index.html: STATUS '{key}' no longer says '{desk_p}'; update the pins in tools/check_desk.py with it")
         elif root_p not in text:
             errors.append(f"desk/index.html: STATUS '{key}' says '{desk_p}' but the root card no longer says '{root_p}'")
+    # the Overview proof sentences (data-card) may only use numbers their root card states (W112, as W61 for STATUS)
+    for key, line in re.findall(r'<li data-card="([^"]+)">(.*?)</li>', page, re.S):
+        card = next((c for c in cards if re.search(rf"<h3[^>]*>\s*{re.escape(key)}\b", c)), "")
+        if not card:
+            errors.append(f"desk/index.html: Overview proof names root card '{key}', which no longer exists")
+            continue
+        text = html_unescape(re.sub(r"<[^>]+>", " ", card)).replace("\u2212", "-")
+        for tok in re.findall(r"[-+\u2212]?\d[\d,.]*\d%?|\d%?", html_unescape(line)):
+            if tok.replace("\u2212", "-").rstrip(".,") not in text:
+                errors.append(f"desk/index.html: Overview proof '{key}' says {tok}, which the root card does not")
     # when a root card adds a scope, the desk's STATUS line must carry it too (W88); numbers alone miss this
     for key, root_says, desk_must in (("Reverse DCF", "FY2023-24", "FY2023-24"), ("Options", "forward", "forward")):
         card = next((c for c in cards if re.search(rf"<h3[^>]*>\s*{re.escape(key)}\b", c)), "")

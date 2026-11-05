@@ -7,7 +7,6 @@
 
   // greeting and market state (IST)
   const now = new Date(), ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })), h = ist.getHours(), m = ist.getMinutes(), wd = ist.getDay();
-  $('#hello').textContent = `${h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'}, Achintya`;
   $('#today').textContent = ist.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
   const mins = h * 60 + m, open = wd >= 1 && wd <= 5 && mins >= 555 && mins < 930;
   const dot = $('#mkt-state').previousElementSibling; if (dot) dot.classList.toggle('live', open);
@@ -69,13 +68,14 @@
 
   async function strategies() {
     const ev = await window.deskEvLoad();
-    if (!ev) { $('#strat').innerHTML = '<p class="note">Could not load the evidence file.</p>'; return; }
+    if (!ev) { $('#strat').innerHTML = '<p class="note">Could not load the evidence file.</p>'; $('#proof-lab').innerHTML = 'Lab: the evidence file could not be loaded here; <a href="#evidence">open Evidence</a>.'; return; }
     const g = ev['day/bearish'], rows = Object.entries(g.experiments).map(([id, e]) => ({ id, ...e })).sort((a, b) => b.mean - a.mean);
     const sup = g.joint.stepm, nsup = sup.length, nfail = rows.length - nsup;
     $('#strat').innerHTML = `<div class="strip"><span class="a">SURVIVE ${nsup}</span><span class="ticks">${rows.map(r => `<i class="${sup.includes(r.id) ? 's' : r.hi < 0 ? 'f' : ''}" title="${esc(window.deskPretty(r.id))}"></i>`).join('')}</span><span class="b">NOT SURVIVING ${nfail}</span></div>${bars(rows.slice(0, 8), sup)}<p class="note">Train 2015 to 2020, day horizon, bearish side. Here ${nsup} of ${rows.length} variants pass the many-trials check at the 10% level; across all four horizon and side groups the lab counts ${Object.values(ev).reduce((n, v) => n + v.joint.stepm.length, 0)} of ${Object.values(ev).reduce((n, v) => n + Object.keys(v.experiments).length, 0)}. These are lab experiments. ${(() => { const c = k => ev[k] && ev[k].experiments['champion-v1-day'], b = c('day/bullish'), s = c('day/bearish');
       return s ? `The lab's first provisional rule, its blended score (Champion v1), has its own train replay in this file: on the bearish side its interval is ${s.lo > 0 ? 'above zero' : s.hi < 0 ? 'entirely below zero' : 'not distinguishable from zero'} (${(s.lo * 100).toFixed(2)} to ${(s.hi * 100).toFixed(2)} points), and it ${sup.includes('champion-v1-day') ? 'is' : 'is not'} among the ${nsup} variants that stay superior once the number of tries is counted${b ? `, and on the bullish side its interval is ${b.hi < 0 ? 'entirely below zero (it loses to the market line)' : 'not above zero'}` : ''}. Each pick on the Picks view names the strategy that chose it.` : 'The lab\'s first provisional rule, a blended score, has its train replay in a separate lab report. Each pick on the Picks view names the strategy that chose it.'; })()}</p>`;
     const tot = Object.values(ev).reduce((n, v) => n + v.joint.stepm.length, 0), all = Object.values(ev).reduce((n, v) => n + Object.keys(v.experiments).length, 0);
     $('#surv-line').textContent = `${tot} of ${all} results pass the many-trials check (10% level)`;
+    $('#proof-lab').textContent = `Lab: ${tot} of ${all} strategy results still beat the market's base rate after correcting for how many were tried (10% level), in the 2015 to 2020 train years; this count leaves out later, unseen years.`;
     $('#surv-bar').style.width = (tot / all * 100).toFixed(0) + '%';
   }
 
@@ -98,5 +98,17 @@
     } catch { box.innerHTML = '<p class="note">Could not load findings here. <a href="../index.html#findings">Open the classic page</a>.</p>'; }
   }
 
-  top(); strategies(); journal(); findings();
+  async function who() {
+    try {
+      const { doc } = await window.deskRoot(), hero = doc.querySelector('header.hero'); if (!hero) return;
+      const k = hero.querySelector('.kicker'), n = hero.querySelector('h1'), f = [...hero.querySelectorAll('.facts > div')];
+      const fact = name => f.find(d => d.querySelector('dt').textContent.trim() === name);
+      if (k) $('#ov-kick').textContent = k.textContent.trim(); if (n) $('#hello').textContent = n.textContent.trim();
+      const c = fact('Certified'), b = fact('Built');
+      if (c) $('#ov-cert').textContent = 'Certified: ' + [...c.querySelectorAll('dd')].map(d => d.textContent.trim()).join('; ');
+      if (b) { const m = b.querySelector('dd').textContent.match(/^(\d+) research repos/); if (m) $('#ov-built').textContent = `${m[1]} research projects alongside it`; }
+    } catch {}
+  }
+
+  who(); top(); strategies(); journal(); findings();
 })();
