@@ -14,6 +14,18 @@ window.deskRoot = (() => {
     return { doc, cards };
   }));
 })();
+/* The lab's reasoning text can print price levels ("close above SMA200=2407.84"). The desk shows no prices (DD4, SPEC §10),
+   so every reasoning string goes through this before it is shown (W109). tools/check_desk.py keeps the same rules in LEVEL_RULES. */
+window.deskNoLevels = (() => {
+  const N = '[-+]?\\d[\\d,]*(?:\\.\\d+)?', D = '[-+]?\\d[\\d,]*\\.\\d+(?![\\d.])';
+  const R = [
+    [`\\b((?:SMA|EMA|WMA|HMA|DEMA|TEMA|KAMA|VWAP)\\d*)\\s*=\\s*${N}`, 'gi', '$1'],
+    [`\\b(close|open|high|low|pivot|[RS][1-3]|Tenkan|Kijun|VWAP)\\s+${D}`, 'gi', '$1'],
+    [`\\b(channel|cloud|range|band)\\s+${D}\\s*(?:-|to|\u2013)\\s*${D}`, 'gi', '$1'],
+    [`\\s*\\[\\s*${D}\\s*,\\s*${D}\\s*\\]`, 'g', ''],
+  ].map(([re, f, to]) => [new RegExp(re, f), to]);
+  return s => R.reduce((t, [re, to]) => t.replace(re, to), String(s)).replace(/\s+([,)])/g, '$1').replace(/\s{2,}/g, ' ').trim();
+})();
 /* Desk core: theme, sidebar, hash views, filter chips, lightbox. No dependencies. */
 (() => {
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];

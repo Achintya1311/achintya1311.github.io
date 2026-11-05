@@ -44,7 +44,7 @@
     return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${body}<path d="${dots}" fill="none" stroke="#4c8bf5" stroke-width="1" stroke-dasharray="1.5 2.5" vector-effect="non-scaling-stroke"/></svg>`;
   }
 
-  const tile = (p, rk, side) => `<a class="t2" href="#picks" title="${esc(p.reasoning || '')}">
+  const tile = (p, rk, side) => `<a class="t2" href="#picks" title="${esc(window.deskNoLevels(p.reasoning || ''))}">
     <span class="logo" style="background:hsl(${hue(p.symbol)} 55% 62%)">${esc(p.symbol.slice(0, 2))}</span>
     <span class="nm"><span class="r1"><span class="bd">${side === 'up' ? 'BULL' : 'BEAR'}</span><b>${esc(p.symbol)}</b></span><small>${esc(String(p.strategy || '').replace('@v1', '').replace(/_/g, ' '))}</small></span>
     <span class="mini">${mini(p.chart)}</span><span class="rk">${rk != null ? 'p' + rk : '–'}</span></a>`;
