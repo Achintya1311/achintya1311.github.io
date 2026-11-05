@@ -71,6 +71,7 @@ svg.ch{width:100%;height:auto;display:block}
 .act:first-of-type{border-top:0} .act small{display:block;color:var(--muted)}
 .ico{width:30px;height:30px;border-radius:8px;background:var(--surface2);display:grid;place-items:center;color:var(--accent);flex:none}
 .chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.fcount{margin:-8px 0 12px}
 .chip{background:var(--surface);border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:5px 13px;font-size:.84rem}
 .chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .seg{margin-left:auto;display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}

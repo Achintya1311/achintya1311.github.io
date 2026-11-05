@@ -48,6 +48,8 @@ window.deskRoot = (() => {
     const on = $('.chip[aria-pressed=true]', f.parentElement), sort = $('.seg [aria-pressed=true]', f.parentElement);
     const cat = on ? on.dataset.cat : 'all';
     $$('.card', f).forEach(c => c.hidden = cat !== 'all' && !(c.dataset.cat || '').split(' ').includes(cat));
+    const cnt = $('[data-count]', f.parentElement), all = $$('.card', f), vis = all.filter(c => !c.hidden).length;
+    if (cnt) cnt.textContent = `Showing ${vis} of ${all.length} findings` + (cat !== 'all' && on ? ` (${on.textContent})` : '') + (sort && sort.dataset.sort === 'neg' ? ', negative results first' : '') + '.';
     if (sort) { const cs = $$('.card', f); const k = sort.dataset.sort; cs.sort((a, b) => k === 'old' ? b.dataset.i - a.dataset.i : k === 'neg' ? (b.dataset.neg - a.dataset.neg) || (a.dataset.i - b.dataset.i) : a.dataset.i - b.dataset.i); cs.forEach(c => f.appendChild(c)); }
   };
   document.addEventListener('click', e => {
