@@ -42,7 +42,7 @@
     <a class="nav" href="../index.html" aria-label="Classic page"><svg><use href="#i-file"/></svg><span class="lbl">Classic page</span></a>
     <a class="nav" href="https://github.com/Achintya1311" aria-label="GitHub"><svg><use href="#i-ext"/></svg><span class="lbl">GitHub</span></a>
     <div class="grow"></div>
-    <div class="pill"><span class="dot"></span><span class="lbl">Historical data only</span>
+    <div class="pill" title="Lab status: testing phase, live from 2 Nov 2026"><span class="dot live" aria-hidden="true"></span><span class="lbl">Testing phase, live from 2 Nov</span>
       <span class="theme"><button data-t="light" aria-label="Light theme" aria-pressed="false"><svg width="14" height="14"><use href="#i-sun"/></svg></button><button data-t="dark" aria-label="Dark theme" aria-pressed="true"><svg width="14" height="14"><use href="#i-moon"/></svg></button></span></div>
     <div class="me"><span class="av"></span><div>Achintya Mishra<small>NISM XV · VIII</small></div></div>
   </nav>
@@ -67,7 +67,7 @@
           </div>
         </div>
         <div class="hside">
-          <a class="scard" href="#picks"><span class="ico"><svg width="16" height="16"><use href="#i-book"/></svg></span><div><b>Pick record</b><small>Hits and misses against the market's base rate start at go-live on 2 Nov 2026. Every pick stays, misses included.</small></div></a>
+          <a class="scard" href="#picks"><span class="ico"><svg width="16" height="16"><use href="#i-book"/></svg></span><div><b>Pick record</b><small>Live since 2 Nov 2026: each pick is committed before the open and scored after the close against the market's base rate. Every pick stays, misses included.</small></div></a>
           <a class="scard learn" href="#evidence"><div class="thumb"><svg width="22" height="22"><use href="#i-flask"/></svg></div><div><span class="kick">START HERE</span><b>What survived the test</b><small id="surv-line">Evidence from the lab</small><i class="prog"><s id="surv-bar"></s></i></div></a>
           <div class="qa">
             <a href="#findings"><span class="ico"><svg width="16" height="16"><use href="#i-grid"/></svg></span><span><b>Browse findings</b><small>charts, negative results kept</small></span></a>
@@ -201,7 +201,7 @@
     try {
       const d = await latest(h), t = d.tables || {};
       HZ = h; EV = await window.deskEvLoad(); RK = Object.fromEntries(((d.xray && d.xray.stocks) || []).map(s => [s.s, s]));
-      $('#picks-sub').textContent = `${h === 'day' ? 'Day' : 'Week'} picks for session ${d.session}${dry ? ' (dry run: the lab has not gone live yet, these are not published picks)' : ''}`;
+      $('#picks-sub').textContent = `${h === 'day' ? 'Day' : 'Week'} picks for session ${d.session}${dry ? ' (testing phase: these come from the lab\'s rehearsal folder, not its published picks)' : ''}`;
       $('#picks-body').innerHTML = `<div class="two">${table('Bullish picks', 'up', 'BULLISH', t.bullish || [])}${table('Bearish picks', 'dn', 'BEARISH', t.bearish || [])}</div>`;
       $('#picks-note').textContent = d.disclaimer || '';
     } catch { $('#picks-sub').textContent = 'Could not reach the lab’s picks right now.'; $('#picks-body').innerHTML = `<div class="empty">GitHub may be limiting requests; try the Day or Week button again in a few minutes, or see the <a href="https://github.com/${REPO}/tree/main/live">lab repo</a>.</div>`; }

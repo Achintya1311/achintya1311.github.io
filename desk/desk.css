@@ -28,8 +28,8 @@ a{color:var(--accent);text-underline-offset:3px} button{font:inherit;color:inher
 .nav.on{background:var(--surface2);color:var(--ink)} .nav.on svg{color:var(--accent)}
 .nav svg{width:18px;height:18px;flex:none}
 .grow{flex:1}
-.pill{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);padding:8px 10px;border:1px solid var(--line);border-radius:999px;white-space:nowrap;overflow:hidden}
-.pill .lbl{overflow:hidden;text-overflow:ellipsis;min-width:0}.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:none} .dot.live{background:var(--up)}
+.pill{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);padding:8px 10px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.pill .lbl{white-space:normal;line-height:1.3;min-width:0}.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:none} .dot.live{background:var(--up)}
 .theme{display:flex;gap:2px;margin-left:auto;flex:none;background:var(--surface2);border-radius:999px;padding:2px}
 .theme button{background:none;border:0;border-radius:999px;padding:4px 6px;color:var(--muted);line-height:0}
 .theme button[aria-pressed=true]{background:var(--line);color:var(--ink)}

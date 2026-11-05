@@ -54,7 +54,7 @@
     if (!r) { $('#top-bull').innerHTML = $('#top-bear').innerHTML = '<p class="note">Could not load the lab’s picks.</p>'; $('#depth').innerHTML = '<p class="note">Breadth needs the lab’s picks file, which could not be loaded.</p>'; return; }
     const d = r.data, x = d.xray, rk = {};
     ((x && x.stocks) || []).forEach(s => rk[s.s] = s);
-    if (x) { $('#depth').innerHTML = depth(x.breadth); $('#asof').textContent = 'as of ' + x.asof + (r.dry ? ' · dry run' : ''); }
+    if (x) { $('#depth').innerHTML = depth(x.breadth); $('#asof').textContent = 'as of ' + x.asof + (r.dry ? ' · rehearsal file' : ''); }
     if (x && x.breadth && x.breadth.n) $('#counts').innerHTML = `<span class="g">▲ ${Number(x.breadth.up)}</span> <span class="r">▼ ${Number(x.breadth.down)}</span><small>stocks up / down in the last session, by price move, not picks</small>`;
     $('#top-bull').innerHTML = (d.tables.bullish || []).slice(0, 3).map(p => tile(p, rk[p.symbol] && rk[p.symbol].b, 'up')).join('') || '<p class="note">No picks.</p>';
     $('#top-bear').innerHTML = (d.tables.bearish || []).slice(0, 3).map(p => tile(p, rk[p.symbol] && rk[p.symbol].d, 'dn')).join('') || '<p class="note">No picks.</p>';
