@@ -44,7 +44,7 @@ main{padding:22px clamp(16px,3vw,32px) 60px;min-width:0}
 .top .btn{margin-left:auto}
 .btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:8px 16px;font-weight:600;text-decoration:none;display:inline-block}
 .btn.ghost{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}
-.view{display:none} .view.on{display:block}
+.view{display:none;scroll-margin-top:100vh} .view.on{display:block}
 .cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
 .panel h2{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
@@ -164,3 +164,19 @@ table.t{width:100%;border-collapse:collapse;font-size:.88rem} .t th{font-size:.7
 .ab h2{font-size:1.2rem;letter-spacing:0;text-transform:none;color:var(--ink)} .ab .facts{display:grid;gap:12px;margin:16px 0}
 .ab .facts dt{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)} .ab .facts dd{margin:2px 0 0}
 .ab .links{display:flex;flex-wrap:wrap;gap:8px}
+
+/* Mobile (SITE_SPEC design rules, W2): below 760px a bottom bar with the five labelled groups, 44px+ targets */
+.mbar{display:none}
+@media(max-width:760px){
+  .shell,.shell.collapsed{grid-template-columns:minmax(0,1fr)}
+  .shell .side{position:fixed;left:0;right:0;bottom:0;top:auto;height:auto;flex-direction:row;gap:0;padding:4px 4px calc(4px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line);z-index:40;overflow:visible}
+  .shell .side .brand,.shell .side .pill,.shell .side .me,.shell .side .grow{display:none}
+  .shell .side .nav{flex:1 1 0;min-width:0;flex-direction:column;justify-content:center;gap:3px;padding:6px 2px;min-height:54px;font-size:.75rem;line-height:1.1;text-align:center}
+  .shell .side .nav .lbl{display:block;white-space:nowrap}
+  main{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  .mbar{display:flex;align-items:center;gap:10px;margin:-8px 0 14px}
+  .mb-b{width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:.85rem;flex:none}
+  .mbar .mpill{flex:1;min-width:0;padding:6px 10px}
+  .mbar .theme{flex-direction:row;margin:0}
+  .mbar .theme button{min-width:44px;min-height:44px;display:grid;place-items:center}
+}

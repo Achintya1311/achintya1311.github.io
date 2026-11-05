@@ -55,6 +55,8 @@ window.deskNoLevels = (() => {
     shown = true;
   };
   addEventListener('hashchange', show); show();
+  // the browser scrolls to the #view section on load, which would hide the mobile top strip above it; views always open at the top
+  addEventListener('load', () => window.scrollTo(0, 0));
   // skip link: focus main without touching the hash, which drives the views
   $('.skip').onclick = e => { e.preventDefault(); $('main').focus(); };
   // chips + segmented sort, applied per feed
