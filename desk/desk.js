@@ -44,8 +44,11 @@ window.deskNoLevels = (() => {
     const v = location.hash.slice(1) || $('.view').id;
     const t = $('#' + CSS.escape(v)) && $('#' + CSS.escape(v)).classList.contains('view') ? v : $('.view').id;
     $$('.view').forEach(e => e.classList.toggle('on', e.id === t));
-    $$('.nav[href^="#"]').forEach(a => { const on = a.getAttribute('href') === '#' + t; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); });
-    document.title = ($('.nav.on .lbl') ? $('.nav.on .lbl').textContent + ' · ' : '') + (shell.dataset.name || 'Desk');
+    // a group is current when it holds the view (DD1); within a group the sub-tab carries aria-current
+    $$('.nav[href^="#"]').forEach(a => { const on = (a.dataset.views || a.getAttribute('href').slice(1)).split(' ').includes(t); a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); });
+    $$('.subtabs a').forEach(a => { const on = a.getAttribute('href') === '#' + t; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); });
+    const sub = $('.view.on .subtabs a.on'), grp = $('.nav.on .lbl');
+    document.title = (sub ? sub.textContent + ' · ' : '') + (grp ? grp.textContent + ' · ' : '') + (shell.dataset.name || 'Desk');
     window.scrollTo(0, 0);
     // move focus to the new view's heading, but not on first load (deep links, skip link)
     if (shown) { const h = $('.view.on h1'); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }

@@ -21,6 +21,7 @@
 <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2zM12 10v5M12 18v.5"/></symbol>
 <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6zM14 3v5h5M9 13h7M9 17h7"/></symbol>
 <symbol id="i-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol><symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></symbol>
 <symbol id="i-side" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 6l-6 6 6 6M19 6l-6 6 6 6"/></symbol>
@@ -30,17 +31,12 @@
 <div class="shell" data-name="Research Desk">
   <nav class="side" aria-label="Sections">
     <div class="brand"><b>AM</b><span class="lbl">Research Desk</span><button class="tog" data-tog aria-label="Collapse sidebar" aria-expanded="true"><svg width="16" height="16"><use href="#i-side"/></svg></button></div>
-    <a class="nav" href="#home" aria-label="Home"><svg><use href="#i-home"/></svg><span class="lbl">Home</span></a>
-    <div class="nav-h">Research</div>
-    <a class="nav" href="#findings" aria-label="Findings"><svg><use href="#i-grid"/></svg><span class="lbl">Findings</span></a>
-    <a class="nav" href="#wrong" aria-label="What I got wrong"><svg><use href="#i-warn"/></svg><span class="lbl">What I got wrong</span></a>
-    <a class="nav" href="#evidence" aria-label="Evidence"><svg><use href="#i-flask"/></svg><span class="lbl">Evidence</span></a>
-    <a class="nav" href="#xray" aria-label="Market X-Ray"><svg><use href="#i-book"/></svg><span class="lbl">Market X-Ray</span></a>
-    <a class="nav" href="#picks" aria-label="Picks"><svg><use href="#i-chart"/></svg><span class="lbl">Picks</span></a>
-    <a class="nav" href="#lab" aria-label="Picks lab"><svg><use href="#i-code"/></svg><span class="lbl">Picks lab</span></a>
-    <div class="nav-h">Elsewhere</div>
-    <a class="nav" href="../index.html" aria-label="Classic page"><svg><use href="#i-file"/></svg><span class="lbl">Classic page</span></a>
-    <a class="nav" href="https://github.com/Achintya1311" aria-label="GitHub"><svg><use href="#i-ext"/></svg><span class="lbl">GitHub</span></a>
+    <!-- DD1/DD8: five groups in story order; data-views lists the views each group holds (sub-views are tabs) -->
+    <a class="nav" href="#home" data-views="home" aria-label="Overview"><svg><use href="#i-home"/></svg><span class="lbl">Overview</span></a>
+    <a class="nav" href="#findings" data-views="findings wrong" aria-label="Projects"><svg><use href="#i-grid"/></svg><span class="lbl">Projects</span></a>
+    <a class="nav" href="#evidence" data-views="evidence" aria-label="Evidence"><svg><use href="#i-flask"/></svg><span class="lbl">Evidence</span></a>
+    <a class="nav" href="#picks" data-views="picks xray lab" aria-label="Live lab"><svg><use href="#i-chart"/></svg><span class="lbl">Live lab</span></a>
+    <a class="nav" href="#about" data-views="about" aria-label="About"><svg><use href="#i-user"/></svg><span class="lbl">About</span></a>
     <div class="grow"></div>
     <div class="pill" title="Lab status: testing phase, live from 2 Nov 2026"><span class="dot live" aria-hidden="true"></span><span class="lbl">Testing phase, live from 2 Nov</span>
       <span class="theme"><button data-t="light" aria-label="Light theme" aria-pressed="false"><svg width="14" height="14"><use href="#i-sun"/></svg></button><button data-t="dark" aria-label="Dark theme" aria-pressed="true"><svg width="14" height="14"><use href="#i-moon"/></svg></button></span></div>
@@ -81,6 +77,7 @@
     </section>
 
     <section class="view" id="findings">
+      <nav class="subtabs" aria-label="Projects"><a href="#findings">Findings</a><a href="#wrong">What I got wrong</a></nav>
       <div class="top"><div><h1>Findings</h1><p>One question per project, the answer, and the evidence. Open a finding for the full chart.</p></div></div>
       <div class="feed-wrap">
         <div class="chips" id="chips" role="group" aria-label="Filter and sort findings"></div>
@@ -90,11 +87,13 @@
     </section>
 
     <section class="view" id="wrong">
+      <nav class="subtabs" aria-label="Projects"><a href="#findings">Findings</a><a href="#wrong">What I got wrong</a></nav>
       <div class="top"><div><h1>What I got wrong</h1><p>Mistakes found by testing my own work, and what changed.</p></div></div>
       <div class="panel"><ul class="list" id="wrong-all"></ul></div>
     </section>
 
     <section class="view" id="picks">
+      <nav class="subtabs" aria-label="Live lab"><a href="#picks">Picks</a><a href="#xray">Market X-Ray</a><a href="#lab">How the lab works</a></nav>
       <div class="top"><div><h1>Picks</h1><p id="picks-sub">Loading the lab's latest picks…</p></div></div>
       <div class="chips"><div class="seg" id="hz" style="margin-left:0"><button data-h="day" aria-pressed="true">Day</button><button data-h="week" aria-pressed="false">Week</button></div></div>
       <div id="picks-body"><div class="empty">Loading…</div></div>
@@ -115,15 +114,27 @@
     </section>
 
     <section class="view" id="xray">
+      <nav class="subtabs" aria-label="Live lab"><a href="#picks">Picks</a><a href="#xray">Market X-Ray</a><a href="#lab">How the lab works</a></nav>
       <div class="top"><div><h1>Market X-Ray</h1><p id="xr-sub">Loading the universe…</p></div></div>
       <div id="xr-body"><div class="empty">Loading…</div></div>
       <p class="note">Model output in testing. Not investment advice or a recommendation. Not a SEBI-registered research analyst. Ranks only, no prices or levels.</p>
     </section>
 
     <section class="view" id="lab">
+      <nav class="subtabs" aria-label="Live lab"><a href="#picks">Picks</a><a href="#xray">Market X-Ray</a><a href="#lab">How the lab works</a></nav>
       <div class="top"><div><h1>Picks lab</h1><p>An autonomous lab testing rule-based NSE F&amp;O strategies against the market's own base rate.</p></div><a class="btn ghost" href="https://github.com/Achintya1311/stockstalker-lab">Repo</a></div>
       <div class="panel"><p>Each strategy is replayed day by day from a blank state, scored only on data it has never seen, and kept only if it beats the share of stocks that moved the same way anyway. Every pick is shown, losers included.</p>
         <p class="note">The live scoreboard is published by the lab's own workflow from 2 Nov 2026 and is not duplicated here. Model output in testing. Not investment advice or a recommendation. Not a SEBI-registered research analyst.</p></div>
+    </section>
+    <section class="view" id="about">
+      <div class="top"><div><h1>About</h1><p id="ab-kick">Who built this desk.</p></div></div>
+      <div class="panel ab">
+        <h2 id="ab-name">Achintya Mishra</h2>
+        <p id="ab-lede"></p>
+        <dl id="ab-facts" class="facts"></dl>
+        <p class="links"><a class="btn" href="https://github.com/Achintya1311">GitHub</a> <a class="btn ghost" href="../research/craft.pdf">Research paper (PDF)</a> <a class="btn ghost" href="../index.html">Classic page</a></p>
+        <p class="note">The classic page is the same content without JavaScript; this desk reads its findings from it.</p>
+      </div>
     </section>
     <p class="note">Educational research on historical data. Not investment advice. Not a SEBI-registered research analyst.</p>
   </main>
@@ -164,6 +175,10 @@
     <p class="fc-foot"><span class="tag neu">${esc(st[0])}</span>${st[1] ? ` <span class="chg">${esc(st[1])}</span>` : ''}</p>
     <div class="lb-side" hidden><h3>${esc(c.title)} ${c.tag ? `<span class="tag">${esc(c.tag)}</span>` : ''}</h3><div class="big" style="padding:0">${esc(c.big)}<span>${esc(c.sub)}</span></div>${st[1] ? `<p><span class="tag neu">${esc(st[0])}</span> ${esc(st[1])}</p>` : ''}<p>${esc(c.text)}</p>${c.note ? `<p class="note">${esc(c.note)}</p>` : ''}${c.repo ? `<p><a href="${esc(c.repo)}">${esc(c.repoName)} →</a></p>` : ''}</div></article>`; }).join('');
   if (window.deskApply) window.deskApply();
+  // About reads the root hero (DD2: the root index.html is the one source)
+  const hero = doc.querySelector('header.hero'), tx = sel => { const e = hero && hero.querySelector(sel); return e ? e.textContent.trim() : ''; };
+  if (hero) { $('#ab-kick').textContent = tx('.kicker') || $('#ab-kick').textContent; $('#ab-name').textContent = tx('h1') || 'Achintya Mishra'; $('#ab-lede').textContent = tx('.lede');
+    $('#ab-facts').innerHTML = [...hero.querySelectorAll('.facts > div')].map(d => `<div><dt>${esc(d.querySelector('dt').textContent)}</dt>${[...d.querySelectorAll('dd')].map(x => `<dd>${esc(x.textContent)}</dd>`).join('')}</div>`).join(''); }
   const wrong = [...doc.querySelectorAll('#wrong .log li')].map(li => li.innerHTML.replace(/href="(?!http)/g, 'href="../'));
   $('#wrong-all').innerHTML = wrong.map((x, i) => `<li><span class="ico num">${i + 1}</span><div class="tx">${x}</div></li>`).join('');
 })();

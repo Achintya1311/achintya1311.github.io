@@ -156,3 +156,11 @@ table.t{width:100%;border-collapse:collapse;font-size:.88rem} .t th{font-size:.7
 @media(max-width:980px){.lb .nv{top:auto;bottom:12px;transform:none}}
 .top h1:focus{outline:0}
 :root[data-theme=light]{--kick:#1d5fd1}
+
+/* DD1: sub-views of a group are tabs (Projects: Findings, What I got wrong; Live lab: Picks, X-Ray, How the lab works) */
+.subtabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:-6px 0 16px;overflow-x:auto;scrollbar-width:thin}
+.subtabs a{flex:none;padding:10px 12px;min-height:44px;display:flex;align-items:center;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-1px;font-size:.9rem}
+.subtabs a:hover{color:var(--ink)} .subtabs a.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.ab h2{font-size:1.2rem;letter-spacing:0;text-transform:none;color:var(--ink)} .ab .facts{display:grid;gap:12px;margin:16px 0}
+.ab .facts dt{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)} .ab .facts dd{margin:2px 0 0}
+.ab .links{display:flex;flex-wrap:wrap;gap:8px}
