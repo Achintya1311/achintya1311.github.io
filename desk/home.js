@@ -39,7 +39,7 @@
     if (!c || !c.bars) return '';
     const W = 130, H = 44, bars = c.bars.slice(-30), n = bars.length, bw = W / n, y = v => (100 - v) / 100 * (H - 6) + 3;
     const ma = bars.map((_, i) => { const a = bars.slice(Math.max(0, i - 7), i + 1); return a.reduce((s, b) => s + b[3], 0) / a.length; });
-    const body = bars.map(([o, hi, lo, cl], i) => { const x = i * bw + bw / 2, up = cl >= o, col = up ? 'var(--up)' : 'var(--down)'; return `<line x1="${x}" x2="${x}" y1="${y(hi)}" y2="${y(lo)}" stroke="${col}" stroke-width=".8"/><rect x="${x - bw * .32}" y="${y(Math.max(o, cl))}" width="${bw * .64}" height="${Math.max(Math.abs(y(o) - y(cl)), .8)}" fill="${col}"/>`; }).join('');
+    const body = bars.map(([o, hi, lo, cl], i) => { const x = i * bw + bw / 2, up = cl >= o, col = up ? 'var(--up)' : 'var(--down)'; return `<line x1="${x}" x2="${x}" y1="${y(hi)}" y2="${y(lo)}" stroke="${col}" stroke-width=".8"/><rect x="${x - bw * .32}" y="${y(Math.max(o, cl))}" width="${bw * .64}" height="${Math.max(Math.abs(y(o) - y(cl)), .8)}" ${up ? `fill="${col}"` : `fill="none" stroke="${col}" stroke-width=".8"`}/>`; }).join('');
     const dots = ma.map((v, i) => `${i ? 'L' : 'M'}${i * bw + bw / 2},${y(v)}`).join('');
     return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${body}<path d="${dots}" fill="none" stroke="#4c8bf5" stroke-width="1" stroke-dasharray="1.5 2.5" vector-effect="non-scaling-stroke"/></svg>`;
   }
