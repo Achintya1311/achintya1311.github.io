@@ -19,5 +19,6 @@ svg.ch.wide { min-width: 640px; }
 .ev { grid-column: 1 / -1; font-size: .8rem; border-top: 1px solid var(--line); padding-top: 8px; margin-top: 4px; color: var(--muted); }
 .ev b { color: var(--ink); }
 .ev .g, .ev .r { font-weight: 600; }
+.panel > .ev { border-top: 0; padding-top: 0; margin: 0 0 12px; }
 .hint { display: none; font-size: .75rem; color: var(--muted); margin: 0 0 6px; }
 @media (max-width: 760px) { .hint { display: block; } svg.ch.wide { min-width: 760px; } }
