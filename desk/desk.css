@@ -59,6 +59,14 @@ svg.ch{width:100%;height:auto;display:block}
 .tile{display:grid;grid-template-columns:auto minmax(0,1fr) 90px;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;border:1px dashed;text-align:left;background:var(--surface);width:100%}
 .tile.up{border-color:rgba(46,204,143,.45);background:var(--up-soft)} .tile.dn{border-color:rgba(239,91,107,.45);background:var(--down-soft)}
 .tile:hover{filter:brightness(1.12)}
+/* Picks rows after the lead (DD9, W110): one line, opens in place */
+details.tile{display:block;padding:0} details.tile>summary{display:flex;align-items:center;gap:12px;padding:10px 12px;min-height:44px;cursor:pointer;list-style:none}
+details.tile>summary::-webkit-details-marker{display:none}
+details.tile>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:0 4px 4px;flex:none}
+details.tile[open]>summary::after{transform:rotate(-135deg);margin-top:6px}
+details.tile>summary>span:nth-child(2){flex:1;min-width:0} details.tile>summary small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+details.tile .rowb{display:grid;gap:8px;padding:0 12px 12px}
+.tiles .more{margin:2px 0 0}
 .badge{font:700 .75rem var(--mono);letter-spacing:.06em;padding:2px 7px;border-radius:5px;display:inline-block}
 .up .badge{background:var(--up);color:#04140c} .dn .badge{background:var(--down);color:#1a0509}
 .tile strong{display:block;font-size:.95rem} .tile small{color:var(--muted)}
