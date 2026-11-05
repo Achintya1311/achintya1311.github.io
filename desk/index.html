@@ -170,19 +170,10 @@
 // ---- Picks: the lab's JSON, rendered as charts. Shapes only: bars and zone are scaled 0-100, no prices.
 (async () => {
   const $ = (s, r = document) => r.querySelector(s), esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const REPO = 'Achintya1311/stockstalker-lab', RAW = `https://raw.githubusercontent.com/${REPO}/main/`;
-  const J = async u => { const r = await fetch(u); if (!r.ok) throw 0; return r.json(); };
-  let root = 'live', dry = false;
-  const latest = async h => {
-    for (const base of ['live', 'reports/live_dryrun']) {
-      try {
-        const list = await J(`https://api.github.com/repos/${REPO}/contents/${base}/${h}`);
-        const names = list.map(f => f.name).filter(n => n.endsWith('.json')).sort();
-        if (names.length) { root = base; dry = base !== 'live'; return await J(`${RAW}${base}/${h}/${names[names.length - 1]}`); }
-      } catch {}
-    }
-    throw 0;
-  };
+  const REPO = 'Achintya1311/stockstalker-lab';
+  // the shared loader in evidence.js (W12): cached per horizon, so toggling Day and Week makes no new API calls
+  let dry = false;
+  const latest = async h => { const r = await window.deskLatest(h); if (!r) throw 0; dry = r.dry; return r.data; };
   const chart = c => {
     if (!c || !c.bars) return '';
     const W = 320, H = 150, n = c.bars.length, bw = W / n, y = v => (100 - v) / 100 * (H - 8) + 4;
@@ -208,7 +199,7 @@
       $('#picks-sub').textContent = `${h === 'day' ? 'Day' : 'Week'} picks for session ${d.session}${dry ? ' (dry run: the lab has not gone live yet, these are not published picks)' : ''}`;
       $('#picks-body').innerHTML = `<div class="two">${table('Bullish picks', 'up', 'BULLISH', t.bullish || [])}${table('Bearish picks', 'dn', 'BEARISH', t.bearish || [])}</div>`;
       $('#picks-note').textContent = d.disclaimer || '';
-    } catch { $('#picks-sub').textContent = 'Could not load the lab’s picks right now.'; $('#picks-body').innerHTML = `<div class="empty">See the <a href="https://github.com/${REPO}">lab repo</a>.</div>`; }
+    } catch { $('#picks-sub').textContent = 'Could not reach the lab’s picks right now.'; $('#picks-body').innerHTML = `<div class="empty">GitHub may be limiting requests; try the Day or Week button again in a few minutes, or see the <a href="https://github.com/${REPO}/tree/main/live">lab repo</a>.</div>`; }
   };
   $('#hz').addEventListener('click', e => { const b = e.target.closest('button'); if (b) draw(b.dataset.h); });
   draw('day');

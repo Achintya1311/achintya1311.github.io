@@ -11,7 +11,11 @@
   // ---------- data ----------
   let evP = null;
   window.deskEvLoad = () => (evP = evP || J(RAW + 'reports/evidence_train.json').then(ev => Object.fromEntries(Object.entries(ev).filter(([k, v]) => /^(day|week)\/(bullish|bearish)$/.test(k) && v && v.experiments && v.joint && Array.isArray(v.joint.stepm)))).catch(() => null));
+  // one shared loader for Home, Picks and X-Ray (W12, W82): one listing call per horizon per page load;
+  // if the GitHub API is rate-limited (60 calls an hour), probe the last ten IST dates on raw.githubusercontent.com;
+  // a failure is not cached, so the next view or toggle tries again
   const latestP = {};
+  const ymd = d => new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })).toLocaleDateString('en-CA');
   const latest = h => (latestP[h] = latestP[h] || (async () => {
     for (const base of ['live', 'reports/live_dryrun']) {
       try {
@@ -20,8 +24,11 @@
         if (names.length) return { dry: base !== 'live', data: await J(`${RAW}${base}/${h}/${names[names.length - 1]}`) };
       } catch {}
     }
+    for (let i = -1; i < 10; i++) {
+      try { return { dry: false, data: await J(`${RAW}live/${h}/${ymd(new Date(Date.now() - i * 864e5))}.json`) }; } catch {}
+    }
     return null;
-  })());
+  })().then(r => { if (!r) delete latestP[h]; return r; }));
 
   window.deskLatest = latest;
 
@@ -154,7 +161,8 @@
 
   async function xrayView() {
     const r = await latest('day');
-    if (!r || !r.data.xray) { $('#xr-body').innerHTML = '<div class="empty">The lab has not published an X-Ray for the next session yet.</div>'; return; }
+    if (!r) { $('#xr-sub').textContent = 'Could not reach the lab right now.'; $('#xr-body').innerHTML = `<div class="empty">Could not reach the lab's files right now (GitHub may be limiting requests). Try again in a few minutes, or see the <a href="https://github.com/${REPO}/tree/main/live">lab repo</a>.</div>`; return; }
+    if (!r.data.xray) { $('#xr-sub').textContent = `Session ${r.data.session}`; $('#xr-body').innerHTML = '<div class="empty">The lab\'s latest picks file has no X-Ray block.</div>'; return; }
     const x = r.data.xray, b = x.breadth;
     $('#xr-sub').textContent = `Session ${r.data.session}${r.dry ? ' (dry run: the lab has not gone live yet)' : ''} · data as of ${x.asof} · ${x.n} stocks in the universe`;
     const score = s => Math.max(s.b ?? -1, s.d ?? -1), side = s => (s.b ?? -1) >= (s.d ?? -1) ? 'b' : 'd';
