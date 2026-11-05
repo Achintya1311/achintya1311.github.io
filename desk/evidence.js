@@ -95,8 +95,8 @@
 
   function verdict(g) {
     const n = g.joint.stepm.length, ps = pf(g.joint.spa.consistent);
-    if (n && g.joint.spa.consistent >= 0.05) return `<b>Mixed.</b> Of ${g.joint.n_models} variants tried, ${n} ${n === 1 ? 'passes' : 'pass'} the one-by-one check after correcting for how many were tried, but the all-variants joint test cannot rule out luck (p ${ps}). Treat ${n === 1 ? 'it' : 'them'} as unconfirmed.`;
-    if (n) return `<b class="g">Some variants survive.</b> Across all ${g.joint.n_models} variants tried, the joint test gives p ${ps}, and ${n} ${n === 1 ? 'variant is' : 'variants are'} individually superior after correcting for how many were tried.`;
+    if (n && g.joint.spa.consistent >= 0.05) return `<b>Mixed.</b> Of ${g.joint.n_models} variants tried, ${n} ${n === 1 ? 'passes' : 'pass'} the one-by-one check after correcting for how many were tried (at the 10% level), but the all-variants joint test cannot rule out luck (p ${ps}). Treat ${n === 1 ? 'it' : 'them'} as unconfirmed.`;
+    if (n) return `<b class="g">Some variants survive.</b> Across all ${g.joint.n_models} variants tried, the joint test gives p ${ps}, and ${n} ${n === 1 ? 'variant passes' : 'variants pass'} the one-by-one check after correcting for how many were tried (at the 10% level; the joint test is read at 5%).`;
     if (g.joint.spa.consistent >= 0.05) return `<b class="r">Nothing survives.</b> Across ${g.joint.n_models} variants the joint test gives p ${ps}, so luck cannot be ruled out as the source of the best-looking results.`;
     return `<b class="r">Nothing survives.</b> Across ${g.joint.n_models} variants the joint test gives p ${ps}: the best-looking results here are what luck produces when this many are tried.`;
   }
@@ -118,7 +118,7 @@
       <div class="panel"><h2>${hz} horizon, ${side} picks</h2><p>${verdict(g)}</p>
         <p class="note">In plain words: if none of the ${g.joint.n_models} variants had a real edge, a best result at least this good would turn up by chance with p ${pf(g.joint.spa.consistent)} (Hansen SPA; its looser and stricter versions give p ${pf(g.joint.spa.lower)} and p ${pf(g.joint.spa.upper)}). The model confidence set keeps ${g.joint.mcs.length} of ${g.joint.n_models} variants as not clearly worse than the best. Days are resampled ${g.joint.block > 1 ? `in blocks of ${g.joint.block} so days that move together stay together` : 'one at a time (block length 1)'}.${Object.entries(g.joint.twins || {}).map(([a, b]) => ` ${esc(pretty(a))} makes the same picks as ${esc(pretty(b))}, so the joint tests count them once.`).join('')}</p></div>
       <div class="panel"><h2>Edge over the market base rate, 95% interval</h2>${forest(rows, g.joint)}
-        <p class="note"><span class="g">Green</span> survives the correction for many trials. <span style="color:var(--amber)">Amber</span> is an order-block or confluence variant. <span class="r">Red</span> loses to the market line with an interval entirely below zero. Grey is not distinguishable from zero.</p></div>
+        <p class="note"><span class="g">Green</span> passes the one-by-one check after the correction for many trials, at the 10% level. <span style="color:var(--amber)">Amber</span> is an order-block or confluence variant. <span class="r">Red</span> loses to the market line with an interval entirely below zero. Grey is not distinguishable from zero.</p></div>
       <div class="panel"><h2>Do order blocks help? The ablation</h2><p>${esc(obVerdict)}</p>
         <div class="scroll" tabindex="0" role="region" aria-label="Strategy table, scrolls sideways"><table class="t ab"><thead><tr><th>Strategy</th><th>Edge (pts)</th><th>95% interval</th><th>Verdict</th></tr></thead><tbody>${abl}</tbody></table></div>
         <p class="note">Read the rows in pairs. O00 against O01 shows what the impulse requirement adds; O04, O04A and O04B differ only in which ingredient is left out. Other rows use different base signals, so they are context, not a one-change comparison. The placebo uses the same zone logic with the impulse requirement removed.</p></div>`;
@@ -139,7 +139,7 @@
     const wl = $('#ev-weekline');
     if (wl) wl.textContent = !wn ? `Among the weekly variants in the lab's evidence file, none survives; the weekly joint tests give p ${pf(wp)} at best.`
       : `Among the weekly variants in the lab's evidence file, ${wn} ${wn === 1 ? 'passes' : 'pass'} the one-by-one check` + (wp >= 0.05 ? `, but no weekly joint test is below 0.05 (p ${pf(wp)}), so this is weak evidence.` : '.');
-    $('#ev-sum').innerHTML = `<div class="stat"><b>${total}</b><span>strategy results tested</span></div><div class="stat"><b>${surv}</b><span>survive the many-trials correction</span></div><div class="stat"><b>${weekNone ? 'none' : wConf ? 'some' : wn + ' unconfirmed'}</b><span>at the weekly horizon</span></div><div class="stat"><b>${obN}</b><span>distinct order-block variants tested (placebo excluded)</span></div>`;
+    $('#ev-sum').innerHTML = `<div class="stat"><b>${total}</b><span>strategy results tested</span></div><div class="stat"><b>${surv}</b><span>pass the many-trials check (10% level)</span></div><div class="stat"><b>${weekNone ? 'none' : wConf ? 'some' : wn + ' unconfirmed'}</b><span>at the weekly horizon</span></div><div class="stat"><b>${obN}</b><span>distinct order-block variants tested (placebo excluded)</span></div>`;
     $('#ev-chips').innerHTML = keys.map((k, i) => `<button class="chip" data-k="${k}" aria-pressed="${i === 0}">${k.replace('/', ' · ')}</button>`).join('');
     $('#ev-chips').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; [...$('#ev-chips').children].forEach(c => c.setAttribute('aria-pressed', c === b)); drawEvidence(ev, b.dataset.k); };
     drawEvidence(ev, keys[0]);
