@@ -26,6 +26,8 @@ PRICE_FIELDS = {"open", "close", "move_rs"}
 # "buy-and-hold" is a research benchmark, not a call, so it is allowed.
 BANNED = re.compile(r"\b(?:buy(?!-and-hold)|sell(?:ing)?|opportunit\w*|upside|stop[- ]?loss|entry price|price target|target price)\b|₹", re.I)
 # desk text that says the current picks come from Champion v1 (W96, W100)
+# DD5: test names that belong inside "How this was tested"
+STAT_NAMES = re.compile(r"\b(?:SPA|StepM|MCS|Kupiec|bootstrap)\b")
 STALE_PICKS = re.compile(r"current (?:picks use|blended score)", re.I)
 # the desk strips price levels from the lab's reasoning with window.deskNoLevels (desk/desk.js); same rules here (W109)
 _N, _D = r"[-+]?\d[\d,]*(?:\.\d+)?", r"[-+]?\d[\d,]*\.\d+(?![\d.])"
@@ -271,6 +273,13 @@ def check_desk_files(errors):
                 os.unlink(t.name)
                 if bad:
                     errors.append(f"{f.relative_to(ROOT)}: inline script {k} has a JavaScript syntax error")
+    # DD5: statistical test names only inside a collapsed "How this was tested" block (on the same source line as its summary)
+    for f in sorted(DESK.glob("*.js")) + sorted(DESK.glob("*.html")):
+        for n, line in enumerate(f.read_text().splitlines(), 1):
+            code = re.sub(r"^\s*(?://|/\*|<!--).*$", "", line)
+            hit = STAT_NAMES.search(code)
+            if hit and "How this was tested</summary>" not in code:
+                errors.append(f"{f.relative_to(ROOT)}:{n}: '{hit.group(0)}' outside a 'How this was tested' block (DD5)")
     if total > 1_000_000:
         errors.append(f"desk/ is {total} bytes, over 1 MB")
     page = (DESK / "index.html").read_text()
@@ -278,6 +287,16 @@ def check_desk_files(errors):
         errors.append("desk/index.html: no skip link")
     if re.search(r'<a class="nav"(?![^>]*aria-label)', page):
         errors.append("desk/index.html: nav link without aria-label")
+    # DD1: five groups in story order, and the Overview first screen keeps who, the certificates, three proofs and three start links
+    groups = re.findall(r'<a class="nav" href="#[^"]*"[^>]*aria-label="([^"]+)"', page)
+    if groups != ["Overview", "Projects", "Evidence", "Live lab", "About"]:
+        errors.append(f"desk/index.html: nav groups are {groups}, DD1 wants Overview, Projects, Evidence, Live lab, About")
+    ov = page[page.find('<div class="ov">'):page.find('<h2 class="ov-sub">')]
+    if not ov or "NISM Series XV" not in ov or "NISM Series VIII" not in ov or "StockStalker" not in ov:
+        errors.append("desk/index.html: Overview first screen lost the name of StockStalker or a NISM certificate (DD1)")
+    start = re.search(r'<nav class="start"[^>]*>(.*?)</nav>', ov, re.S)
+    if ov.count("<li") != 3 or not start or start.group(1).count("<a ") != 3:
+        errors.append("desk/index.html: Overview first screen needs three proof items and three start-here links (DD1)")
     # prose must not hard-code a lab result the page also computes from the file (W30)
     if "none survives" in page:
         errors.append("desk/index.html: hard-codes 'none survives'; state lab results from the evidence file")
@@ -302,6 +321,7 @@ def selftest():
     assert not banned_hits("e.target.closest('x')") and not banned_hits('<stop stop-color="red">')
     assert no_levels("close above SMA200=2407.84, RSI(2)=6.50 -> score +0.3499") == "close above SMA200, RSI(2)=6.50 -> score +0.3499"
     assert price_left("close 2410.50 within trailing 20-day range [2300.00, 2420.00]") == []
+    assert STAT_NAMES.search("Hansen SPA") and not STAT_NAMES.search("spatial MCSE spa")
     assert price_left("level 2407.84 reached") and price_left("BBupper=2407.84") and not price_left("RSI(2)=95.50, return +27.246%, +3.58 sigma")
 
 
