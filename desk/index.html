@@ -57,7 +57,7 @@
         <ul class="proof">
           <li id="proof-lab">The lab's evidence file is loading.</li>
           <li data-card="Risk">Risk: a constant-volatility normal model failed its 99% test out of sample on GULFOILLUB (42 breaches vs about 25 expected); a GARCH-t model passed (21 vs about 25).</li>
-          <li data-card="Portfolio optimisation">Portfolio: on 29 large caps, equal weight compounded ahead of mean-variance optimisation out of sample over 126 folds (+420% vs +256% after costs); the gap is not statistically significant at the 252-day training window.</li>
+          <li data-card="Portfolio optimisation">Portfolio: on 29 large caps, equal weight compounded ahead of mean-variance optimisation out of sample over 127 folds (+426% vs +228% after costs, data to 30 Oct 2026); the gap is not statistically significant at the 252-day training window.</li>
         </ul>
         <nav class="start" aria-label="Start here"><a href="#findings">Browse the findings →</a><a href="#evidence">What survived the test →</a><a href="#wrong">What I got wrong →</a></nav>
       </div>
@@ -170,7 +170,7 @@
     'Options': ['Filtering needed', 'A quote-quality check: it shows whether raw option quotes can be used as they come. The counts depend on the forward assumed, and breaks stay routine under both forwards tried.'],
     'Headline sentiment': ['No link found', 'Same-day returns only and a small sample, so this says the link is not shown, not that there is none.'],
     'Technical screen': ['Mostly below holding', 'After Indian delivery costs, 1 of 3 names beats buy-and-hold.'],
-    'Portfolio optimisation': ['Equal-weight ahead', 'On 29 large caps, equal weight beat mean-variance optimisation out of sample over 126 folds (+427% vs +309% before costs); costs widen the gap.']
+    'Portfolio optimisation': ['Equal-weight ahead', 'On 29 large caps, equal weight beat mean-variance optimisation out of sample over 127 folds (+433% vs +278% before costs, data to 30 Oct 2026); costs widen the gap.']
   };
   const LABEL = { valuation: 'Valuation', factors: 'Factors', risk: 'Risk', options: 'Options', sentiment: 'Sentiment', screen: 'Screen', portfolio: 'Portfolio' };
   let doc, cards;

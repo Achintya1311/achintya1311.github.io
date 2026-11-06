@@ -114,7 +114,7 @@ def check_root_contract(errors):
     # numbers with a label must keep that label: a bare-token match passes swaps like beta 0.80 -> 0.85 (W93)
     lines = dict(re.findall(r"'([^']+)': \['[^']*', '([^']*)'\]", status.group(1) if status else ""))
     for key, desk_p, root_p in (
-        ("Portfolio optimisation", "(+427% vs +309% before costs)", "+427% vs +309% before costs"),
+        ("Portfolio optimisation", "(+433% vs +278% before costs, data to 30 Oct 2026)", "+433% vs +278% before costs"),
         ("Factor exposure", "beta 0.80", "beta 0.80"),
         ("Factor exposure", "small-cap loading 0.47", "SMB 0.47"),
         ("Factor exposure", "0.85 sits in alpha", "attributes 0.85 to alpha"),
