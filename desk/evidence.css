@@ -24,3 +24,6 @@ svg.ch.wide { min-width: 640px; }
 @media (max-width: 760px) { .hint { display: block; } svg.ch.wide { min-width: 760px; } }
 .how { margin-top: 8px; } .how summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; width: fit-content; color: var(--muted); font-size: .85rem; } .how p { margin-top: 4px; }
 .how summary::before { content: "\25B8"; margin-right: 6px; } .how[open] summary::before { content: "\25BE"; }
+
+/* DD9 (W120): the ablation table opens from its verdict sentence */
+.abl{margin-top:4px} .abl .ob{color:var(--ink)} .abl .ob .note{color:var(--muted)}

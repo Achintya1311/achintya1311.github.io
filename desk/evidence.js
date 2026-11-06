@@ -130,8 +130,8 @@
       <div class="panel"><h2>Edge over the market base rate, 95% interval</h2>${forest(rows, g.joint)}
         <p class="note"><span class="g">Green</span> passes the one-by-one check after the correction for many trials, at the 10% level. <span style="color:var(--amber)">Amber</span> is an order-block or confluence variant. <span class="r">Red</span> loses to the market line with an interval entirely below zero. Grey is not distinguishable from zero.</p></div>
       <div class="panel"><h2>Do order blocks help? The ablation</h2><p>${esc(obVerdict)}</p>
-        <div class="scroll" tabindex="0" role="region" aria-label="Strategy table, scrolls sideways"><table class="t ab"><thead><tr><th>Strategy</th><th>Edge (pts)</th><th>95% interval</th><th>Verdict</th></tr></thead><tbody>${abl}</tbody></table></div>
-        <p class="note">Read the rows in pairs. O00 against O01 shows what the impulse requirement adds; O04, O04A and O04B differ only in which ingredient is left out. Other rows use different base signals, so they are context, not a one-change comparison. The placebo uses the same zone logic with the impulse requirement removed.</p></div>`;
+        <details class="orow abl"><summary><span class="ot">Each order-block variant, with its edge and verdict</span></summary><div class="ob"><div class="scroll" tabindex="0" role="region" aria-label="Strategy table, scrolls sideways"><table class="t ab"><thead><tr><th>Strategy</th><th>Edge (pts)</th><th>95% interval</th><th>Verdict</th></tr></thead><tbody>${abl}</tbody></table></div>
+        <p class="note">Read the rows in pairs. O00 against O01 shows what the impulse requirement adds; O04, O04A and O04B differ only in which ingredient is left out. Other rows use different base signals, so they are context, not a one-change comparison. The placebo uses the same zone logic with the impulse requirement removed.</p></div></details></div>`;
   }
 
   async function evidenceView() {
