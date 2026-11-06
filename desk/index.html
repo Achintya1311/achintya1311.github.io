@@ -95,7 +95,7 @@
 
     <section class="view" id="findings">
       <nav class="subtabs" aria-label="Projects"><a href="#findings">Findings</a><a href="#wrong">What I got wrong</a></nav>
-      <div class="top"><div><h1>Findings</h1><p>One question per project, the answer, and the evidence. Open a finding for the full chart.</p></div></div>
+      <div class="top"><div><h1>Findings</h1><p>One question per project, the answer, and the evidence. The first finding is open; the arrow on any other shows its summary, and its title opens the full chart.</p></div></div>
       <div class="feed-wrap">
         <div class="chips" id="chips" role="group" aria-label="Filter and sort findings"></div>
         <p class="note fcount" data-count role="status" aria-live="polite"></p>
@@ -190,6 +190,7 @@
     <p class="fc-sub">${esc(c.sub)}</p>
     <p class="fc-a">${esc(c.text)}</p>
     <p class="fc-foot"><span class="tag neu">${esc(st[0])}</span>${st[1] ? ` <span class="chg">${esc(st[1])}</span>` : ''}</p>
+    <button type="button" class="fc-x" aria-expanded="false" aria-label="Show the summary of ${esc(c.title)}"></button>
     <div class="lb-side" hidden><h3>${esc(c.title)} ${c.tag ? `<span class="tag">${esc(c.tag)}</span>` : ''}</h3><div class="big" style="padding:0">${esc(c.big)}<span>${esc(c.sub)}</span></div>${st[1] ? `<p><span class="tag neu">${esc(st[0])}</span> ${esc(st[1])}</p>` : ''}<p>${esc(c.text)}</p>${c.note ? `<p class="note">${esc(c.note)}</p>` : ''}${c.repo ? `<p><a href="${esc(c.repo)}">${esc(c.repoName)} →</a></p>` : ''}</div></article>`; }).join('');
   if (window.deskApply) window.deskApply();
   // About reads the root hero (DD2: the root index.html is the one source)

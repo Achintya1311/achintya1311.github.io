@@ -68,7 +68,15 @@ window.deskNoLevels = (() => {
     const cnt = $('[data-count]', f.parentElement), all = $$('.card', f), vis = all.filter(c => !c.hidden).length;
     if (cnt) cnt.textContent = `Showing ${vis} of ${all.length} findings` + (cat !== 'all' && on ? ` (${on.textContent})` : '') + (sort && sort.dataset.sort === 'neg' ? ', negative results first' : '') + '.';
     if (sort) { const cs = $$('.card', f); const k = sort.dataset.sort; cs.sort((a, b) => k === 'old' ? b.dataset.i - a.dataset.i : k === 'neg' ? (b.dataset.neg - a.dataset.neg) || (a.dataset.i - b.dataset.i) : a.dataset.i - b.dataset.i); cs.forEach(c => f.appendChild(c)); }
+    // DD9: the first card shown is the lead and stays open; the others are title-and-stat rows that open in place
+    const vis2 = $$('.card', f).filter(c => !c.hidden);
+    $$('.card', f).forEach(c => { const lead = c === vis2[0]; c.classList.toggle('lead', lead); c.classList.toggle('row', !lead); });
   };
+  document.addEventListener('click', e => {
+    const x = e.target.closest('.fc-x'); if (!x) return;
+    const c = x.closest('.card'), on = !c.classList.contains('open');
+    c.classList.toggle('open', on); x.setAttribute('aria-expanded', String(on)); x.setAttribute('aria-label', (on ? 'Hide' : 'Show') + x.getAttribute('aria-label').replace(/^(Show|Hide)/, ''));
+  });
   document.addEventListener('click', e => {
     const c = e.target.closest('.chip,.seg button'); if (!c) return;
     $$(c.matches('.chip') ? '.chip' : '.seg button', c.parentElement).forEach(x => x.setAttribute('aria-pressed', x === c));
@@ -110,6 +118,6 @@ window.deskNoLevels = (() => {
     load(el); lb.classList.add('on'); shell.inert = true; document.body.style.overflow = 'hidden'; $('.x', lb).focus();
   };
   document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-lb]:not(button)')) window.deskOpen(e.target); });
-  document.addEventListener('click', e => { const c = e.target.closest('[data-lb]'); if (c && !e.target.closest('a')) window.deskOpen(c); });
+  document.addEventListener('click', e => { const c = e.target.closest('[data-lb]'); if (c && !e.target.closest('a, .fc-x')) window.deskOpen(c); });
   window.deskApply = () => feeds().forEach(apply);
 })();
