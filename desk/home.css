@@ -47,13 +47,10 @@
 .ebar::after { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--line); }
 .ebar i { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
 .ev2 { text-align: right; color: var(--muted); }
-.jr { display: grid; gap: 0; }
-.jr a { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); text-decoration: none; color: var(--ink); align-items: start; }
-.jr a:first-child { border-top: 0; padding-top: 0; }
-.jr .av2 { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #4c8bf5); }
-.jr b { font-size: .84rem; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.jr b .tag { font-weight: 600; } .jr b time { color: var(--muted); font-weight: 400; font-size: .75rem; }
-.jr small { display: block; color: var(--muted); font-size: .82rem; line-height: 1.4; margin-top: 2px; }
+.jrow summary { flex-wrap: nowrap !important; align-items: center !important; }
+.jrow .tag { flex: none; font-weight: 600; }
+.jrow .jt { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .86rem; }
+.jrow time { flex: none; color: var(--muted); font-size: .75rem; }
 .scard { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; text-decoration: none; color: var(--ink); }
 .scard b { display: block; font-size: .95rem; } .scard small { display: block; color: var(--muted); font-size: .8rem; line-height: 1.4; margin-top: 2px; }
 .scard.learn { grid-template-columns: 96px minmax(0, 1fr); align-items: center; }

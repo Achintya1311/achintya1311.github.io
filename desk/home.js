@@ -85,7 +85,8 @@
       if (!r.ok) throw 0;
       const list = await r.json(), ago = t => { const mm = (Date.now() - new Date(t)) / 6e4; return mm < 90 ? Math.round(mm) + 'm ago' : mm < 2880 ? Math.round(mm / 60) + 'h ago' : Math.round(mm / 1440) + 'd ago'; };
       $('#journal').innerHTML = list.map(c => { const msg = c.commit.message.split('\n')[0].replace(/\s*\[supervised\]/, ''), mt = msg.match(/^(\w+)(?:\(([^)]+)\))?:\s*(.*)$/), lane = mt && mt[2] ? mt[2] : mt ? mt[1] : 'lab';
-        return `<a href="${esc(c.html_url)}"><span class="av2"></span><span><b>lab <span class="tag">${esc(lane)}</span><time>${ago(c.commit.author.date)}</time></b><small>${esc(mt ? mt[3] : msg)}</small></span></a>`; }).join('');
+        // DD9: one line per entry (lane, start of the message, age); the full line and the commit link open in place
+        return `<details class="orow jrow"><summary><span class="tag">${esc(lane)}</span><span class="jt">${esc(mt ? mt[3] : msg)}</span><time>${ago(c.commit.author.date)}</time></summary><div class="ob"><p>${esc(mt ? mt[3] : msg)}</p><a href="${esc(c.html_url)}">Open the lab commit →</a></div></details>`; }).join('');
     } catch { $('#journal').innerHTML = `<p class="note">Could not load the journal. <a href="https://github.com/${REPO}/blob/main/state/journal.md">Open it on GitHub</a>.</p>`; }
   }
 
