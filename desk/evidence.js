@@ -17,16 +17,13 @@
   const latestP = {};
   const ymd = d => new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })).toLocaleDateString('en-CA');
   const latest = h => (latestP[h] = latestP[h] || (async () => {
-    for (const base of ['live', 'reports/live_dryrun']) {
-      try {
-        const list = await J(`https://api.github.com/repos/${REPO}/contents/${base}/${h}`);
-        const names = list.map(f => f.name).filter(n => n.endsWith('.json')).sort();
-        if (names.length) return { dry: base !== 'live', data: await J(`${RAW}${base}/${h}/${names[names.length - 1]}`) };
-      } catch {}
-    }
+    // published picks first (listing, then the dated files directly); the rehearsal folder only when neither finds a live file (W122)
+    const listed = async base => { const list = await J(`https://api.github.com/repos/${REPO}/contents/${base}/${h}`), names = list.map(f => f.name).filter(n => n.endsWith('.json')).sort(); return names.length ? J(`${RAW}${base}/${h}/${names[names.length - 1]}`) : null; };
+    try { const d = await listed('live'); if (d) return { dry: false, data: d }; } catch {}
     for (let i = -1; i < 10; i++) {
       try { return { dry: false, data: await J(`${RAW}live/${h}/${ymd(new Date(Date.now() - i * 864e5))}.json`) }; } catch {}
     }
+    try { const d = await listed('reports/live_dryrun'); if (d) return { dry: true, data: d }; } catch {}
     return null;
   })().then(r => { if (!r) delete latestP[h]; return r; }));
 
