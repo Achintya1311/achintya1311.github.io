@@ -89,12 +89,12 @@
     } catch { $('#journal').innerHTML = `<p class="note">Could not load the journal. <a href="https://github.com/${REPO}/blob/main/state/journal.md">Open it on GitHub</a>.</p>`; }
   }
 
-  // 4 newest findings = first four cards in the root page's order (no date field exists); title, stat, thumbnail only
+  // 4 newest findings = first four cards in the root page's order (no date field exists). DD9: one line each (title and stat), opening to the card's one-line summary
   async function findings() {
     const box = $('#home-find');
     try {
       const { cards } = await window.deskRoot();
-      box.innerHTML = cards.slice(0, 4).map(c => `<a class="hf" href="#findings"><span class="hf-t">${esc(c.title)}</span><span class="hf-s${c.big.length > 12 ? ' long' : ''}">${esc(c.big)}</span><span class="hf-u">${esc(c.sub)}</span>${c.src ? `<span class="fc-th"><img src="${esc(c.src)}" alt="" width="96" height="72" loading="lazy"></span>` : '<span class="fc-th ph" aria-hidden="true">Workbook</span>'}</a>`).join('');
+      box.innerHTML = cards.slice(0, 4).map(c => `<details class="orow"><summary><span class="ot">${esc(c.title)}</span><span class="os">${esc(c.big)}</span></summary><div class="ob"><p><b>${esc(c.big)}</b> ${esc(c.sub)}</p><a href="#findings">Open it on Findings →</a></div></details>`).join('');
     } catch { box.innerHTML = '<p class="note">Could not load findings here. <a href="../index.html#findings">Open the classic page</a>.</p>'; }
   }
 
