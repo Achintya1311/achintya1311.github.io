@@ -83,8 +83,8 @@
 
       <article class="card">
         <h3>Three-statement model</h3>
-        <p class="stat">#1 <span>dividend payout drives net debt/EBITDA most</span></p>
-        <p class="a">Of ten forecast assumptions, payout (0.34&times; impact) and domestic growth (0.21&times;) matter most; the balance sheet balances every forecast year, enforced by a test.</p>
+        <p class="stat">Domestic growth <span>in the top two of ten levers on GULFOILLUB&rsquo;s net debt/EBITDA under both shock sizes tried</span></p>
+        <p class="a">For Gulf Oil Lubricants (GULFOILLUB), which forecast assumption moves net debt/EBITDA most depends on how far each is shocked. With fixed hand-picked steps, dividend payout ranks first (0.34&times; impact) and domestic growth second (0.21&times;), but payout starts from an assumed 0% because the filings carry no dividend data; shocked by one standard deviation of each lever&rsquo;s own history, domestic growth ranks first (0.70&times;) and capex margin second (0.43&times;). The balance sheet balances every forecast year, enforced by a test.</p>
         <p class="fig-note">Output is a live-formula Excel workbook, so there is no chart.</p>
         <a class="repo" href="https://github.com/Achintya1311/three-statement-model">three-statement-model &rarr;</a>
       </article>
@@ -99,8 +99,8 @@
 
       <article class="card">
         <h3>Risk</h3>
-        <p class="stat">10 vs 5 <span>VaR breaches vs expected at 99%</span></p>
-        <p class="a">On RELIANCE, the constant-volatility normal VaR fails its own backtest: Kupiec rejects it (p = 0.048), but that is one of four in-sample tests and does not survive a Holm correction (adjusted p = 0.096); the evidence that the tails are fatter than the model assumes is the out-of-sample test. Tested out of sample on GULFOILLUB (pre-registered, 2,506 test days, refit every 20 days), the constant-volatility normal model still fails at 99% (42 breaches vs about 25 expected, p = 0.002); a GARCH-t model passes (21 vs about 25, p = 0.40).</p>
+        <p class="stat">42 vs 25 <span>99% VaR breaches vs expected for the constant-volatility normal model, out of sample (pre-registered, GULFOILLUB)</span></p>
+        <p class="a">Tested out of sample on GULFOILLUB (pre-registered, 2,506 test days, refit every 20 days), the constant-volatility normal VaR fails at 99% (42 breaches vs about 25 expected, p = 0.002); a GARCH-t model passes (21 vs about 25, p = 0.40). In sample on RELIANCE the same normal model was breached 10 times against about 5 expected: Kupiec rejects it (p = 0.048), but that is one of four in-sample tests and does not survive a Holm correction (adjusted p = 0.096), so the out-of-sample test is the evidence that the tails are fatter than the model assumes.</p>
         <figure class="fig"><img src="assets/charts/risk-lab.png" width="900" height="643" loading="lazy" alt="Histogram of a million simulated 20-day maximum drawdowns on RELIANCE, with the median and worst path marked."><figcaption>From <code>python -m mcsim.portfolio --drawdown-plot</code> (monte-carlo-risk-lab, main as of 8796513, 17 Oct 2026); RELIANCE daily bars 4 Sep 2024 to 4 Sep 2026.</figcaption></figure>
         <a class="repo" href="https://github.com/Achintya1311/monte-carlo-risk-lab">monte-carlo-risk-lab &rarr;</a>
       </article>
@@ -131,8 +131,8 @@
 
       <article class="card">
         <h3>Portfolio optimisation</h3>
-        <p class="stat">+420% vs +256% <span>equal weight vs max-Sharpe, both after costs, 126 folds</span></p>
-        <p class="a">On 29 large caps, equal weight compounded ahead of mean-variance optimisation out of sample, and none of five pre-registered rules beat it: +427% vs +309% before costs, +420% vs +256% after costs, with both portfolios paying to rebalance. Costs widen the gap, since the optimizer&rsquo;s own turnover (54% per fold vs 5%) costs more than the raw cost-rate difference suggests. The gap is not statistically significant at the 252-day training window (Sharpe difference &minus;0.37, 95% interval &minus;0.92 to +0.09); equal weight stays ahead across the risk-free rates and training windows tried, and only the 126-day window separates them clearly.</p>
+        <p class="stat">+426% vs +228% <span>equal weight vs max-Sharpe, both after costs, 127 folds, fixtures to 30 Oct 2026</span></p>
+        <p class="a">On 29 large caps, equal weight compounded ahead of mean-variance optimisation out of sample, and none of five pre-registered rules beat it. On fixtures to 30 Oct 2026 (127 folds): +433% vs +278% before costs, +426% vs +228% after costs, with both portfolios paying to rebalance; at the 26 Oct refresh (126 folds) it was +427% vs +309% before costs. A weekly data refresh adds folds and rewrites adjusted prices, so the figures move a little each week. Costs widen the gap, since the optimizer&rsquo;s own turnover (54% per fold vs 5%) costs more than the raw cost-rate difference suggests. The gap is not statistically significant at the 252-day training window (Sharpe difference &minus;0.42, 95% interval &minus;0.96 to +0.02); equal weight stays ahead across the risk-free rates and training windows tried, and only the 126-day window separates them clearly.</p>
         <figure class="fig"><img src="assets/charts/markowitz.png" width="900" height="675" loading="lazy" alt="Efficient frontier, tangency portfolio and capital market line for 29 large-cap stocks."><figcaption>From <code>optimizer.report</code>&rsquo;s frontier plot (markowitz-portfolio-optimizer, main as of bf609d3, 17 Oct 2026); 29 large caps, daily bars 1 Jan 2015 to 15 Oct 2026.</figcaption></figure>
         <a class="repo" href="https://github.com/Achintya1311/markowitz-portfolio-optimizer">markowitz-portfolio-optimizer &rarr;</a>
       </article>
