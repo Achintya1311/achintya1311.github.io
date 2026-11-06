@@ -204,3 +204,7 @@ details.orow>summary:focus-visible{outline:2px solid var(--accent);outline-offse
 .card.fc.row:not(.open){grid-template-columns:minmax(0,1fr) 36px;grid-template-areas:"t x" "stat x"}
 .card.fc.row:not(.open) :is(.fc-cat,.fc-th,.fc-sub,.fc-a,.fc-foot){display:none}
 .card.fc.row:not(.open) .fc-stat{font-size:1.05rem}
+
+/* DD9 on What I got wrong (W119): one row per mistake */
+#wrong-all li{display:block;padding:0} #wrong-all .orow{border-top:0} #wrong-all .orow .wh{flex-basis:100%;color:var(--ink)} #wrong-all .ob{color:var(--ink)}
+#wrong-all .num{color:var(--muted);font-family:var(--mono);margin-right:4px}

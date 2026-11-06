@@ -197,8 +197,15 @@
   const hero = doc.querySelector('header.hero'), tx = sel => { const e = hero && hero.querySelector(sel); return e ? e.textContent.trim() : ''; };
   if (hero) { $('#ab-kick').textContent = tx('.kicker') || $('#ab-kick').textContent; $('#ab-name').textContent = tx('h1') || 'Achintya Mishra'; $('#ab-lede').textContent = tx('.lede');
     $('#ab-facts').innerHTML = [...hero.querySelectorAll('.facts > div')].map(d => `<div><dt>${esc(d.querySelector('dt').textContent)}</dt>${[...d.querySelectorAll('dd')].map(x => `<dd>${esc(x.textContent)}</dd>`).join('')}</div>`).join(''); }
-  const wrong = [...doc.querySelectorAll('#wrong .log li')].map(li => li.innerHTML.replace(/href="(?!http)/g, 'href="../'));
-  $('#wrong-all').innerHTML = wrong.map((x, i) => `<li><span class="ico num">${i + 1}</span><div class="tx">${x}</div></li>`).join('');
+  // DD9: each mistake is one line (its label and first sentence); the rest, with test names and the link, opens in place. The first one is open.
+  const wrong = [...doc.querySelectorAll('#wrong .log li')].map(li => {
+    li.querySelectorAll('a[href]').forEach(a => { if (!/^(https?:|#)/.test(a.getAttribute('href'))) a.setAttribute('href', '../' + a.getAttribute('href')); });
+    const lab = li.querySelector('strong'), nodes = [...li.childNodes].filter(n => n !== lab), t = nodes.find(n => n.nodeType === 3 && n.textContent.trim());
+    let head = '', rest = nodes.map(n => n.nodeType === 3 ? esc(n.textContent) : n.outerHTML || '').join('');
+    if (t) { const m = t.textContent.match(/^\s*(.*?[.?!])(\s+(?=[A-Z(])[\s\S]*|\s*)$/); if (m) { head = m[1]; rest = nodes.map(n => n === t ? esc(m[2]) : n.nodeType === 3 ? esc(n.textContent) : n.outerHTML || '').join(''); } }
+    return { lab: lab ? lab.innerHTML : '', head: esc(head), rest: rest.trim() };
+  });
+  $('#wrong-all').innerHTML = wrong.map((w, i) => `<li><details class="orow"${i ? '' : ' open'}><summary><span class="ot"><span class="num">${i + 1}</span> ${w.lab}</span><span class="wh">${w.head}</span></summary><div class="ob">${w.rest}</div></details></li>`).join('');
 })();
 
 // ---- Picks: the lab's JSON, rendered as charts. Shapes only: bars and zone are scaled 0-100, no prices.
