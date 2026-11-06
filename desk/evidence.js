@@ -11,17 +11,21 @@
   // ---------- data ----------
   let evP = null;
   window.deskEvLoad = () => (evP = evP || J(RAW + 'reports/evidence_train.json').then(ev => Object.fromEntries(Object.entries(ev).filter(([k, v]) => /^(day|week)\/(bullish|bearish)$/.test(k) && v && v.experiments && v.joint && Array.isArray(v.joint.stepm)))).catch(() => null));
+  // one shared loader for Home, Picks and X-Ray (W12, W82): one listing call per horizon per page load;
+  // if the GitHub API is rate-limited (60 calls an hour), probe the last ten IST dates on raw.githubusercontent.com;
+  // a failure is not cached, so the next view or toggle tries again
   const latestP = {};
+  const ymd = d => new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })).toLocaleDateString('en-CA');
   const latest = h => (latestP[h] = latestP[h] || (async () => {
-    for (const base of ['live', 'reports/live_dryrun']) {
-      try {
-        const list = await J(`https://api.github.com/repos/${REPO}/contents/${base}/${h}`);
-        const names = list.map(f => f.name).filter(n => n.endsWith('.json')).sort();
-        if (names.length) return { dry: base !== 'live', data: await J(`${RAW}${base}/${h}/${names[names.length - 1]}`) };
-      } catch {}
+    // published picks first (listing, then the dated files directly); the rehearsal folder only when neither finds a live file (W122)
+    const listed = async base => { const list = await J(`https://api.github.com/repos/${REPO}/contents/${base}/${h}`), names = list.map(f => f.name).filter(n => n.endsWith('.json')).sort(); return names.length ? J(`${RAW}${base}/${h}/${names[names.length - 1]}`) : null; };
+    try { const d = await listed('live'); if (d) return { dry: false, data: d }; } catch {}
+    for (let i = -1; i < 10; i++) {
+      try { return { dry: false, data: await J(`${RAW}live/${h}/${ymd(new Date(Date.now() - i * 864e5))}.json`) }; } catch {}
     }
+    try { const d = await listed('reports/live_dryrun'); if (d) return { dry: true, data: d }; } catch {}
     return null;
-  })());
+  })().then(r => { if (!r) delete latestP[h]; return r; }));
 
   window.deskLatest = latest;
 
@@ -85,7 +89,9 @@
       s += `<line x1="${x(pts(r.lo))}" x2="${x(pts(r.hi))}" y1="${y}" y2="${y}" stroke="${col}" stroke-width="2.2"/><circle cx="${x(pts(r.mean))}" cy="${y}" r="4" fill="${col}"/>`;
       s += `<text x="${W - R + 8}" y="${y + 4}" font-size="11" class="num" fill="currentColor">${fmt(r.mean)}</text>`;
     });
-    return s + '</svg></div>';
+    s += '</svg></div>';
+    const tr = rows.map(r => `<tr><th scope="row">${esc(pretty(r.id))}</th><td class="num">${fmt(r.mean)}</td><td class="num">${fmt(r.lo)} to ${fmt(r.hi)}</td><td>${joint.stepm.includes(r.id) ? 'passes' : r.hi < 0 ? 'below zero' : 'does not pass'}</td></tr>`).join('');
+    return s + `<details class="bt"><summary>Table of this chart</summary><div class="scroll" tabindex="0" role="region" aria-label="Edge table, scrolls sideways"><table><caption>Edge over the market base rate, points, with 95% interval</caption><thead><tr><th scope="col">Variant</th><th scope="col">Edge</th><th scope="col">95% interval</th><th scope="col">Many-trials check</th></tr></thead><tbody>${tr}</tbody></table></div></details>`;
   }
 
   window.deskForest = forest; window.deskFamily = family; window.deskPretty = pretty;
@@ -95,8 +101,8 @@
 
   function verdict(g) {
     const n = g.joint.stepm.length, ps = pf(g.joint.spa.consistent);
-    if (n && g.joint.spa.consistent >= 0.05) return `<b>Mixed.</b> Of ${g.joint.n_models} variants tried, ${n} ${n === 1 ? 'passes' : 'pass'} the one-by-one check after correcting for how many were tried, but the all-variants joint test cannot rule out luck (p ${ps}). Treat ${n === 1 ? 'it' : 'them'} as unconfirmed.`;
-    if (n) return `<b class="g">Some variants survive.</b> Across all ${g.joint.n_models} variants tried, the joint test gives p ${ps}, and ${n} ${n === 1 ? 'variant is' : 'variants are'} individually superior after correcting for how many were tried.`;
+    if (n && g.joint.spa.consistent >= 0.05) return `<b>Mixed.</b> Of ${g.joint.n_models} variants tried, ${n} ${n === 1 ? 'passes' : 'pass'} the one-by-one check after correcting for how many were tried (at the 10% level), but the all-variants joint test cannot rule out luck (p ${ps}). Treat ${n === 1 ? 'it' : 'them'} as unconfirmed.`;
+    if (n) return `<b class="g">Some variants survive.</b> Across all ${g.joint.n_models} variants tried, the joint test gives p ${ps}, and ${n} ${n === 1 ? 'variant passes' : 'variants pass'} the one-by-one check after correcting for how many were tried (at the 10% level; the joint test is read at 5%).`;
     if (g.joint.spa.consistent >= 0.05) return `<b class="r">Nothing survives.</b> Across ${g.joint.n_models} variants the joint test gives p ${ps}, so luck cannot be ruled out as the source of the best-looking results.`;
     return `<b class="r">Nothing survives.</b> Across ${g.joint.n_models} variants the joint test gives p ${ps}: the best-looking results here are what luck produces when this many are tried.`;
   }
@@ -116,12 +122,13 @@
       : ob.length ? 'At least one order-block variant has an interval above zero here; it still needs validation on unseen years.' : 'No order-block replay is in this group yet.';
     $('#ev-body').innerHTML = `
       <div class="panel"><h2>${hz} horizon, ${side} picks</h2><p>${verdict(g)}</p>
-        <p class="note">In plain words: if none of the ${g.joint.n_models} variants had a real edge, a best result at least this good would turn up by chance with p ${pf(g.joint.spa.consistent)} (Hansen SPA; its looser and stricter versions give p ${pf(g.joint.spa.lower)} and p ${pf(g.joint.spa.upper)}). The model confidence set keeps ${g.joint.mcs.length} of ${g.joint.n_models} variants as not clearly worse than the best. Days are resampled ${g.joint.block > 1 ? `in blocks of ${g.joint.block} so days that move together stay together` : 'one at a time (block length 1)'}.${Object.entries(g.joint.twins || {}).map(([a, b]) => ` ${esc(pretty(a))} makes the same picks as ${esc(pretty(b))}, so the joint tests count them once.`).join('')}</p></div>
+        <p class="note">In plain words: if none of the ${g.joint.n_models} variants had a real edge, a best result at least this good would turn up by chance with p ${pf(g.joint.spa.consistent)}.${Object.entries(g.joint.twins || {}).map(([a, b]) => ` ${esc(pretty(a))} makes the same picks as ${esc(pretty(b))}, so the joint tests count them once.`).join('')}</p>
+        <details class="how"><summary>How this was tested</summary><p class="note">Joint test: Hansen SPA, p ${pf(g.joint.spa.consistent)} (its looser and stricter versions give p ${pf(g.joint.spa.lower)} and p ${pf(g.joint.spa.upper)}). One-by-one check: Romano-Wolf StepM at the 10% level. The model confidence set (MCS) keeps ${g.joint.mcs.length} of ${g.joint.n_models} variants as not clearly worse than the best. Bootstrap: days are resampled ${g.joint.block > 1 ? `in blocks of ${g.joint.block} so days that move together stay together` : 'one at a time (block length 1)'}.</p></details></div>
       <div class="panel"><h2>Edge over the market base rate, 95% interval</h2>${forest(rows, g.joint)}
-        <p class="note"><span class="g">Green</span> survives the correction for many trials. <span style="color:var(--amber)">Amber</span> is an order-block or confluence variant. <span class="r">Red</span> loses to the market line with an interval entirely below zero. Grey is not distinguishable from zero.</p></div>
+        <p class="note"><span class="g">Green</span> passes the one-by-one check after the correction for many trials, at the 10% level. <span style="color:var(--amber)">Amber</span> is an order-block or confluence variant. <span class="r">Red</span> loses to the market line with an interval entirely below zero. Grey is not distinguishable from zero.</p></div>
       <div class="panel"><h2>Do order blocks help? The ablation</h2><p>${esc(obVerdict)}</p>
-        <div class="scroll" tabindex="0" role="region" aria-label="Strategy table, scrolls sideways"><table class="t ab"><thead><tr><th>Strategy</th><th>Edge (pts)</th><th>95% interval</th><th>Verdict</th></tr></thead><tbody>${abl}</tbody></table></div>
-        <p class="note">Read the rows in pairs. O00 against O01 shows what the impulse requirement adds; O04, O04A and O04B differ only in which ingredient is left out. Other rows use different base signals, so they are context, not a one-change comparison. The placebo uses the same zone logic with the impulse requirement removed.</p></div>`;
+        <details class="orow abl"><summary><span class="ot">Each order-block variant, with its edge and verdict</span></summary><div class="ob"><div class="scroll" tabindex="0" role="region" aria-label="Strategy table, scrolls sideways"><table class="t ab"><thead><tr><th>Strategy</th><th>Edge (pts)</th><th>95% interval</th><th>Verdict</th></tr></thead><tbody>${abl}</tbody></table></div>
+        <p class="note">Read the rows in pairs. O00 against O01 shows what the impulse requirement adds; O04, O04A and O04B differ only in which ingredient is left out. Other rows use different base signals, so they are context, not a one-change comparison. The placebo uses the same zone logic with the impulse requirement removed.</p></div></details></div>`;
   }
 
   async function evidenceView() {
@@ -139,24 +146,31 @@
     const wl = $('#ev-weekline');
     if (wl) wl.textContent = !wn ? `Among the weekly variants in the lab's evidence file, none survives; the weekly joint tests give p ${pf(wp)} at best.`
       : `Among the weekly variants in the lab's evidence file, ${wn} ${wn === 1 ? 'passes' : 'pass'} the one-by-one check` + (wp >= 0.05 ? `, but no weekly joint test is below 0.05 (p ${pf(wp)}), so this is weak evidence.` : '.');
-    $('#ev-sum').innerHTML = `<div class="stat"><b>${total}</b><span>strategy results tested</span></div><div class="stat"><b>${surv}</b><span>survive the many-trials correction</span></div><div class="stat"><b>${weekNone ? 'none' : wConf ? 'some' : wn + ' unconfirmed'}</b><span>at the weekly horizon</span></div><div class="stat"><b>${obN}</b><span>distinct order-block variants tested (placebo excluded)</span></div>`;
+    $('#ev-sum').innerHTML = `<div class="stat"><b>${total}</b><span>strategy results tested</span></div><div class="stat"><b>${surv}</b><span>pass the many-trials check (10% level)</span></div><div class="stat"><b>${weekNone ? 'none' : wConf ? 'some' : wn + ' unconfirmed'}</b><span>at the weekly horizon</span></div><div class="stat"><b>${obN}</b><span>distinct order-block variants tested (placebo excluded)</span></div>`;
     $('#ev-chips').innerHTML = keys.map((k, i) => `<button class="chip" data-k="${k}" aria-pressed="${i === 0}">${k.replace('/', ' · ')}</button>`).join('');
     $('#ev-chips').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; [...$('#ev-chips').children].forEach(c => c.setAttribute('aria-pressed', c === b)); drawEvidence(ev, b.dataset.k); };
     drawEvidence(ev, keys[0]);
   }
 
   // ---------- Market X-Ray ----------
+  const binTable = b => {
+    const E = b.edges_pct, n = b.counts.length, f = e => (e > 0 ? '+' : '') + Number(e) + '%';
+    if (n !== E.length + 1) return '';
+    return `<details class="bt"><summary>Table of the bins</summary><table><caption>Stocks by open-to-close move, last session</caption><thead><tr><th scope="col">Move</th><th scope="col">Stocks</th></tr></thead><tbody>${b.counts.map((c, i) => `<tr><th scope="row">${i === 0 ? 'Below ' + f(E[0]) : i === n - 1 ? 'Above ' + f(E[i - 1]) : f(E[i - 1]) + ' to ' + f(E[i])}</th><td>${Number(c)}</td></tr>`).join('')}</tbody></table></details>`;
+  };
+
   function histogram(b) {
     const W = 560, H = 120, n = b.counts.length, bw = W / n, mx = Math.max(...b.counts, 1), mid = b.edges_pct.indexOf(0) + 1;
     const bars = b.counts.map((c, i) => `<rect x="${i * bw + 1}" y="${H - 16 - c / mx * (H - 26)}" width="${bw - 2}" height="${c / mx * (H - 26)}" fill="${i < mid ? 'var(--down)' : 'var(--up)'}" opacity=".85"><title>${c} stocks</title></rect>`).join('');
-    return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Distribution of the last session's open-to-close moves across the universe">${bars}<line x1="${mid * bw}" x2="${mid * bw}" y1="4" y2="${H - 16}" stroke="currentColor" opacity=".5"/><text x="2" y="${H - 3}" font-size="10" fill="currentColor" opacity=".6">down more than 4%</text><text x="${W - 2}" y="${H - 3}" font-size="10" text-anchor="end" fill="currentColor" opacity=".6">up more than 4%</text></svg>`;
+    return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Distribution of the last session's open-to-close moves across the universe">${bars}<line x1="${mid * bw}" x2="${mid * bw}" y1="4" y2="${H - 16}" stroke="currentColor" opacity=".5"/><text x="2" y="${H - 3}" font-size="10" fill="currentColor" opacity=".6">down more than 4%</text><text x="${W - 2}" y="${H - 3}" font-size="10" text-anchor="end" fill="currentColor" opacity=".6">up more than 4%</text></svg>` + binTable(b);
   }
 
   async function xrayView() {
     const r = await latest('day');
-    if (!r || !r.data.xray) { $('#xr-body').innerHTML = '<div class="empty">The lab has not published an X-Ray for the next session yet.</div>'; return; }
+    if (!r) { $('#xr-sub').textContent = 'Could not reach the lab right now.'; $('#xr-body').innerHTML = `<div class="empty">Could not reach the lab's files right now (GitHub may be limiting requests). Try again in a few minutes, or see the <a href="https://github.com/${REPO}/tree/main/live">lab repo</a>.</div>`; return; }
+    if (!r.data.xray) { $('#xr-sub').textContent = `Session ${r.data.session}`; $('#xr-body').innerHTML = '<div class="empty">The lab\'s latest picks file has no X-Ray block.</div>'; return; }
     const x = r.data.xray, b = x.breadth;
-    $('#xr-sub').textContent = `Session ${r.data.session}${r.dry ? ' (dry run: the lab has not gone live yet)' : ''} · data as of ${x.asof} · ${x.n} stocks in the universe`;
+    $('#xr-sub').textContent = `Session ${r.data.session}${r.dry ? ' (testing phase: from the lab\'s rehearsal folder, not its published file)' : ''} · data as of ${x.asof} · ${x.n} stocks in the universe`;
     const score = s => Math.max(s.b ?? -1, s.d ?? -1), side = s => (s.b ?? -1) >= (s.d ?? -1) ? 'b' : 'd';
     const bull = x.stocks.filter(s => s.b != null && side(s) === 'b').sort((a, c) => c.b - a.b), bear = x.stocks.filter(s => s.d != null && side(s) === 'd').sort((a, c) => c.d - a.d), none = x.stocks.filter(s => s.b == null && s.d == null);
     const dot = (s, k) => `<span class="dot-s ${k}" tabindex="0" role="img" aria-label="${esc(s.s)}, ${k === 'up' ? 'bullish rank ' + s.b : k === 'dn' ? 'bearish rank ' + s.d : 'not scored'}" data-s="${esc(s.s)}" title="${esc(s.s)} · ${k === 'up' ? 'bullish rank ' + s.b : k === 'dn' ? 'bearish rank ' + s.d : 'not scored'}" style="opacity:${k === 'no' ? .3 : (.3 + .7 * score(s) / 100).toFixed(2)}"></span>`;

@@ -7,7 +7,6 @@
 
   // greeting and market state (IST)
   const now = new Date(), ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })), h = ist.getHours(), m = ist.getMinutes(), wd = ist.getDay();
-  $('#hello').textContent = `${h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'}, Achintya`;
   $('#today').textContent = ist.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
   const mins = h * 60 + m, open = wd >= 1 && wd <= 5 && mins >= 555 && mins < 930;
   const dot = $('#mkt-state').previousElementSibling; if (dot) dot.classList.toggle('live', open);
@@ -39,12 +38,12 @@
     if (!c || !c.bars) return '';
     const W = 130, H = 44, bars = c.bars.slice(-30), n = bars.length, bw = W / n, y = v => (100 - v) / 100 * (H - 6) + 3;
     const ma = bars.map((_, i) => { const a = bars.slice(Math.max(0, i - 7), i + 1); return a.reduce((s, b) => s + b[3], 0) / a.length; });
-    const body = bars.map(([o, hi, lo, cl], i) => { const x = i * bw + bw / 2, up = cl >= o, col = up ? 'var(--up)' : 'var(--down)'; return `<line x1="${x}" x2="${x}" y1="${y(hi)}" y2="${y(lo)}" stroke="${col}" stroke-width=".8"/><rect x="${x - bw * .32}" y="${y(Math.max(o, cl))}" width="${bw * .64}" height="${Math.max(Math.abs(y(o) - y(cl)), .8)}" fill="${col}"/>`; }).join('');
+    const body = bars.map(([o, hi, lo, cl], i) => { const x = i * bw + bw / 2, up = cl >= o, col = up ? 'var(--up)' : 'var(--down)'; return `<line x1="${x}" x2="${x}" y1="${y(hi)}" y2="${y(lo)}" stroke="${col}" stroke-width=".8"/><rect x="${x - bw * .32}" y="${y(Math.max(o, cl))}" width="${bw * .64}" height="${Math.max(Math.abs(y(o) - y(cl)), .8)}" ${up ? `fill="${col}"` : `fill="none" stroke="${col}" stroke-width=".8"`}/>`; }).join('');
     const dots = ma.map((v, i) => `${i ? 'L' : 'M'}${i * bw + bw / 2},${y(v)}`).join('');
     return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${body}<path d="${dots}" fill="none" stroke="#4c8bf5" stroke-width="1" stroke-dasharray="1.5 2.5" vector-effect="non-scaling-stroke"/></svg>`;
   }
 
-  const tile = (p, rk, side) => `<a class="t2" href="#picks" title="${esc(p.reasoning || '')}">
+  const tile = (p, rk, side) => `<a class="t2" href="#picks" title="${esc(window.deskNoLevels(p.reasoning || ''))}">
     <span class="logo" style="background:hsl(${hue(p.symbol)} 55% 62%)">${esc(p.symbol.slice(0, 2))}</span>
     <span class="nm"><span class="r1"><span class="bd">${side === 'up' ? 'BULL' : 'BEAR'}</span><b>${esc(p.symbol)}</b></span><small>${esc(String(p.strategy || '').replace('@v1', '').replace(/_/g, ' '))}</small></span>
     <span class="mini">${mini(p.chart)}</span><span class="rk">${rk != null ? 'p' + rk : '–'}</span></a>`;
@@ -54,13 +53,13 @@
     if (!r) { $('#top-bull').innerHTML = $('#top-bear').innerHTML = '<p class="note">Could not load the lab’s picks.</p>'; $('#depth').innerHTML = '<p class="note">Breadth needs the lab’s picks file, which could not be loaded.</p>'; return; }
     const d = r.data, x = d.xray, rk = {};
     ((x && x.stocks) || []).forEach(s => rk[s.s] = s);
-    if (x) { $('#depth').innerHTML = depth(x.breadth); $('#asof').textContent = 'as of ' + x.asof + (r.dry ? ' · dry run' : ''); }
+    if (x) { $('#depth').innerHTML = depth(x.breadth); $('#asof').textContent = 'as of ' + x.asof + (r.dry ? ' · rehearsal file' : ''); }
     if (x && x.breadth && x.breadth.n) $('#counts').innerHTML = `<span class="g">▲ ${Number(x.breadth.up)}</span> <span class="r">▼ ${Number(x.breadth.down)}</span><small>stocks up / down in the last session, by price move, not picks</small>`;
     $('#top-bull').innerHTML = (d.tables.bullish || []).slice(0, 3).map(p => tile(p, rk[p.symbol] && rk[p.symbol].b, 'up')).join('') || '<p class="note">No picks.</p>';
     $('#top-bear').innerHTML = (d.tables.bearish || []).slice(0, 3).map(p => tile(p, rk[p.symbol] && rk[p.symbol].d, 'dn')).join('') || '<p class="note">No picks.</p>';
   }
 
-  // compact edge bars (points over the market base rate), green when the strategy survives the many-trials test
+  // compact edge bars, top 5 only (DD9; the full list is on Evidence) (points over the market base rate), green when the strategy survives the many-trials test
   function bars(rows, sup) {
     const mx = Math.max(...rows.map(r => Math.abs(r.mean * 100)), 1);
     return `<div class="eb">${rows.map(r => { const v = r.mean * 100, w = Math.abs(v) / mx * 50, s = sup.includes(r.id);
@@ -69,13 +68,14 @@
 
   async function strategies() {
     const ev = await window.deskEvLoad();
-    if (!ev) { $('#strat').innerHTML = '<p class="note">Could not load the evidence file.</p>'; return; }
+    if (!ev) { $('#strat').innerHTML = '<p class="note">Could not load the evidence file.</p>'; $('#proof-lab').innerHTML = 'Lab: the evidence file could not be loaded here; <a href="#evidence">open Evidence</a>.'; return; }
     const g = ev['day/bearish'], rows = Object.entries(g.experiments).map(([id, e]) => ({ id, ...e })).sort((a, b) => b.mean - a.mean);
     const sup = g.joint.stepm, nsup = sup.length, nfail = rows.length - nsup;
-    $('#strat').innerHTML = `<div class="strip"><span class="a">SURVIVE ${nsup}</span><span class="ticks">${rows.map(r => `<i class="${sup.includes(r.id) ? 's' : r.hi < 0 ? 'f' : ''}" title="${esc(window.deskPretty(r.id))}"></i>`).join('')}</span><span class="b">NOT SURVIVING ${nfail}</span></div>${bars(rows.slice(0, 8), sup)}<p class="note">Train 2015 to 2020, day horizon, bearish side. Here ${nsup} of ${rows.length} variants survive; across all four horizon and side groups the lab counts ${Object.values(ev).reduce((n, v) => n + v.joint.stepm.length, 0)} of ${Object.values(ev).reduce((n, v) => n + Object.keys(v.experiments).length, 0)}. These are lab experiments. ${(() => { const c = k => ev[k] && ev[k].experiments['champion-v1-day'], b = c('day/bullish'), s = c('day/bearish');
-      return s ? `The lab's first provisional rule, its blended score (Champion v1), has its own train replay in this file: on the bearish side it ${sup.includes('champion-v1-day') ? 'survives' : 'does not survive'} the correction${b ? `, and on the bullish side its interval is ${b.hi < 0 ? 'entirely below zero (it loses to the market line)' : 'not above zero'}` : ''}. Each pick on the Picks view names the strategy that chose it.` : 'The lab\'s first provisional rule, a blended score, has its train replay in a separate lab report. Each pick on the Picks view names the strategy that chose it.'; })()}</p>`;
+    $('#strat').innerHTML = `<div class="strip"><span class="a">SURVIVE ${nsup}</span><span class="ticks">${rows.map(r => `<i class="${sup.includes(r.id) ? 's' : r.hi < 0 ? 'f' : ''}" title="${esc(window.deskPretty(r.id))}"></i>`).join('')}</span><span class="b">NOT SURVIVING ${nfail}</span></div>${bars(rows.slice(0, 5), sup)}<p class="note">The 5 largest edges of ${rows.length} variants (points over the base rate), train years 2015 to 2020, day horizon, bearish side; ${nsup} pass the many-trials check at the 10% level.</p><details class="orow"><summary><span class="ot">More on this list</span></summary><div class="ob"><p>Across all four horizon and side groups the lab counts ${Object.values(ev).reduce((n, v) => n + v.joint.stepm.length, 0)} of ${Object.values(ev).reduce((n, v) => n + Object.keys(v.experiments).length, 0)}. These are lab experiments. ${(() => { const c = k => ev[k] && ev[k].experiments['champion-v1-day'], b = c('day/bullish'), s = c('day/bearish');
+      return s ? `The lab's first provisional rule, its blended score (Champion v1), has its own train replay in this file: on the bearish side its interval is ${s.lo > 0 ? 'above zero' : s.hi < 0 ? 'entirely below zero' : 'not distinguishable from zero'} (${(s.lo * 100).toFixed(2)} to ${(s.hi * 100).toFixed(2)} points), and it ${sup.includes('champion-v1-day') ? 'is' : 'is not'} among the ${nsup} variants that stay superior once the number of tries is counted${b ? `, and on the bullish side its interval is ${b.hi < 0 ? 'entirely below zero (it loses to the market line)' : 'not above zero'}` : ''}. Each pick on the Picks view names the strategy that chose it.` : 'The lab\'s first provisional rule, a blended score, has its train replay in a separate lab report. Each pick on the Picks view names the strategy that chose it.'; })()}</p></div></details>`;
     const tot = Object.values(ev).reduce((n, v) => n + v.joint.stepm.length, 0), all = Object.values(ev).reduce((n, v) => n + Object.keys(v.experiments).length, 0);
-    $('#surv-line').textContent = `${tot} of ${all} results survive the many-trials test`;
+    $('#surv-line').textContent = `${tot} of ${all} results pass the many-trials check (10% level)`;
+    $('#proof-lab').textContent = `Lab: ${tot} of ${all} strategy results still beat the market's base rate after correcting for how many were tried (10% level), in the 2015 to 2020 train years; this count leaves out later, unseen years.`;
     $('#surv-bar').style.width = (tot / all * 100).toFixed(0) + '%';
   }
 
@@ -85,18 +85,31 @@
       if (!r.ok) throw 0;
       const list = await r.json(), ago = t => { const mm = (Date.now() - new Date(t)) / 6e4; return mm < 90 ? Math.round(mm) + 'm ago' : mm < 2880 ? Math.round(mm / 60) + 'h ago' : Math.round(mm / 1440) + 'd ago'; };
       $('#journal').innerHTML = list.map(c => { const msg = c.commit.message.split('\n')[0].replace(/\s*\[supervised\]/, ''), mt = msg.match(/^(\w+)(?:\(([^)]+)\))?:\s*(.*)$/), lane = mt && mt[2] ? mt[2] : mt ? mt[1] : 'lab';
-        return `<a href="${esc(c.html_url)}"><span class="av2"></span><span><b>lab <span class="tag">${esc(lane)}</span><time>${ago(c.commit.author.date)}</time></b><small>${esc(mt ? mt[3] : msg)}</small></span></a>`; }).join('');
+        // DD9: one line per entry (lane, start of the message, age); the full line and the commit link open in place
+        return `<details class="orow jrow"><summary><span class="tag">${esc(lane)}</span><span class="jt">${esc(mt ? mt[3] : msg)}</span><time>${ago(c.commit.author.date)}</time></summary><div class="ob"><p>${esc(mt ? mt[3] : msg)}</p><a href="${esc(c.html_url)}">Open the lab commit →</a></div></details>`; }).join('');
     } catch { $('#journal').innerHTML = `<p class="note">Could not load the journal. <a href="https://github.com/${REPO}/blob/main/state/journal.md">Open it on GitHub</a>.</p>`; }
   }
 
-  // 4 newest findings = first four cards in the root page's order (no date field exists); title, stat, thumbnail only
+  // 4 newest findings = first four cards in the root page's order (no date field exists). DD9: one line each (title and stat), opening to the card's one-line summary
   async function findings() {
     const box = $('#home-find');
     try {
       const { cards } = await window.deskRoot();
-      box.innerHTML = cards.slice(0, 4).map(c => `<a class="hf" href="#findings"><span class="hf-t">${esc(c.title)}</span><span class="hf-s">${esc(c.big)}</span><span class="hf-u">${esc(c.sub)}</span>${c.src ? `<span class="fc-th"><img src="${esc(c.src)}" alt="" width="96" height="72" loading="lazy"></span>` : '<span class="fc-th ph" aria-hidden="true">Workbook</span>'}</a>`).join('');
+      box.innerHTML = cards.slice(0, 4).map(c => `<details class="orow"><summary><span class="ot">${esc(c.title)}</span><span class="os">${esc(c.big)}</span></summary><div class="ob"><p><b>${esc(c.big)}</b> ${esc(c.sub)}</p><a href="#findings">Open it on Findings →</a></div></details>`).join('');
     } catch { box.innerHTML = '<p class="note">Could not load findings here. <a href="../index.html#findings">Open the classic page</a>.</p>'; }
   }
 
-  top(); strategies(); journal(); findings();
+  async function who() {
+    try {
+      const { doc } = await window.deskRoot(), hero = doc.querySelector('header.hero'); if (!hero) return;
+      const k = hero.querySelector('.kicker'), n = hero.querySelector('h1'), f = [...hero.querySelectorAll('.facts > div')];
+      const fact = name => f.find(d => d.querySelector('dt').textContent.trim() === name);
+      if (k) $('#ov-kick').textContent = k.textContent.trim(); if (n) $('#hello').textContent = n.textContent.trim();
+      const c = fact('Certified'), b = fact('Built');
+      if (c) $('#ov-cert').textContent = 'Certified: ' + [...c.querySelectorAll('dd')].map(d => d.textContent.trim()).join('; ');
+      if (b) { const m = b.querySelector('dd').textContent.match(/^(\d+) research repos/); if (m) $('#ov-built').textContent = `${m[1]} research projects alongside it`; }
+    } catch {}
+  }
+
+  who(); top(); strategies(); journal(); findings();
 })();

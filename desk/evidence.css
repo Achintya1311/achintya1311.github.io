@@ -4,7 +4,7 @@
 .muted { color: var(--muted); }
 #ev-body > * + *, #xr-body > * + * { margin-top: 18px; }
 #ev-sum { margin-bottom: 16px; }
-table.t.ab td:first-child small { display: block; color: var(--muted); font: 400 .74rem var(--sans); }
+table.t.ab td:first-child small { display: block; color: var(--muted); font: 400 .75rem var(--sans); }
 table.t.ab td, table.t.ab th { text-align: left; }
 table.t.ab td.num { font-family: var(--mono); }
 .scroll { overflow-x: auto; }
@@ -19,5 +19,11 @@ svg.ch.wide { min-width: 640px; }
 .ev { grid-column: 1 / -1; font-size: .8rem; border-top: 1px solid var(--line); padding-top: 8px; margin-top: 4px; color: var(--muted); }
 .ev b { color: var(--ink); }
 .ev .g, .ev .r { font-weight: 600; }
+.panel > .ev { border-top: 0; padding-top: 0; margin: 0 0 12px; }
 .hint { display: none; font-size: .75rem; color: var(--muted); margin: 0 0 6px; }
 @media (max-width: 760px) { .hint { display: block; } svg.ch.wide { min-width: 760px; } }
+.how { margin-top: 8px; } .how summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; width: fit-content; color: var(--muted); font-size: .85rem; } .how p { margin-top: 4px; }
+.how summary::before { content: "\25B8"; margin-right: 6px; } .how[open] summary::before { content: "\25BE"; }
+
+/* DD9 (W120): the ablation table opens from its verdict sentence */
+.abl{margin-top:4px} .abl .ob{color:var(--ink)} .abl .ob .note{color:var(--muted)}

@@ -14,6 +14,18 @@ window.deskRoot = (() => {
     return { doc, cards };
   }));
 })();
+/* The lab's reasoning text can print price levels ("close above SMA200=2407.84"). The desk shows no prices (DD4, SPEC §10),
+   so every reasoning string goes through this before it is shown (W109). tools/check_desk.py keeps the same rules in LEVEL_RULES. */
+window.deskNoLevels = (() => {
+  const N = '[-+]?\\d[\\d,]*(?:\\.\\d+)?', D = '[-+]?\\d[\\d,]*\\.\\d+(?![\\d.])';
+  const R = [
+    [`\\b((?:SMA|EMA|WMA|HMA|DEMA|TEMA|KAMA|VWAP)\\d*)\\s*=\\s*${N}`, 'gi', '$1'],
+    [`\\b(close|open|high|low|pivot|[RS][1-3]|Tenkan|Kijun|VWAP)\\s+${D}`, 'gi', '$1'],
+    [`\\b(channel|cloud|range|band)\\s+${D}\\s*(?:-|to|\u2013)\\s*${D}`, 'gi', '$1'],
+    [`\\s*\\[\\s*${D}\\s*,\\s*${D}\\s*\\]`, 'g', ''],
+  ].map(([re, f, to]) => [new RegExp(re, f), to]);
+  return s => R.reduce((t, [re, to]) => t.replace(re, to), String(s)).replace(/\s+([,)])/g, '$1').replace(/\s{2,}/g, ' ').trim();
+})();
 /* Desk core: theme, sidebar, hash views, filter chips, lightbox. No dependencies. */
 (() => {
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -32,14 +44,19 @@ window.deskRoot = (() => {
     const v = location.hash.slice(1) || $('.view').id;
     const t = $('#' + CSS.escape(v)) && $('#' + CSS.escape(v)).classList.contains('view') ? v : $('.view').id;
     $$('.view').forEach(e => e.classList.toggle('on', e.id === t));
-    $$('.nav[href^="#"]').forEach(a => { const on = a.getAttribute('href') === '#' + t; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); });
-    document.title = ($('.nav.on .lbl') ? $('.nav.on .lbl').textContent + ' · ' : '') + (shell.dataset.name || 'Desk');
+    // a group is current when it holds the view (DD1); within a group the sub-tab carries aria-current
+    $$('.nav[href^="#"]').forEach(a => { const on = (a.dataset.views || a.getAttribute('href').slice(1)).split(' ').includes(t); a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); });
+    $$('.subtabs a').forEach(a => { const on = a.getAttribute('href') === '#' + t; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); });
+    const sub = $('.view.on .subtabs a.on'), grp = $('.nav.on .lbl');
+    document.title = (sub ? sub.textContent + ' · ' : '') + (grp ? grp.textContent + ' · ' : '') + (shell.dataset.name || 'Desk');
     window.scrollTo(0, 0);
     // move focus to the new view's heading, but not on first load (deep links, skip link)
     if (shown) { const h = $('.view.on h1'); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }
     shown = true;
   };
   addEventListener('hashchange', show); show();
+  // the browser scrolls to the #view section on load, which would hide the mobile top strip above it; views always open at the top
+  addEventListener('load', () => window.scrollTo(0, 0));
   // skip link: focus main without touching the hash, which drives the views
   $('.skip').onclick = e => { e.preventDefault(); $('main').focus(); };
   // chips + segmented sort, applied per feed
@@ -48,8 +65,18 @@ window.deskRoot = (() => {
     const on = $('.chip[aria-pressed=true]', f.parentElement), sort = $('.seg [aria-pressed=true]', f.parentElement);
     const cat = on ? on.dataset.cat : 'all';
     $$('.card', f).forEach(c => c.hidden = cat !== 'all' && !(c.dataset.cat || '').split(' ').includes(cat));
+    const cnt = $('[data-count]', f.parentElement), all = $$('.card', f), vis = all.filter(c => !c.hidden).length;
+    if (cnt) cnt.textContent = `Showing ${vis} of ${all.length} findings` + (cat !== 'all' && on ? ` (${on.textContent})` : '') + (sort && sort.dataset.sort === 'neg' ? ', negative results first' : '') + '.';
     if (sort) { const cs = $$('.card', f); const k = sort.dataset.sort; cs.sort((a, b) => k === 'old' ? b.dataset.i - a.dataset.i : k === 'neg' ? (b.dataset.neg - a.dataset.neg) || (a.dataset.i - b.dataset.i) : a.dataset.i - b.dataset.i); cs.forEach(c => f.appendChild(c)); }
+    // DD9: the first card shown is the lead and stays open; the others are title-and-stat rows that open in place
+    const vis2 = $$('.card', f).filter(c => !c.hidden);
+    $$('.card', f).forEach(c => { const lead = c === vis2[0]; c.classList.toggle('lead', lead); c.classList.toggle('row', !lead); });
   };
+  document.addEventListener('click', e => {
+    const x = e.target.closest('.fc-x'); if (!x) return;
+    const c = x.closest('.card'), on = !c.classList.contains('open');
+    c.classList.toggle('open', on); x.setAttribute('aria-expanded', String(on)); x.setAttribute('aria-label', (on ? 'Hide' : 'Show') + x.getAttribute('aria-label').replace(/^(Show|Hide)/, ''));
+  });
   document.addEventListener('click', e => {
     const c = e.target.closest('.chip,.seg button'); if (!c) return;
     $$(c.matches('.chip') ? '.chip' : '.seg button', c.parentElement).forEach(x => x.setAttribute('aria-pressed', x === c));
@@ -91,6 +118,6 @@ window.deskRoot = (() => {
     load(el); lb.classList.add('on'); shell.inert = true; document.body.style.overflow = 'hidden'; $('.x', lb).focus();
   };
   document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-lb]:not(button)')) window.deskOpen(e.target); });
-  document.addEventListener('click', e => { const c = e.target.closest('[data-lb]'); if (c && !e.target.closest('a')) window.deskOpen(c); });
+  document.addEventListener('click', e => { const c = e.target.closest('[data-lb]'); if (c && !e.target.closest('a, .fc-x')) window.deskOpen(c); });
   window.deskApply = () => feeds().forEach(apply);
 })();

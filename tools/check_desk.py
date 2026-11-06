@@ -6,7 +6,8 @@ Fails (exit 1) if the desk would break or would publish something it must not:
   3. a desk file shows recommendation wording (SITE_SPEC "Desk", DD4, and the SEBI rules);
   4. the order-block zone is drawn without its caption;
   5. a relative link or #anchor in desk/index.html points nowhere;
-  6. desk/ grows past 1 MB.
+  6. desk/ grows past 1 MB;
+  7. a price level in the lab's reasoning would still show after the desk's deskNoLevels() strip (W109).
 Standard library only. Needs network for the lab JSON; no network is a failure, not a pass.
 """
 import json, re, sys, urllib.request
@@ -25,7 +26,30 @@ PRICE_FIELDS = {"open", "close", "move_rs"}
 # "buy-and-hold" is a research benchmark, not a call, so it is allowed.
 BANNED = re.compile(r"\b(?:buy(?!-and-hold)|sell(?:ing)?|opportunit\w*|upside|stop[- ]?loss|entry price|price target|target price)\b|₹", re.I)
 # desk text that says the current picks come from Champion v1 (W96, W100)
+# DD5: test names that belong inside "How this was tested"
+STAT_NAMES = re.compile(r"\b(?:SPA|StepM|MCS|Kupiec|bootstrap)\b")
 STALE_PICKS = re.compile(r"current (?:picks use|blended score)", re.I)
+# the desk strips price levels from the lab's reasoning with window.deskNoLevels (desk/desk.js); same rules here (W109)
+_N, _D = r"[-+]?\d[\d,]*(?:\.\d+)?", r"[-+]?\d[\d,]*\.\d+(?![\d.])"
+LEVEL_RULES = [
+    (re.compile(rf"\b((?:SMA|EMA|WMA|HMA|DEMA|TEMA|KAMA|VWAP)\d*)\s*=\s*{_N}", re.I), r"\1"),
+    (re.compile(rf"\b(close|open|high|low|pivot|[RS][1-3]|Tenkan|Kijun|VWAP)\s+{_D}", re.I), r"\1"),
+    (re.compile(rf"\b(channel|cloud|range|band)\s+{_D}\s*(?:-|to|\u2013)\s*{_D}", re.I), r"\1"),
+    (re.compile(rf"\s*\[\s*{_D}\s*,\s*{_D}\s*\]"), ""),
+]
+# what is left after the strip: a decimal of 50 or more that is not a percent, a sigma or an RSI reading reads as a price
+PRICE_LEFT = re.compile(r"(?<![\w.(])(\d[\d,]*\.\d+)(?!\s*(?:%|sigma|\u03c3))")
+
+
+def no_levels(text):
+    for rx, to in LEVEL_RULES:
+        text = rx.sub(to, text)
+    return re.sub(r"\s{2,}", " ", re.sub(r"\s+([,)])", r"\1", text)).strip()
+
+
+def price_left(text):
+    text = re.sub(r"\b(?:RSI|ADX|MFI|CCI|Stoch\w*|%[KD])(?:\(\d+\))?\s*=\s*[-+]?\d+(?:\.\d+)?", " ", no_levels(text))
+    return [m for m in PRICE_LEFT.findall(text) if float(m.replace(",", "")) >= 50]
 
 
 class Tags(HTMLParser):
@@ -90,7 +114,7 @@ def check_root_contract(errors):
     # numbers with a label must keep that label: a bare-token match passes swaps like beta 0.80 -> 0.85 (W93)
     lines = dict(re.findall(r"'([^']+)': \['[^']*', '([^']*)'\]", status.group(1) if status else ""))
     for key, desk_p, root_p in (
-        ("Portfolio optimisation", "(+427% vs +309% before costs)", "+427% vs +309% before costs"),
+        ("Portfolio optimisation", "(+433% vs +278% before costs, data to 30 Oct 2026)", "+433% vs +278% before costs"),
         ("Factor exposure", "beta 0.80", "beta 0.80"),
         ("Factor exposure", "small-cap loading 0.47", "SMB 0.47"),
         ("Factor exposure", "0.85 sits in alpha", "attributes 0.85 to alpha"),
@@ -102,6 +126,16 @@ def check_root_contract(errors):
             errors.append(f"desk/index.html: STATUS '{key}' no longer says '{desk_p}'; update the pins in tools/check_desk.py with it")
         elif root_p not in text:
             errors.append(f"desk/index.html: STATUS '{key}' says '{desk_p}' but the root card no longer says '{root_p}'")
+    # the Overview proof sentences (data-card) may only use numbers their root card states (W112, as W61 for STATUS)
+    for key, line in re.findall(r'<li data-card="([^"]+)">(.*?)</li>', page, re.S):
+        card = next((c for c in cards if re.search(rf"<h3[^>]*>\s*{re.escape(key)}\b", c)), "")
+        if not card:
+            errors.append(f"desk/index.html: Overview proof names root card '{key}', which no longer exists")
+            continue
+        text = html_unescape(re.sub(r"<[^>]+>", " ", card)).replace("\u2212", "-")
+        for tok in re.findall(r"[-+\u2212]?\d[\d,.]*\d%?|\d%?", html_unescape(line)):
+            if tok.replace("\u2212", "-").rstrip(".,") not in text:
+                errors.append(f"desk/index.html: Overview proof '{key}' says {tok}, which the root card does not")
     # when a root card adds a scope, the desk's STATUS line must carry it too (W88); numbers alone miss this
     for key, root_says, desk_must in (("Reverse DCF", "FY2023-24", "FY2023-24"), ("Options", "forward", "forward")):
         card = next((c for c in cards if re.search(rf"<h3[^>]*>\s*{re.escape(key)}\b", c)), "")
@@ -195,6 +229,9 @@ def check_lab(errors):
                     errors.append(f"lab {h} {side} {p.get('symbol')}: chart values outside 0-100, i.e. real prices")
                 if banned_hits(p.get("reasoning", "")):
                     errors.append(f"lab {h} {side} {p.get('symbol')}: banned wording in reasoning")
+                left = price_left(p.get("reasoning", ""))
+                if left:
+                    errors.append(f"lab {h} {side} {p.get('symbol')}: reasoning would still show {left} after deskNoLevels; add the pattern to deskNoLevels and LEVEL_RULES (W109)")
 
 
 def check_desk_files(errors):
@@ -214,6 +251,14 @@ def check_desk_files(errors):
                     errors.append(f"{f.relative_to(ROOT)}:{n}: p.{fld} is a price; the desk shows no prices")
                 elif fld not in PICK_FIELDS:
                     errors.append(f"{f.relative_to(ROOT)}:{n}: p.{fld} is not a field the lab writes on a pick")
+    # every reasoning string the desk shows goes through deskNoLevels (W109)
+    for f in sorted(DESK.glob("*.js")) + sorted(DESK.glob("*.html")):
+        for n, line in enumerate(f.read_text().splitlines(), 1):
+            if re.search(r"(?<!deskNoLevels\()\bp\.reasoning\b", line):
+                errors.append(f"{f.relative_to(ROOT)}:{n}: p.reasoning shown without window.deskNoLevels (W109)")
+    js = (DESK / "desk.js").read_text()
+    if "window.deskNoLevels" not in js or js.count("`, 'g") != len(LEVEL_RULES):
+        errors.append("desk/desk.js: deskNoLevels missing or its rule count differs from LEVEL_RULES in tools/check_desk.py")
     import shutil, subprocess
     if shutil.which("node"):
         for f in sorted(DESK.glob("*.js")):
@@ -228,6 +273,13 @@ def check_desk_files(errors):
                 os.unlink(t.name)
                 if bad:
                     errors.append(f"{f.relative_to(ROOT)}: inline script {k} has a JavaScript syntax error")
+    # DD5: statistical test names only inside a collapsed "How this was tested" block (on the same source line as its summary)
+    for f in sorted(DESK.glob("*.js")) + sorted(DESK.glob("*.html")):
+        for n, line in enumerate(f.read_text().splitlines(), 1):
+            code = re.sub(r"^\s*(?://|/\*|<!--).*$", "", line)
+            hit = STAT_NAMES.search(code)
+            if hit and "How this was tested</summary>" not in code:
+                errors.append(f"{f.relative_to(ROOT)}:{n}: '{hit.group(0)}' outside a 'How this was tested' block (DD5)")
     if total > 1_000_000:
         errors.append(f"desk/ is {total} bytes, over 1 MB")
     page = (DESK / "index.html").read_text()
@@ -235,6 +287,16 @@ def check_desk_files(errors):
         errors.append("desk/index.html: no skip link")
     if re.search(r'<a class="nav"(?![^>]*aria-label)', page):
         errors.append("desk/index.html: nav link without aria-label")
+    # DD1: five groups in story order, and the Overview first screen keeps who, the certificates, three proofs and three start links
+    groups = re.findall(r'<a class="nav" href="#[^"]*"[^>]*aria-label="([^"]+)"', page)
+    if groups != ["Overview", "Projects", "Evidence", "Live lab", "About"]:
+        errors.append(f"desk/index.html: nav groups are {groups}, DD1 wants Overview, Projects, Evidence, Live lab, About")
+    ov = page[page.find('<div class="ov">'):page.find('<h2 class="ov-sub">')]
+    if not ov or "NISM Series XV" not in ov or "NISM Series VIII" not in ov or "StockStalker" not in ov:
+        errors.append("desk/index.html: Overview first screen lost the name of StockStalker or a NISM certificate (DD1)")
+    start = re.search(r'<nav class="start"[^>]*>(.*?)</nav>', ov, re.S)
+    if ov.count("<li") != 3 or not start or start.group(1).count("<a ") != 3:
+        errors.append("desk/index.html: Overview first screen needs three proof items and three start-here links (DD1)")
     # prose must not hard-code a lab result the page also computes from the file (W30)
     if "none survives" in page:
         errors.append("desk/index.html: hard-codes 'none survives'; state lab results from the evidence file")
@@ -257,6 +319,10 @@ def selftest():
     assert banned_hits("Buy the dip") and banned_hits("upside of 20%") and banned_hits("₹500")
     assert not banned_hits("beat buy-and-hold after costs")
     assert not banned_hits("e.target.closest('x')") and not banned_hits('<stop stop-color="red">')
+    assert no_levels("close above SMA200=2407.84, RSI(2)=6.50 -> score +0.3499") == "close above SMA200, RSI(2)=6.50 -> score +0.3499"
+    assert price_left("close 2410.50 within trailing 20-day range [2300.00, 2420.00]") == []
+    assert STAT_NAMES.search("Hansen SPA") and not STAT_NAMES.search("spatial MCSE spa")
+    assert price_left("level 2407.84 reached") and price_left("BBupper=2407.84") and not price_left("RSI(2)=95.50, return +27.246%, +3.58 sigma")
 
 
 def main():

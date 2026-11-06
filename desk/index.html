@@ -21,6 +21,7 @@
 <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2zM12 10v5M12 18v.5"/></symbol>
 <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6zM14 3v5h5M9 13h7M9 17h7"/></symbol>
 <symbol id="i-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol><symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></symbol>
 <symbol id="i-side" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 6l-6 6 6 6M19 6l-6 6 6 6"/></symbol>
@@ -30,49 +31,59 @@
 <div class="shell" data-name="Research Desk">
   <nav class="side" aria-label="Sections">
     <div class="brand"><b>AM</b><span class="lbl">Research Desk</span><button class="tog" data-tog aria-label="Collapse sidebar" aria-expanded="true"><svg width="16" height="16"><use href="#i-side"/></svg></button></div>
-    <a class="nav" href="#home" aria-label="Home"><svg><use href="#i-home"/></svg><span class="lbl">Home</span></a>
-    <div class="nav-h">Research</div>
-    <a class="nav" href="#findings" aria-label="Findings"><svg><use href="#i-grid"/></svg><span class="lbl">Findings</span></a>
-    <a class="nav" href="#wrong" aria-label="What I got wrong"><svg><use href="#i-warn"/></svg><span class="lbl">What I got wrong</span></a>
-    <a class="nav" href="#evidence" aria-label="Evidence"><svg><use href="#i-flask"/></svg><span class="lbl">Evidence</span></a>
-    <a class="nav" href="#xray" aria-label="Market X-Ray"><svg><use href="#i-book"/></svg><span class="lbl">Market X-Ray</span></a>
-    <a class="nav" href="#picks" aria-label="Picks"><svg><use href="#i-chart"/></svg><span class="lbl">Picks</span></a>
-    <a class="nav" href="#lab" aria-label="Picks lab"><svg><use href="#i-code"/></svg><span class="lbl">Picks lab</span></a>
-    <div class="nav-h">Elsewhere</div>
-    <a class="nav" href="../index.html" aria-label="Classic page"><svg><use href="#i-file"/></svg><span class="lbl">Classic page</span></a>
-    <a class="nav" href="https://github.com/Achintya1311" aria-label="GitHub"><svg><use href="#i-ext"/></svg><span class="lbl">GitHub</span></a>
+    <!-- DD1/DD8: five groups in story order; data-views lists the views each group holds (sub-views are tabs) -->
+    <a class="nav" href="#home" data-views="home" aria-label="Overview"><svg><use href="#i-home"/></svg><span class="lbl">Overview</span></a>
+    <a class="nav" href="#findings" data-views="findings wrong" aria-label="Projects"><svg><use href="#i-grid"/></svg><span class="lbl">Projects</span></a>
+    <a class="nav" href="#evidence" data-views="evidence" aria-label="Evidence"><svg><use href="#i-flask"/></svg><span class="lbl">Evidence</span></a>
+    <a class="nav" href="#picks" data-views="picks xray lab" aria-label="Live lab"><svg><use href="#i-chart"/></svg><span class="lbl">Live lab</span></a>
+    <a class="nav" href="#about" data-views="about" aria-label="About"><svg><use href="#i-user"/></svg><span class="lbl">About</span></a>
     <div class="grow"></div>
-    <div class="pill"><span class="dot"></span><span class="lbl">Historical data only</span>
+    <div class="pill" title="Lab status: testing phase, live from 2 Nov 2026"><span class="dot live" aria-hidden="true"></span><span class="lbl">Testing phase, live from 2 Nov</span>
       <span class="theme"><button data-t="light" aria-label="Light theme" aria-pressed="false"><svg width="14" height="14"><use href="#i-sun"/></svg></button><button data-t="dark" aria-label="Dark theme" aria-pressed="true"><svg width="14" height="14"><use href="#i-moon"/></svg></button></span></div>
     <div class="me"><span class="av"></span><div>Achintya Mishra<small>NISM XV · VIII</small></div></div>
   </nav>
   <main id="main" tabindex="-1">
+    <!-- below 760px the sidebar becomes the bottom tab bar; this strip keeps the one status chip (DD6) and the theme switch on top -->
+    <div class="mbar"><b class="mb-b" aria-hidden="true">AM</b><span class="pill mpill"><span class="dot live" aria-hidden="true"></span><span>Testing phase, live from 2 Nov</span></span>
+      <span class="theme"><button data-t="light" aria-label="Light theme" aria-pressed="false"><svg width="14" height="14"><use href="#i-sun"/></svg></button><button data-t="dark" aria-label="Dark theme" aria-pressed="true"><svg width="14" height="14"><use href="#i-moon"/></svg></button></span></div>
     <section class="view" id="home">
-      <div class="top"><div><h1 id="hello">Good evening</h1><p id="today"></p></div><a class="btn" href="../research/craft.pdf">Research paper</a></div>
+      <!-- DD1 first screen: who, what he built, both certifications, three proof sentences, three start-here links. The market sits below. -->
+      <div class="ov">
+        <p class="ov-k" id="ov-kick">Equity research candidate · data science + finance</p>
+        <h1 id="hello">Achintya Mishra</h1>
+        <p class="ov-what">I built <b>StockStalker</b>, a command-line research pipeline on Indian (NSE) market data, <span id="ov-built">plus research projects</span>, and a lab that tests rule-based strategies against the market's own base rate. Negative results are reported too.</p>
+        <p class="ov-cert" id="ov-cert">Certified: NISM Series XV · Research Analyst; NISM Series VIII · Equity Derivatives</p>
+        <h2 class="ov-h">What the testing showed</h2>
+        <ul class="proof">
+          <li id="proof-lab">The lab's evidence file is loading.</li>
+          <li data-card="Risk">Risk: a constant-volatility normal model failed its 99% test out of sample on GULFOILLUB (42 breaches vs about 25 expected); a GARCH-t model passed (21 vs about 25).</li>
+          <li data-card="Portfolio optimisation">Portfolio: on 29 large caps, equal weight compounded ahead of mean-variance optimisation out of sample over 127 folds (+426% vs +228% after costs, data to 30 Oct 2026); the gap is not statistically significant at the 252-day training window.</li>
+        </ul>
+        <nav class="start" aria-label="Start here"><a href="#findings">Browse the findings →</a><a href="#evidence">What survived the test →</a><a href="#wrong">What I got wrong →</a></nav>
+      </div>
+      <h2 class="ov-sub">Latest from the research and the lab <small id="today"></small></h2>
       <div class="hcols">
         <div class="hmain">
+          <div class="hcard hnew"><h2>Newest findings <a href="#findings">Open Findings →</a></h2><div id="home-find" class="orows"><p class="note">Loading findings…</p></div></div>
+          <div class="hrow">
+            <div class="hcard"><h2>Strategies tested <a href="#evidence">Open Evidence →</a></h2><div id="strat"></div></div>
+            <div class="hcard"><h2>Lab journal this week <a href="https://github.com/Achintya1311/stockstalker-lab/blob/main/state/journal.md">Open journal →</a></h2><div id="journal" class="orows"></div></div>
+          </div>
           <div class="hero">
             <div class="hero-top"><span class="status"><i class="dot live"></i><span id="mkt-state">Closed</span></span><span class="asof">MARKET BREADTH <small id="asof"></small></span></div>
             <p id="counts" class="counts" aria-live="polite"></p>
             <div id="depth" class="depth"></div>
             <div class="tb">
-              <div class="tb-col up"><h3><svg width="14" height="14"><use href="#i-chart"/></svg> TOP BULLISH</h3><div id="top-bull" class="trows"></div></div>
-              <div class="tb-col dn"><h3>TOP BEARISH</h3><div id="top-bear" class="trows"></div></div>
+              <div class="tb-col up"><h2><svg width="14" height="14" aria-hidden="true"><use href="#i-chart"/></svg> TOP BULLISH</h2><div id="top-bull" class="trows"></div></div>
+              <div class="tb-col dn"><h2>TOP BEARISH</h2><div id="top-bear" class="trows"></div></div>
             </div>
-          </div>
-          <div class="hcard hnew"><h2>Newest findings <a href="#findings">Open Findings →</a></h2><div id="home-find" class="hfind"><p class="note">Loading findings…</p></div></div>
-          <div class="hrow">
-            <div class="hcard"><h2>Strategies tested <a href="#evidence">Open Evidence →</a></h2><div id="strat"></div></div>
-            <div class="hcard"><h2>Lab journal this week <a href="https://github.com/Achintya1311/stockstalker-lab/blob/main/state/journal.md">Open journal →</a></h2><div id="journal" class="jr"></div></div>
           </div>
         </div>
         <div class="hside">
-          <a class="scard" href="#picks"><span class="ico"><svg width="16" height="16"><use href="#i-book"/></svg></span><div><b>Pick record</b><small>Hits and misses against the market's base rate start at go-live on 2 Nov 2026. Every pick stays, misses included.</small></div></a>
+          <a class="scard" href="#picks"><span class="ico"><svg width="16" height="16"><use href="#i-book"/></svg></span><div><b>Pick record</b><small>Live since 2 Nov 2026: each pick is committed before the open and scored after the close against the market's base rate. Every pick stays, misses included.</small></div></a>
           <a class="scard learn" href="#evidence"><div class="thumb"><svg width="22" height="22"><use href="#i-flask"/></svg></div><div><span class="kick">START HERE</span><b>What survived the test</b><small id="surv-line">Evidence from the lab</small><i class="prog"><s id="surv-bar"></s></i></div></a>
-          <div class="qa">
-            <a href="#findings"><span class="ico"><svg width="16" height="16"><use href="#i-grid"/></svg></span><span><b>Browse findings</b><small>charts, negative results kept</small></span></a>
+          <div class="qa" aria-label="More from the lab" role="group">
             <a href="#xray"><span class="ico"><svg width="16" height="16"><use href="#i-grid"/></svg></span><span><b>Market X-Ray</b><small>every stock's rank for the next session</small></span></a>
-            <a href="#wrong"><span class="ico"><svg width="16" height="16"><use href="#i-warn"/></svg></span><span><b>What I got wrong</b><small>mistakes found by testing</small></span></a>
             <a href="https://github.com/Achintya1311/stockstalker-lab"><span class="ico"><svg width="16" height="16"><use href="#i-code"/></svg></span><span><b>The lab on GitHub</b><small>code, ledger, every trial</small></span></a>
           </div>
         </div>
@@ -81,19 +92,23 @@
     </section>
 
     <section class="view" id="findings">
-      <div class="top"><div><h1>Findings</h1><p>One question per project, the answer, and the evidence. Open a finding for the full chart.</p></div></div>
+      <nav class="subtabs" aria-label="Projects"><a href="#findings">Findings</a><a href="#wrong">What I got wrong</a></nav>
+      <div class="top"><div><h1>Findings</h1><p>One question per project, the answer, and the evidence. The first finding is open; the arrow on any other shows its summary, and its title opens the full chart.</p></div></div>
       <div class="feed-wrap">
-        <div class="chips" id="chips"></div>
+        <div class="chips" id="chips" role="group" aria-label="Filter and sort findings"></div>
+        <p class="note fcount" data-count role="status" aria-live="polite"></p>
         <div class="feed" id="feed" data-feed><div class="empty" id="feed-empty">Loading findings…</div></div>
       </div>
     </section>
 
     <section class="view" id="wrong">
+      <nav class="subtabs" aria-label="Projects"><a href="#findings">Findings</a><a href="#wrong">What I got wrong</a></nav>
       <div class="top"><div><h1>What I got wrong</h1><p>Mistakes found by testing my own work, and what changed.</p></div></div>
       <div class="panel"><ul class="list" id="wrong-all"></ul></div>
     </section>
 
     <section class="view" id="picks">
+      <nav class="subtabs" aria-label="Live lab"><a href="#picks">Picks</a><a href="#xray">Market X-Ray</a><a href="#lab">How the lab works</a></nav>
       <div class="top"><div><h1>Picks</h1><p id="picks-sub">Loading the lab's latest picks…</p></div></div>
       <div class="chips"><div class="seg" id="hz" style="margin-left:0"><button data-h="day" aria-pressed="true">Day</button><button data-h="week" aria-pressed="false">Week</button></div></div>
       <div id="picks-body"><div class="empty">Loading…</div></div>
@@ -107,21 +122,33 @@
       <div id="ev-body"><div class="empty">Loading the lab's results…</div></div>
       <div class="panel" style="margin-top:18px"><h2>How to read this</h2>
         <p><b>Edge</b> is how much more often a strategy's picks moved the right way than the market's own base rate for that day. It is not a return. For the lab's first provisional rule, its blended score (Champion v1), the average move of its picks after Indian trading costs was slightly negative in the train years (between −0.12 and −0.54 percentage points), so a hit-rate edge is a research finding, not a claim about money made.</p>
-        <p><b>Why there is a correction.</b> The lab tried many variants. Run enough of them and some look good by luck. The joint test (Hansen SPA), the stepwise test (Romano-Wolf StepM) and the model confidence set (MCS) ask whether anything is left once the number of tries is accounted for. Intervals come from a block bootstrap over dates, so days that move together are not counted as independent.</p>
-        <p><b>Limits.</b> Train years only, so none of the lab's strategy results here is validated on unseen data yet. <span id="ev-weekline">The weekly result is read from the lab's evidence file each time.</span> That file is rebuilt by the lab's own workflow and can lag behind its newest experiments, which are not counted here until the next successful build. This page reads the lab's file each time.</p>
-        <p class="note">Educational research on historical data. Not investment advice. Not a SEBI-registered research analyst.</p></div>
+        <p><b>Why there is a correction.</b> The lab tried many variants. Run enough of them and some look good by luck, so every result here is checked again after counting how many were tried. Intervals are built so that days that move together are not counted as independent.</p>
+        <details class="how"><summary>How this was tested</summary><p>The joint test is Hansen's SPA (read at 5%), the one-by-one check is the Romano-Wolf stepwise test (StepM, at 10%), and the model confidence set (MCS, at 10%) keeps the variants not clearly worse than the best. Intervals come from a stationary block bootstrap over dates.</p></details>
+        <p><b>Limits.</b> Train years only, so none of the lab's strategy results here is validated on unseen data yet. <span id="ev-weekline">The weekly result is read from the lab's evidence file each time.</span> That file is rebuilt by the lab's own workflow and can lag behind its newest experiments, which are not counted here until the next successful build. This page reads the lab's file each time.</p></div>
     </section>
 
     <section class="view" id="xray">
+      <nav class="subtabs" aria-label="Live lab"><a href="#picks">Picks</a><a href="#xray">Market X-Ray</a><a href="#lab">How the lab works</a></nav>
       <div class="top"><div><h1>Market X-Ray</h1><p id="xr-sub">Loading the universe…</p></div></div>
       <div id="xr-body"><div class="empty">Loading…</div></div>
       <p class="note">Model output in testing. Not investment advice or a recommendation. Not a SEBI-registered research analyst. Ranks only, no prices or levels.</p>
     </section>
 
     <section class="view" id="lab">
+      <nav class="subtabs" aria-label="Live lab"><a href="#picks">Picks</a><a href="#xray">Market X-Ray</a><a href="#lab">How the lab works</a></nav>
       <div class="top"><div><h1>Picks lab</h1><p>An autonomous lab testing rule-based NSE F&amp;O strategies against the market's own base rate.</p></div><a class="btn ghost" href="https://github.com/Achintya1311/stockstalker-lab">Repo</a></div>
       <div class="panel"><p>Each strategy is replayed day by day from a blank state, scored only on data it has never seen, and kept only if it beats the share of stocks that moved the same way anyway. Every pick is shown, losers included.</p>
         <p class="note">The live scoreboard is published by the lab's own workflow from 2 Nov 2026 and is not duplicated here. Model output in testing. Not investment advice or a recommendation. Not a SEBI-registered research analyst.</p></div>
+    </section>
+    <section class="view" id="about">
+      <div class="top"><div><h1>About</h1><p id="ab-kick">Who built this desk.</p></div></div>
+      <div class="panel ab">
+        <h2 id="ab-name">Achintya Mishra</h2>
+        <p id="ab-lede"></p>
+        <dl id="ab-facts" class="facts"></dl>
+        <p class="links"><a class="btn" href="https://github.com/Achintya1311">GitHub</a> <a class="btn ghost" href="../research/craft.pdf">Research paper (PDF)</a> <a class="btn ghost" href="../index.html">Classic page</a></p>
+        <p class="note">The classic page is the same content without JavaScript; this desk reads its findings from it.</p>
+      </div>
     </section>
     <p class="note">Educational research on historical data. Not investment advice. Not a SEBI-registered research analyst.</p>
   </main>
@@ -143,7 +170,7 @@
     'Options': ['Filtering needed', 'A quote-quality check: it shows whether raw option quotes can be used as they come. The counts depend on the forward assumed, and breaks stay routine under both forwards tried.'],
     'Headline sentiment': ['No link found', 'Same-day returns only and a small sample, so this says the link is not shown, not that there is none.'],
     'Technical screen': ['Mostly below holding', 'After Indian delivery costs, 1 of 3 names beats buy-and-hold.'],
-    'Portfolio optimisation': ['Equal-weight ahead', 'On 29 large caps, equal weight beat mean-variance optimisation out of sample over 126 folds (+427% vs +309% before costs); costs widen the gap.']
+    'Portfolio optimisation': ['Equal-weight ahead', 'On 29 large caps, equal weight beat mean-variance optimisation out of sample over 127 folds (+433% vs +278% before costs, data to 30 Oct 2026); costs widen the gap.']
   };
   const LABEL = { valuation: 'Valuation', factors: 'Factors', risk: 'Risk', options: 'Options', sentiment: 'Sentiment', screen: 'Screen', portfolio: 'Portfolio' };
   let doc, cards;
@@ -155,58 +182,84 @@
   $('#feed').innerHTML = cards.map(c => { const st = STATUS[c.title] || ['Result', '']; return `<article class="card fc" data-lb data-seq data-i="${c.i}" data-neg="${c.neg}" data-cat="${c.cat}" data-imgs="${esc(c.src)}" data-note="${esc(c.note)}">
     <span class="fc-cat">${esc(LABEL[c.cat] || 'Finding')}</span>
     <h2 class="fc-t"><button type="button" class="open" aria-haspopup="dialog">${esc(c.title)}</button></h2>
-    <p class="fc-stat">${esc(c.big)}</p>
+    <p class="fc-stat${c.big.length > 12 ? ' long' : ''}">${esc(c.big)}</p>
     ${c.src ? `<div class="fc-th"><img src="${esc(c.src)}" alt="${esc(c.alt)}" width="96" height="72" loading="lazy"></div>` : '<div class="fc-th ph" aria-hidden="true">Workbook</div>'}
     <p class="fc-sub">${esc(c.sub)}</p>
     <p class="fc-a">${esc(c.text)}</p>
     <p class="fc-foot"><span class="tag neu">${esc(st[0])}</span>${st[1] ? ` <span class="chg">${esc(st[1])}</span>` : ''}</p>
+    <button type="button" class="fc-x" aria-expanded="false" aria-label="Show the summary of ${esc(c.title)}"></button>
     <div class="lb-side" hidden><h3>${esc(c.title)} ${c.tag ? `<span class="tag">${esc(c.tag)}</span>` : ''}</h3><div class="big" style="padding:0">${esc(c.big)}<span>${esc(c.sub)}</span></div>${st[1] ? `<p><span class="tag neu">${esc(st[0])}</span> ${esc(st[1])}</p>` : ''}<p>${esc(c.text)}</p>${c.note ? `<p class="note">${esc(c.note)}</p>` : ''}${c.repo ? `<p><a href="${esc(c.repo)}">${esc(c.repoName)} →</a></p>` : ''}</div></article>`; }).join('');
-  const wrong = [...doc.querySelectorAll('#wrong .log li')].map(li => li.innerHTML.replace(/href="(?!http)/g, 'href="../'));
-  $('#wrong-all').innerHTML = wrong.map((x, i) => `<li><span class="ico num">${i + 1}</span><div class="tx">${x}</div></li>`).join('');
+  if (window.deskApply) window.deskApply();
+  // About reads the root hero (DD2: the root index.html is the one source)
+  const hero = doc.querySelector('header.hero'), tx = sel => { const e = hero && hero.querySelector(sel); return e ? e.textContent.trim() : ''; };
+  if (hero) { $('#ab-kick').textContent = tx('.kicker') || $('#ab-kick').textContent; $('#ab-name').textContent = tx('h1') || 'Achintya Mishra'; $('#ab-lede').textContent = tx('.lede');
+    $('#ab-facts').innerHTML = [...hero.querySelectorAll('.facts > div')].map(d => `<div><dt>${esc(d.querySelector('dt').textContent)}</dt>${[...d.querySelectorAll('dd')].map(x => `<dd>${esc(x.textContent)}</dd>`).join('')}</div>`).join(''); }
+  // DD9: each mistake is one line (its label and first sentence); the rest, with test names and the link, opens in place. The first one is open.
+  const wrong = [...doc.querySelectorAll('#wrong .log li')].map(li => {
+    li.querySelectorAll('a[href]').forEach(a => { if (!/^(https?:|#)/.test(a.getAttribute('href'))) a.setAttribute('href', '../' + a.getAttribute('href')); });
+    const lab = li.querySelector('strong'), nodes = [...li.childNodes].filter(n => n !== lab), t = nodes.find(n => n.nodeType === 3 && n.textContent.trim());
+    let head = '', rest = nodes.map(n => n.nodeType === 3 ? esc(n.textContent) : n.outerHTML || '').join('');
+    if (t) { const m = t.textContent.match(/^\s*(.*?[.?!])(\s+(?=[A-Z(])[\s\S]*|\s*)$/); if (m) { head = m[1]; rest = nodes.map(n => n === t ? esc(m[2]) : n.nodeType === 3 ? esc(n.textContent) : n.outerHTML || '').join(''); } }
+    return { lab: lab ? lab.innerHTML : '', head: esc(head), rest: rest.trim() };
+  });
+  $('#wrong-all').innerHTML = wrong.map((w, i) => `<li><details class="orow"${i ? '' : ' open'}><summary><span class="ot"><span class="num">${i + 1}</span> ${w.lab}</span><span class="wh">${w.head}</span></summary><div class="ob">${w.rest}</div></details></li>`).join('');
 })();
 
 // ---- Picks: the lab's JSON, rendered as charts. Shapes only: bars and zone are scaled 0-100, no prices.
 (async () => {
   const $ = (s, r = document) => r.querySelector(s), esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const REPO = 'Achintya1311/stockstalker-lab', RAW = `https://raw.githubusercontent.com/${REPO}/main/`;
-  const J = async u => { const r = await fetch(u); if (!r.ok) throw 0; return r.json(); };
-  let root = 'live', dry = false;
-  const latest = async h => {
-    for (const base of ['live', 'reports/live_dryrun']) {
-      try {
-        const list = await J(`https://api.github.com/repos/${REPO}/contents/${base}/${h}`);
-        const names = list.map(f => f.name).filter(n => n.endsWith('.json')).sort();
-        if (names.length) { root = base; dry = base !== 'live'; return await J(`${RAW}${base}/${h}/${names[names.length - 1]}`); }
-      } catch {}
-    }
-    throw 0;
-  };
+  const REPO = 'Achintya1311/stockstalker-lab';
+  // the shared loader in evidence.js (W12): cached per horizon, so toggling Day and Week makes no new API calls
+  let dry = false;
+  const latest = async h => { const r = await window.deskLatest(h); if (!r) throw 0; dry = r.dry; return r.data; };
   const chart = c => {
     if (!c || !c.bars) return '';
     const W = 320, H = 150, n = c.bars.length, bw = W / n, y = v => (100 - v) / 100 * (H - 8) + 4;
     let z = '';
     if (c.zone) { const zx = c.zone.from * bw; z = `<rect x="${zx}" y="${y(c.zone.high)}" width="${W - zx}" height="${Math.max(y(c.zone.low) - y(c.zone.high), 1.5)}" fill="${c.zone.side === 'demand' ? 'var(--up)' : 'var(--down)'}" opacity=".22"/>`; }
     const bars = c.bars.map(([o, h, l, cl], i) => { const x = i * bw + bw / 2, up = cl >= o, col = up ? 'var(--up)' : 'var(--down)';
-      return `<line x1="${x}" x2="${x}" y1="${y(h)}" y2="${y(l)}" stroke="${col}" stroke-width="1"/><rect x="${x - bw * .32}" y="${y(Math.max(o, cl))}" width="${bw * .64}" height="${Math.max(Math.abs(y(o) - y(cl)), 1)}" fill="${col}"/>`; }).join('');
-    return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Recent price bars${c.zone ? ' with the nearest order-block zone' : ''}">${z}${bars}</svg>`;
+      return `<line x1="${x}" x2="${x}" y1="${y(h)}" y2="${y(l)}" stroke="${col}" stroke-width="1"/><rect x="${x - bw * .32}" y="${y(Math.max(o, cl))}" width="${bw * .64}" height="${Math.max(Math.abs(y(o) - y(cl)), 1)}" ${up ? `fill="${col}"` : `fill="none" stroke="${col}" stroke-width="1"`}/>`; }).join('');
+    return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Recent price bars, filled when the day closed above its open and hollow when below${c.zone ? ', with the nearest order-block zone' : ''}">${z}${bars}</svg>${words(c)}`;
   };
-  let EV = null, HZ = 'day', RK = {};
+  // W4: the chart in words, from the same scaled bars (0 to 100 of the chart's own range); counts and positions only, no prices or levels (DD4)
+  const words = c => {
+    const b = c.bars, n = b.length, up = b.filter(x => x[3] >= x[0]).length, cl = b.map(x => x[3]), l = cl[n - 1];
+    const third = v => v < 100 / 3 ? 'lower third' : v < 200 / 3 ? 'middle third' : 'upper third';
+    const z = !c.zone ? '' : c.zone.low > l ? ' The shaded zone sits above the latest close.' : c.zone.high < l ? ' The shaded zone sits below the latest close.' : ' The latest close is inside the shaded zone.';
+    return `<details class="bt"><summary>Chart in words</summary><p>${n} sessions: ${up} closed at or above their open, ${n - up} below. Closes start in the ${third(b[0][3])} of the chart's range; the lowest is session ${cl.indexOf(Math.min(...cl)) + 1} and the highest session ${cl.indexOf(Math.max(...cl)) + 1}; the latest is in the ${third(l)}.${z}</p></details>`;
+  };
+  let EV = null, HZ = 'day', RK = {}, LBL = '';
   const fp = x => (x >= 0 ? '+' : '') + (x * 100).toFixed(2);
   const rankTag = (p, word) => { const r = RK[p.symbol], v = r && (word === 'BULLISH' ? r.b : r.d); return v != null ? ` · rank p${v}` : ''; };
-  const strip = (p, word) => {
-    const e = window.deskEv(EV, p.strategy, HZ, word === 'BULLISH' ? 'bullish' : 'bearish');
-    if (!e) return '<div class="ev"><b>Evidence:</b> this strategy\'s train replay is a separate lab report, not in the evidence file this page reads, so the page makes no edge claim for it.</div>';
-    return `<div class="ev"><b>Train evidence (2015 to 2020):</b> edge ${fp(e.mean)} pts, 95% interval ${fp(e.lo)} to ${fp(e.hi)}; ${e.superior ? '<span class="g">survives the many-trials correction</span>' : '<span class="r">does not survive the many-trials correction</span>'}.</div>`;
+  // one evidence line per strategy, under the panel heading instead of on every tile (W42); the wording follows the interval (W101)
+  const strip = (strategy, word) => {
+    const e = window.deskEv(EV, strategy, HZ, word === 'BULLISH' ? 'bullish' : 'bearish'), nm = `<b>${esc(String(strategy).replace('@v1', ''))}</b>`;
+    if (!e) return `<div class="ev">${nm}: no train replay for this strategy in the evidence file this page reads, so the page makes no edge claim for it.</div>`;
+    const how = e.superior ? '<span class="g">passes the many-trials check (10% level)</span>'
+      : e.lo > 0 ? 'positive in the train years, but not after the many-trials correction'
+      : e.hi < 0 ? '<span class="r">entirely below zero: it loses to the market line</span>'
+      : 'not distinguishable from zero';
+    // the lab's own label decides 'provisional' (SPEC section 10); a train-years pass is not the lab's full test, so say so next to it (W114)
+    const prov = LBL === 'provisional' && (e.superior || e.lo > 0) ? ' This is a train-years result only: the lab still labels this strategy provisional because it has not passed all of its own tests.' : '';
+    return `<div class="ev">${nm}, train evidence 2015 to 2020: edge ${fp(e.mean)} pts, 95% interval ${fp(e.lo)} to ${fp(e.hi)}; ${how}.${prov}</div>`;
   };
-  const table = (title, cls, word, picks) => `<div class="panel"><h2>${title}</h2><div class="tiles">${picks.length ? picks.map(p => `<div class="tile ${cls}" style="grid-template-columns:auto minmax(0,1fr)"><span class="badge">${word}</span><span><strong>${esc(p.symbol)}</strong><small>${esc(p.strategy || '')}${rankTag(p, word)}</small></span>${p.chart ? `<span style="grid-column:1/-1">${chart(p.chart)}${p.chart.zone ? `<small>Shaded: nearest ${p.chart.zone.side} order-block zone${p.chart.zone.retested ? ', retested' : ''}. Chart structure only, not the reason for the pick. Not a level to act on.</small>` : ''}</span>` : ''}<small style="grid-column:1/-1">${esc(p.reasoning || '')}</small>${strip(p, word)}${p.hit != null ? `<span class="num ${p.hit ? 'g' : 'r'}" style="grid-column:1/-1">Result: ${p.hit ? 'moved the picked way' : 'moved the other way'} (open to close ${(+p.move_pct).toFixed(2)}%)${p.late ? ' · committed after the open, not counted in hit rates' : ''}</span>` : p.late ? '<span class="num" style="grid-column:1/-1">Committed after the open, not counted in hit rates</span>' : ''}</div>`).join('') : '<p class="note">No picks.</p>'}</div></div>`;
+  // DD9 (W110): the first pick on each side is the lead and shows its chart and reasoning; the rest are one-line rows that open on click or tap
+  const result = p => p.hit != null ? `<span class="num ${p.hit ? 'g' : 'r'}" style="grid-column:1/-1">Result: ${p.hit ? 'moved the picked way' : 'moved the other way'} (open to close ${(+p.move_pct).toFixed(2)}%)${p.late ? ' · committed after the open, not counted in hit rates' : ''}</span>` : p.late ? '<span class="num" style="grid-column:1/-1">Committed after the open, not counted in hit rates</span>' : '';
+  const head = (p, word) => `<span class="badge">${word}</span><span><strong>${esc(p.symbol)}</strong><small>${esc(p.strategy || '')}${rankTag(p, word)}</small></span>`;
+  const body = p => `${p.chart ? `<span style="grid-column:1/-1">${chart(p.chart)}${p.chart.zone ? `<small>Shaded: nearest ${p.chart.zone.side} order-block zone${p.chart.zone.retested ? ', retested' : ''}. Chart structure only, not the reason for the pick. Not a level to act on.</small>` : ''}</span>` : ''}<small style="grid-column:1/-1">${esc(window.deskNoLevels(p.reasoning || ''))}</small>`;
+  const short = p => p.hit != null ? `<span class="num ${p.hit ? 'g' : 'r'}">${p.hit ? 'Moved the picked way' : 'Moved the other way'}</span>` : '';
+  const tile = (p, cls, word, i) => i === 0
+    ? `<div class="tile lead ${cls}" style="grid-template-columns:auto minmax(0,1fr)">${head(p, word)}${body(p)}${result(p)}</div>`
+    : `<details class="tile row ${cls}"><summary>${head(p, word)}${short(p)}</summary><div class="rowb">${body(p)}${result(p)}</div></details>`;
+  const table = (title, cls, word, picks) => `<div class="panel"><h2>${title}</h2>${[...new Set(picks.map(p => p.strategy || ''))].filter(Boolean).map(s => strip(s, word)).join('')}<div class="tiles">${picks.length ? picks.map((p, i) => tile(p, cls, word, i)).join('') + (picks.length > 1 ? `<p class="note more">The first pick is shown in full; open any other row for its chart and the lab's reasoning.</p>` : '') : '<p class="note">No picks.</p>'}</div></div>`;
   const draw = async h => {
     try {
       const d = await latest(h), t = d.tables || {};
-      HZ = h; EV = await window.deskEvLoad(); RK = Object.fromEntries(((d.xray && d.xray.stocks) || []).map(s => [s.s, s]));
-      $('#picks-sub').textContent = `${h === 'day' ? 'Day' : 'Week'} picks for session ${d.session}${dry ? ' (dry run: the lab has not gone live yet, these are not published picks)' : ''}`;
+      HZ = h; LBL = d.label || ''; EV = await window.deskEvLoad(); RK = Object.fromEntries(((d.xray && d.xray.stocks) || []).map(s => [s.s, s]));
+      $('#picks-sub').textContent = `${h === 'day' ? 'Day' : 'Week'} picks for session ${d.session}${dry ? ' (testing phase: these come from the lab\'s rehearsal folder, not its published picks)' : ''}`;
       $('#picks-body').innerHTML = `<div class="two">${table('Bullish picks', 'up', 'BULLISH', t.bullish || [])}${table('Bearish picks', 'dn', 'BEARISH', t.bearish || [])}</div>`;
       $('#picks-note').textContent = d.disclaimer || '';
-    } catch { $('#picks-sub').textContent = 'Could not load the lab’s picks right now.'; $('#picks-body').innerHTML = `<div class="empty">See the <a href="https://github.com/${REPO}">lab repo</a>.</div>`; }
+    } catch { $('#picks-sub').textContent = 'Could not reach the lab’s picks right now.'; $('#picks-body').innerHTML = `<div class="empty">GitHub may be limiting requests; try the Day or Week button again in a few minutes, or see the <a href="https://github.com/${REPO}/tree/main/live">lab repo</a>.</div>`; }
   };
   $('#hz').addEventListener('click', e => { const b = e.target.closest('button'); if (b) draw(b.dataset.h); });
   draw('day');
