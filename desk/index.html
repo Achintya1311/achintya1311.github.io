@@ -221,7 +221,14 @@
     if (c.zone) { const zx = c.zone.from * bw; z = `<rect x="${zx}" y="${y(c.zone.high)}" width="${W - zx}" height="${Math.max(y(c.zone.low) - y(c.zone.high), 1.5)}" fill="${c.zone.side === 'demand' ? 'var(--up)' : 'var(--down)'}" opacity=".22"/>`; }
     const bars = c.bars.map(([o, h, l, cl], i) => { const x = i * bw + bw / 2, up = cl >= o, col = up ? 'var(--up)' : 'var(--down)';
       return `<line x1="${x}" x2="${x}" y1="${y(h)}" y2="${y(l)}" stroke="${col}" stroke-width="1"/><rect x="${x - bw * .32}" y="${y(Math.max(o, cl))}" width="${bw * .64}" height="${Math.max(Math.abs(y(o) - y(cl)), 1)}" ${up ? `fill="${col}"` : `fill="none" stroke="${col}" stroke-width="1"`}/>`; }).join('');
-    return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Recent price bars, filled when the day closed above its open and hollow when below${c.zone ? ', with the nearest order-block zone' : ''}">${z}${bars}</svg>`;
+    return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Recent price bars, filled when the day closed above its open and hollow when below${c.zone ? ', with the nearest order-block zone' : ''}">${z}${bars}</svg>${words(c)}`;
+  };
+  // W4: the chart in words, from the same scaled bars (0 to 100 of the chart's own range); counts and positions only, no prices or levels (DD4)
+  const words = c => {
+    const b = c.bars, n = b.length, up = b.filter(x => x[3] >= x[0]).length, cl = b.map(x => x[3]), l = cl[n - 1];
+    const third = v => v < 100 / 3 ? 'lower third' : v < 200 / 3 ? 'middle third' : 'upper third';
+    const z = !c.zone ? '' : c.zone.low > l ? ' The shaded zone sits above the latest close.' : c.zone.high < l ? ' The shaded zone sits below the latest close.' : ' The latest close is inside the shaded zone.';
+    return `<details class="bt"><summary>Chart in words</summary><p>${n} sessions: ${up} closed at or above their open, ${n - up} below. Closes start in the ${third(b[0][3])} of the chart's range; the lowest is session ${cl.indexOf(Math.min(...cl)) + 1} and the highest session ${cl.indexOf(Math.max(...cl)) + 1}; the latest is in the ${third(l)}.${z}</p></details>`;
   };
   let EV = null, HZ = 'day', RK = {}, LBL = '';
   const fp = x => (x >= 0 ? '+' : '') + (x * 100).toFixed(2);
