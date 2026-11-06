@@ -44,6 +44,7 @@ h1 { font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 700; letter-spacing: -.
 .facts { margin: 0; display: grid; gap: 18px; border-left: 2px solid var(--line); padding-left: 24px; }
 .facts dt { font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .facts dd { margin: 2px 0 0; font-weight: 500; }
+.facts dd.use { margin-top: 6px; font-weight: 400; font-size: .9rem; color: var(--muted); }
 
 /* Sections */
 .section { padding-block: 64px 8px; }
