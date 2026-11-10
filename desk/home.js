@@ -62,8 +62,10 @@
     ((x && x.stocks) || []).forEach(s => rk[s.s] = s);
     if (x) { $('#depth').innerHTML = depth(x.breadth); $('#asof').textContent = 'as of ' + x.asof + (r.dry ? ' · rehearsal file' : ''); }
     if (x && x.breadth && x.breadth.n) $('#counts').innerHTML = `<span class="g">▲ ${Number(x.breadth.up)}</span> <span class="r">▼ ${Number(x.breadth.down)}</span><small>stocks up / down in the last session, by price move, not picks</small>`;
-    $('#top-bull').innerHTML = (d.tables.bullish || []).slice(0, 3).map(p => tile(p, rk[p.symbol] && rk[p.symbol].b, 'up')).join('') || '<p class="note">No picks.</p>';
-    $('#top-bear').innerHTML = (d.tables.bearish || []).slice(0, 3).map(p => tile(p, rk[p.symbol] && rk[p.symbol].d, 'dn')).join('') || '<p class="note">No picks.</p>';
+    // W130: an empty side says why instead of a bare 'No picks.'
+    const none = k => { const n = ((x && x.stocks) || []).filter(s => s[k] != null).length; return `<p class="note">No ${k === 'b' ? 'bullish' : 'bearish'} picks for session ${esc(d.session)}: ${x ? (n ? `${n} ranked, none in the table` : 'the rule fired on no stock') : 'none in the table'}. <a href="#picks">Why →</a></p>`; };
+    $('#top-bull').innerHTML = (d.tables.bullish || []).slice(0, 3).map(p => tile(p, rk[p.symbol] && rk[p.symbol].b, 'up')).join('') || none('b');
+    $('#top-bear').innerHTML = (d.tables.bearish || []).slice(0, 3).map(p => tile(p, rk[p.symbol] && rk[p.symbol].d, 'dn')).join('') || none('d');
   }
 
   // compact edge bars, top 5 only (DD9; the full list is on Evidence) (points over the market base rate), green when the strategy survives the many-trials test

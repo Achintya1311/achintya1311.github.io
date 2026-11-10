@@ -228,7 +228,7 @@
     const z = !c.zone ? '' : c.zone.low > l ? ' The shaded zone sits above the latest close.' : c.zone.high < l ? ' The shaded zone sits below the latest close.' : ' The latest close is inside the shaded zone.';
     return `<details class="bt"><summary>Chart in words</summary><p>${n} sessions: ${up} closed at or above their open, ${n - up} below. Closes start in the ${third(b[0][3])} of the chart's range; the lowest is session ${cl.indexOf(Math.min(...cl)) + 1} and the highest session ${cl.indexOf(Math.max(...cl)) + 1}; the latest is in the ${third(l)}.${z}</p></details>`;
   };
-  let EV = null, HZ = 'day', RK = {}, LBL = '';
+  let EV = null, HZ = 'day', RK = {}, LBL = '', XR = null;
   const fp = x => (x >= 0 ? '+' : '') + (x * 100).toFixed(2);
   const rankTag = (p, word) => { const r = RK[p.symbol], v = r && (word === 'BULLISH' ? r.b : r.d); return v != null ? ` · rank p${v}` : ''; };
   // one evidence line per strategy, under the panel heading instead of on every tile (W42); the wording follows the interval (W101)
@@ -251,11 +251,15 @@
   const tile = (p, cls, word, i) => i === 0
     ? `<div class="tile lead ${cls}" style="grid-template-columns:auto minmax(0,1fr)">${head(p, word)}${body(p)}${result(p)}</div>`
     : `<details class="tile row ${cls}"><summary>${head(p, word)}${short(p)}</summary><div class="rowb">${body(p)}${result(p)}</div></details>`;
-  const table = (title, cls, word, picks) => `<div class="panel"><h2>${title}</h2>${[...new Set(picks.map(p => p.strategy || ''))].filter(Boolean).map(s => strip(s, word)).join('')}<div class="tiles">${picks.length ? picks.map((p, i) => tile(p, cls, word, i)).join('') + (picks.length > 1 ? `<p class="note more">The first pick is shown in full; open any other row for its chart and the lab's reasoning.</p>` : '') : '<p class="note">No picks.</p>'}</div></div>`;
+  const table = (title, cls, word, picks) => `<div class="panel"><h2>${title}</h2>${[...new Set(picks.map(p => p.strategy || ''))].filter(Boolean).map(s => strip(s, word)).join('')}<div class="tiles">${picks.length ? picks.map((p, i) => tile(p, cls, word, i)).join('') + (picks.length > 1 ? `<p class="note more">The first pick is shown in full; open any other row for its chart and the lab's reasoning.</p>` : '') : none(word)}</div></div>`;
+  // W130: an empty side says why, from the X-Ray block (design/components/not-picked.md), instead of a bare 'No picks.'
+  const none = word => { const k = word === 'BULLISH' ? 'b' : 'd', st = (XR && XR.stocks) || [], n = st.filter(s => s[k] != null).length, exp = XR && XR[word === 'BULLISH' ? 'bullish_experiment' : 'bearish_experiment'];
+    const rule = exp ? window.deskPretty(exp) : 'this side\'s rule';
+    return `<p class="note np">No ${word.toLowerCase()} picks for this session. ${XR ? (n ? `The ${word.toLowerCase()} rule (${esc(rule)}) ranked ${n} ${n === 1 ? 'stock' : 'stocks'}, but the lab's table holds none.` : `The ${word.toLowerCase()} rule (${esc(rule)}) did not fire on any of the ${st.length} stocks it checked, so nothing was ranked. An empty side is a result, not a gap in the data.`) : ''}</p>`; };
   const draw = async h => {
     try {
       const d = await latest(h), t = d.tables || {};
-      HZ = h; LBL = d.label || ''; EV = await window.deskEvLoad(); RK = Object.fromEntries(((d.xray && d.xray.stocks) || []).map(s => [s.s, s]));
+      HZ = h; LBL = d.label || ''; EV = await window.deskEvLoad(); RK = Object.fromEntries(((d.xray && d.xray.stocks) || []).map(s => [s.s, s])); XR = d.xray || null;
       $('#picks-sub').textContent = `${h === 'day' ? 'Day' : 'Week'} picks for session ${d.session}${dry ? ' (testing phase: these come from the lab\'s rehearsal folder, not its published picks)' : ''}`;
       $('#picks-body').innerHTML = `<div class="two">${table('Bullish picks', 'up', 'BULLISH', t.bullish || [])}${table('Bearish picks', 'dn', 'BEARISH', t.bearish || [])}</div>`;
       $('#picks-note').textContent = d.disclaimer || '';
