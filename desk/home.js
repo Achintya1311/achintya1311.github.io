@@ -52,6 +52,13 @@
     const r = await window.deskLatest('day');
     if (!r) { $('#top-bull').innerHTML = $('#top-bear').innerHTML = '<p class="note">Could not load the lab’s picks.</p>'; $('#depth').innerHTML = '<p class="note">Breadth needs the lab’s picks file, which could not be loaded.</p>'; return; }
     const d = r.data, x = d.xray, rk = {};
+    // W125: the clock alone called a weekday holiday 'Market open'. The lab skips non-trading days, so a picks file for a later session than today means no session today.
+    const todayIst = ist.toLocaleDateString('en-CA');
+    if (open && d.session && d.session > todayIst) {
+      const dt = new Date(d.session + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+      if (dot) dot.classList.remove('live');
+      $('#mkt-state').textContent = `Closed today, no session · next session ${dt}`;
+    }
     ((x && x.stocks) || []).forEach(s => rk[s.s] = s);
     if (x) { $('#depth').innerHTML = depth(x.breadth); $('#asof').textContent = 'as of ' + x.asof + (r.dry ? ' · rehearsal file' : ''); }
     if (x && x.breadth && x.breadth.n) $('#counts').innerHTML = `<span class="g">▲ ${Number(x.breadth.up)}</span> <span class="r">▼ ${Number(x.breadth.down)}</span><small>stocks up / down in the last session, by price move, not picks</small>`;
