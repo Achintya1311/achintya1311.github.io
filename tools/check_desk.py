@@ -201,6 +201,9 @@ def check_lab(errors):
             for f in ("asof", "n", "stocks", "breadth", "bullish_strategy", "bearish_strategy"):
                 if f not in x:
                     errors.append(f"lab {h} xray: field '{f}' missing")
+            for f in ("bullish_experiment", "bearish_experiment"):  # optional; X-Ray names the rule and its train result from it (W127)
+                if x.get(f) is not None and not isinstance(x.get(f), str):
+                    errors.append(f"lab {h} xray.{f} is not an experiment id string")
             for st in (x.get("stocks") or [])[:400]:
                 if not isinstance(st.get("s"), str) or any(st.get(k) is not None and not isinstance(st.get(k), (int, float)) for k in ("b", "d")):
                     errors.append(f"lab {h} xray.stocks: entry {st!r} lacks s, or b/d is not a number or null")
@@ -297,6 +300,16 @@ def check_desk_files(errors):
     start = re.search(r'<nav class="start"[^>]*>(.*?)</nav>', ov, re.S)
     if ov.count("<li") != 3 or not start or start.group(1).count("<a ") != 3:
         errors.append("desk/index.html: Overview first screen needs three proof items and three start-here links (DD1)")
+    # DD9 on X-Ray and Evidence (W128, W131), the honest empty side (W130) and the holiday check (W125), 10 Nov 2026
+    evjs, hjs = (DESK / "evidence.js").read_text(), (DESK / "home.js").read_text()
+    if not re.search(r'<details class="orow" id="xr-map">.*Not scored', evjs, re.S) or 'class="panel xr-lead"' not in evjs:
+        errors.append("desk/evidence.js: X-Ray must lead with the ranked names and keep the dot map, with the not-scored dots, in a collapsed row (DD9, W128)")
+    if "forest(lead, g.joint)" not in evjs or "forest(rows, g.joint)" not in evjs:
+        errors.append("desk/evidence.js: the Evidence forest plot must draw its lead rows first and keep all rows, failures included, one click away (DD9, W131)")
+    if "No picks.</p>" in page + hjs:
+        errors.append("desk: an empty pick side says why, not a bare 'No picks.' (W130)")
+    if "d.session > todayIst" not in hjs:
+        errors.append("desk/home.js: the market state must check the lab's session date, or a weekday holiday reads 'Market open' (W125)")
     # prose must not hard-code a lab result the page also computes from the file (W30)
     if "none survives" in page:
         errors.append("desk/index.html: hard-codes 'none survives'; state lab results from the evidence file")
