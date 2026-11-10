@@ -110,6 +110,8 @@
   function drawEvidence(ev, key) {
     const g = ev[key], [hz, side] = key.split('/');
     const rows = Object.entries(g.experiments).map(([id, e]) => ({ id, ...e })).sort((a, b) => b.mean - a.mean);
+    // DD9 (W131): the forest plot leads with the strongest rows; all rows, failures included, open in place
+    const LEAD = 10, lead = rows.slice(0, LEAD), nPass = rows.filter(r => g.joint.stepm.includes(r.id)).length, nBelow = rows.filter(r => r.hi < 0).length;
     const abl = (ABLATION[hz] || []).map(id => {
       const e = g.experiments[id];
       if (!e) return `<tr><td>${esc(pretty(id))}<small>${esc(NOTE[id] || '')}</small></td><td colspan="3" class="muted">replay pending</td></tr>`;
@@ -124,7 +126,8 @@
       <div class="panel"><h2>${hz} horizon, ${side} picks</h2><p>${verdict(g)}</p>
         <p class="note">In plain words: if none of the ${g.joint.n_models} variants had a real edge, a best result at least this good would turn up by chance with p ${pf(g.joint.spa.consistent)}.${Object.entries(g.joint.twins || {}).map(([a, b]) => ` ${esc(pretty(a))} makes the same picks as ${esc(pretty(b))}, so the joint tests count them once.`).join('')}</p>
         <details class="how"><summary>How this was tested</summary><p class="note">Joint test: Hansen SPA, p ${pf(g.joint.spa.consistent)} (its looser and stricter versions give p ${pf(g.joint.spa.lower)} and p ${pf(g.joint.spa.upper)}). One-by-one check: Romano-Wolf StepM at the 10% level. The model confidence set (MCS) keeps ${g.joint.mcs.length} of ${g.joint.n_models} variants as not clearly worse than the best. Bootstrap: days are resampled ${g.joint.block > 1 ? `in blocks of ${g.joint.block} so days that move together stay together` : 'one at a time (block length 1)'}.</p></details></div>
-      <div class="panel"><h2>Edge over the market base rate, 95% interval</h2>${forest(rows, g.joint)}
+      <div class="panel"><h2>Edge over the market base rate, 95% interval</h2>${lead.length < rows.length ? `<p class="note">The ${lead.length} largest edges of ${rows.length} variants are drawn first; ${nPass} of ${rows.length} pass the many-trials check and ${nBelow} lose to the market line.</p>` : ''}${forest(lead, g.joint)}
+        ${lead.length < rows.length ? `<details class="orow allrows"><summary><span class="ot">All ${rows.length} variants, the weakest and the failures included</span><span class="os">${rows.length - lead.length} more rows</span></summary><div class="ob">${forest(rows, g.joint)}</div></details>` : ''}
         <p class="note"><span class="g">Green</span> passes the one-by-one check after the correction for many trials, at the 10% level. <span style="color:var(--amber)">Amber</span> is an order-block or confluence variant. <span class="r">Red</span> loses to the market line with an interval entirely below zero. Grey is not distinguishable from zero.</p></div>
       <div class="panel"><h2>Do order blocks help? The ablation</h2><p>${esc(obVerdict)}</p>
         <details class="orow abl"><summary><span class="ot">Each order-block variant, with its edge and verdict</span></summary><div class="ob"><div class="scroll" tabindex="0" role="region" aria-label="Strategy table, scrolls sideways"><table class="t ab"><thead><tr><th>Strategy</th><th>Edge (pts)</th><th>95% interval</th><th>Verdict</th></tr></thead><tbody>${abl}</tbody></table></div>

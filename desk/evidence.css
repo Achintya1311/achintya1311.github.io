@@ -41,3 +41,5 @@ svg.ch.wide { min-width: 640px; }
 .xr-r small{color:var(--muted);flex-basis:100%}
 .xr-lead .find{margin-top:10px}
 #xr-body .orow .ob h2{font-size:.75rem}
+/* DD9 (W131) */
+.allrows{margin-top:8px} .allrows .ob{color:var(--ink)}
