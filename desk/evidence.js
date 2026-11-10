@@ -206,7 +206,13 @@
       const q = e.target.value.trim().toUpperCase(); let hit = null;
       document.querySelectorAll('.dot-s').forEach(d => { const m = q && d.dataset.s.includes(q); d.classList.toggle('hit', !!m); if (m && !hit) hit = d; });
       if (hit) $('#xr-map').open = true;
-      $('#xr-hit').textContent = !q ? '' : hit ? `${hit.dataset.s}: ${hit.title.split(' · ')[1]}` : 'No stock matches.';
+      // the honest negative states (W129, design/components/not-picked.md): picked, ranked but not picked, or not scored, never a zero rank
+      const st = hit && x.stocks.find(z => z.s === hit.dataset.s), k = st && (st.b == null && st.d == null ? null : side(st) === 'b' ? 'bullish' : 'bearish');
+      const said = !st ? '' : !k ? 'not scored today: neither rule fired on this stock, so it has no rank (not a rank of zero).'
+        : (() => { const l = T[k] || [], i = l.findIndex(p => p.symbol === st.s), rk = k === 'bullish' ? st.b : st.d;
+            return i >= 0 ? `picked, ${k} #${i + 1} of ${l.length}, rank p${rk}.` : `ranked ${k} p${rk}, not picked: the ${k} table holds ${l.length ? 'the top ' + l.length : 'no stocks'}.`; })();
+      const n = q ? document.querySelectorAll('.dot-s.hit').length : 0;
+      $('#xr-hit').textContent = !q ? '' : hit ? `${hit.dataset.s}: ${said}${n > 1 ? ` ${n - 1} more ${n === 2 ? 'stock matches' : 'stocks match'}; type more of the name.` : ''}` : 'No stock matches.';
     };
   }
 
