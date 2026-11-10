@@ -260,7 +260,7 @@
     try {
       const d = await latest(h), t = d.tables || {};
       HZ = h; LBL = d.label || ''; EV = await window.deskEvLoad(); RK = Object.fromEntries(((d.xray && d.xray.stocks) || []).map(s => [s.s, s])); XR = d.xray || null;
-      $('#picks-sub').textContent = `${h === 'day' ? 'Day' : 'Week'} picks for session ${d.session}${dry ? ' (testing phase: these come from the lab\'s rehearsal folder, not its published picks)' : ''}`;
+      $('#picks-sub').textContent = `${h === 'day' ? 'Day' : 'Week'} picks for session ${d.session}, from end-of-day data${d.asof ? ' as of ' + d.asof : ''}, not intraday${dry ? ' (testing phase: these come from the lab\'s rehearsal folder, not its published picks)' : ''}`;
       $('#picks-body').innerHTML = `<div class="two">${table('Bullish picks', 'up', 'BULLISH', t.bullish || [])}${table('Bearish picks', 'dn', 'BEARISH', t.bearish || [])}</div>`;
       $('#picks-note').textContent = d.disclaimer || '';
     } catch { $('#picks-sub').textContent = 'Could not reach the lab’s picks right now.'; $('#picks-body').innerHTML = `<div class="empty">GitHub may be limiting requests; try the Day or Week button again in a few minutes, or see the <a href="https://github.com/${REPO}/tree/main/live">lab repo</a>.</div>`; }

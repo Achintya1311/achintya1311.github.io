@@ -173,7 +173,7 @@
     if (!r) { $('#xr-sub').textContent = 'Could not reach the lab right now.'; $('#xr-body').innerHTML = `<div class="empty">Could not reach the lab's files right now (GitHub may be limiting requests). Try again in a few minutes, or see the <a href="https://github.com/${REPO}/tree/main/live">lab repo</a>.</div>`; return; }
     if (!r.data.xray) { $('#xr-sub').textContent = `Session ${r.data.session}`; $('#xr-body').innerHTML = '<div class="empty">The lab\'s latest picks file has no X-Ray block.</div>'; return; }
     const x = r.data.xray, b = x.breadth;
-    $('#xr-sub').textContent = `Session ${r.data.session}${r.dry ? ' (testing phase: from the lab\'s rehearsal folder, not its published file)' : ''} · data as of ${x.asof} · ${x.n} stocks in the universe`;
+    $('#xr-sub').textContent = `Session ${r.data.session}${r.dry ? ' (testing phase: from the lab\'s rehearsal folder, not its published file)' : ''} · end-of-day data as of ${x.asof}, not intraday · ${x.n} stocks in the universe`;
     const score = s => Math.max(s.b ?? -1, s.d ?? -1), side = s => (s.b ?? -1) >= (s.d ?? -1) ? 'b' : 'd';
     const bull = x.stocks.filter(s => s.b != null && side(s) === 'b').sort((a, c) => c.b - a.b), bear = x.stocks.filter(s => s.d != null && side(s) === 'd').sort((a, c) => c.d - a.d), none = x.stocks.filter(s => s.b == null && s.d == null);
     const dot = (s, k) => `<span class="dot-s ${k}" tabindex="0" role="img" aria-label="${esc(s.s)}, ${k === 'up' ? 'bullish rank ' + s.b : k === 'dn' ? 'bearish rank ' + s.d : 'not scored'}" data-s="${esc(s.s)}" title="${esc(s.s)} · ${k === 'up' ? 'bullish rank ' + s.b : k === 'dn' ? 'bearish rank ' + s.d : 'not scored'}" style="opacity:${k === 'no' ? .3 : (.3 + .7 * score(s) / 100).toFixed(2)}"></span>`;

@@ -60,7 +60,7 @@
       $('#mkt-state').textContent = `Closed today, no session · next session ${dt}`;
     }
     ((x && x.stocks) || []).forEach(s => rk[s.s] = s);
-    if (x) { $('#depth').innerHTML = depth(x.breadth); $('#asof').textContent = 'as of ' + x.asof + (r.dry ? ' · rehearsal file' : ''); }
+    if (x) { $('#depth').innerHTML = depth(x.breadth); $('#asof').textContent = 'as of ' + x.asof + ', end of day' + (r.dry ? ' · rehearsal file' : ''); }
     if (x && x.breadth && x.breadth.n) $('#counts').innerHTML = `<span class="g">▲ ${Number(x.breadth.up)}</span> <span class="r">▼ ${Number(x.breadth.down)}</span><small>stocks up / down in the last session, by price move, not picks</small>`;
     // W130: an empty side says why instead of a bare 'No picks.'
     const none = k => { const n = ((x && x.stocks) || []).filter(s => s[k] != null).length; return `<p class="note">No ${k === 'b' ? 'bullish' : 'bearish'} picks for session ${esc(d.session)}: ${x ? (n ? `${n} ranked, none in the table` : 'the rule fired on no stock') : 'none in the table'}. <a href="#picks">Why →</a></p>`; };
