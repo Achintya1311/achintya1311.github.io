@@ -162,7 +162,7 @@
   function histogram(b) {
     const W = 560, H = 120, n = b.counts.length, bw = W / n, mx = Math.max(...b.counts, 1), mid = b.edges_pct.indexOf(0) + 1;
     const bars = b.counts.map((c, i) => `<rect x="${i * bw + 1}" y="${H - 16 - c / mx * (H - 26)}" width="${bw - 2}" height="${c / mx * (H - 26)}" fill="${i < mid ? 'var(--down)' : 'var(--up)'}" opacity=".85"><title>${c} stocks</title></rect>`).join('');
-    return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Distribution of the last session's open-to-close moves across the universe">${bars}<line x1="${mid * bw}" x2="${mid * bw}" y1="4" y2="${H - 16}" stroke="currentColor" opacity=".5"/><text x="2" y="${H - 3}" font-size="10" fill="currentColor" opacity=".6">down more than 4%</text><text x="${W - 2}" y="${H - 3}" font-size="10" text-anchor="end" fill="currentColor" opacity=".6">up more than 4%</text></svg>` + binTable(b);
+    return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Distribution of the last session's open-to-close moves across the universe">${bars}<line x1="${mid * bw}" x2="${mid * bw}" y1="4" y2="${H - 16}" stroke="currentColor" opacity=".5"/></svg><div class="hax" aria-hidden="true"><span>◀ ${b.counts[0] != null ? 'down more than ' + Math.abs(b.edges_pct[0]) + '%' : ''}</span><span class="z" style="left:${(mid / n * 100).toFixed(1)}%">0</span><span>${'up more than ' + b.edges_pct[b.edges_pct.length - 1] + '%'} ▶</span></div>` + binTable(b);
   }
 
   async function xrayView() {

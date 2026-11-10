@@ -27,3 +27,7 @@ svg.ch.wide { min-width: 640px; }
 
 /* DD9 (W120): the ablation table opens from its verdict sentence */
 .abl{margin-top:4px} .abl .ob{color:var(--ink)} .abl .ob .note{color:var(--muted)}
+
+/* W126: X-Ray histogram axis in HTML, so it stays 12px at 360px (the SVG text scaled to about 5px) */
+.hax{position:relative;display:flex;justify-content:space-between;font:.75rem var(--mono);color:var(--muted);margin-top:2px}
+.hax .z{position:absolute;transform:translateX(-50%)}
