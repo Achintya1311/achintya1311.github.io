@@ -290,16 +290,23 @@ def check_desk_files(errors):
         errors.append("desk/index.html: no skip link")
     if re.search(r'<a class="nav"(?![^>]*aria-label)', page):
         errors.append("desk/index.html: nav link without aria-label")
-    # DD1: five groups in story order, and the Overview first screen keeps who, the certificates, three proofs and three start links
+    # AB, 10 Nov 2026 (supersedes DD1's order): the StockStalker market board leads, five groups, and the first screen
+    # keeps who, both certificates and the board; every project and three proof sentences stay on the same view
     groups = re.findall(r'<a class="nav" href="#[^"]*"[^>]*aria-label="([^"]+)"', page)
-    if groups != ["Overview", "Projects", "Evidence", "Live lab", "About"]:
-        errors.append(f"desk/index.html: nav groups are {groups}, DD1 wants Overview, Projects, Evidence, Live lab, About")
-    ov = page[page.find('<div class="ov">'):page.find('<h2 class="ov-sub">')]
+    if groups != ["Market board", "Live lab", "Evidence", "Projects", "About"]:
+        errors.append(f"desk/index.html: nav groups are {groups}, want Market board, Live lab, Evidence, Projects, About")
+    home = page[page.find('<section class="view" id="home">'):page.find('<section class="view" id="findings">')]
+    ov = home[:home.find('<nav class="jump"')]
     if not ov or "NISM Series XV" not in ov or "NISM Series VIII" not in ov or "StockStalker" not in ov:
-        errors.append("desk/index.html: Overview first screen lost the name of StockStalker or a NISM certificate (DD1)")
-    start = re.search(r'<nav class="start"[^>]*>(.*?)</nav>', ov, re.S)
-    if ov.count("<li") != 3 or not start or start.group(1).count("<a ") != 3:
-        errors.append("desk/index.html: Overview first screen needs three proof items and three start-here links (DD1)")
+        errors.append("desk/index.html: first screen lost the name of StockStalker or a NISM certificate")
+    if 'id="cells"' not in ov or 'id="insp"' not in ov or "Not investment advice" not in ov:
+        errors.append("desk/index.html: first screen needs the market board, its inspector and the disclaimer")
+    jump = re.search(r'<nav class="jump"[^>]*>(.*?)</nav>', home, re.S)
+    if home.count("<li") != 3 or not jump or jump.group(1).count("<a ") < 4 or 'id="proj"' not in home:
+        errors.append("desk/index.html: the home view needs three proof items, the jump links and the project tiles")
+    bjs = (DESK / "board.js").read_text()
+    if "NOT PICKED" not in bjs or "rule did not fire" not in bjs:
+        errors.append("desk/board.js: the inspector must say NOT PICKED and why for a stock no rule chose")
     # DD9 on X-Ray and Evidence (W128, W131), the honest empty side (W130) and the holiday check (W125), 10 Nov 2026
     evjs, hjs = (DESK / "evidence.js").read_text(), (DESK / "home.js").read_text()
     if not re.search(r'<details class="orow" id="xr-map">.*Not scored', evjs, re.S) or 'class="panel xr-lead"' not in evjs:

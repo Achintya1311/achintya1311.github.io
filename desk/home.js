@@ -99,13 +99,13 @@
     } catch { $('#journal').innerHTML = `<p class="note">Could not load the journal. <a href="https://github.com/${REPO}/blob/main/state/journal.md">Open it on GitHub</a>.</p>`; }
   }
 
-  // 4 newest findings = first four cards in the root page's order (no date field exists). DD9: one line each (title and stat), opening to the card's one-line summary
+  // every project as one tile: its name, its headline result, one line. All of them, in the root page's order.
   async function findings() {
-    const box = $('#home-find');
+    const box = $('#proj');
     try {
       const { cards } = await window.deskRoot();
-      box.innerHTML = cards.slice(0, 4).map(c => `<details class="orow"><summary><span class="ot">${esc(c.title)}</span><span class="os">${esc(c.big)}</span></summary><div class="ob"><p><b>${esc(c.big)}</b> ${esc(c.sub)}</p><a href="#findings">Open it on Findings →</a></div></details>`).join('');
-    } catch { box.innerHTML = '<p class="note">Could not load findings here. <a href="../index.html#findings">Open the classic page</a>.</p>'; }
+      box.innerHTML = cards.map(c => `<a class="pj" href="#findings"><span class="pj-t">${esc(c.title)}</span><b class="pj-s">${esc(c.big)}</b><small>${esc(c.sub)}</small></a>`).join('');
+    } catch { box.innerHTML = '<p class="note">Could not load the projects here. <a href="../index.html#findings">Open the classic page</a>.</p>'; }
   }
 
   async function who() {

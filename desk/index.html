@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="desk.css">
 <link rel="stylesheet" href="evidence.css">
 <link rel="stylesheet" href="home.css">
+<link rel="stylesheet" href="board.css">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -32,10 +33,10 @@
   <nav class="side" aria-label="Sections">
     <div class="brand"><b>AM</b><span class="lbl">Research Desk</span><button class="tog" data-tog aria-label="Collapse sidebar" aria-expanded="true"><svg width="16" height="16"><use href="#i-side"/></svg></button></div>
     <!-- DD1/DD8: five groups in story order; data-views lists the views each group holds (sub-views are tabs) -->
-    <a class="nav" href="#home" data-views="home" aria-label="Overview"><svg><use href="#i-home"/></svg><span class="lbl">Overview</span></a>
-    <a class="nav" href="#findings" data-views="findings wrong" aria-label="Projects"><svg><use href="#i-grid"/></svg><span class="lbl">Projects</span></a>
-    <a class="nav" href="#evidence" data-views="evidence" aria-label="Evidence"><svg><use href="#i-flask"/></svg><span class="lbl">Evidence</span></a>
+    <a class="nav" href="#home" data-views="home" aria-label="Market board"><svg><use href="#i-home"/></svg><span class="lbl">Market board</span></a>
     <a class="nav" href="#picks" data-views="picks xray lab" aria-label="Live lab"><svg><use href="#i-chart"/></svg><span class="lbl">Live lab</span></a>
+    <a class="nav" href="#evidence" data-views="evidence" aria-label="Evidence"><svg><use href="#i-flask"/></svg><span class="lbl">Evidence</span></a>
+    <a class="nav" href="#findings" data-views="findings wrong" aria-label="Projects"><svg><use href="#i-grid"/></svg><span class="lbl">Projects</span></a>
     <a class="nav" href="#about" data-views="about" aria-label="About"><svg><use href="#i-user"/></svg><span class="lbl">About</span></a>
     <div class="grow"></div>
     <div class="pill" title="Lab status: testing phase, live from 2 Nov 2026"><span class="dot live" aria-hidden="true"></span><span class="lbl">Testing phase, live from 2 Nov</span>
@@ -47,48 +48,77 @@
     <div class="mbar"><b class="mb-b" aria-hidden="true">AM</b><span class="pill mpill"><span class="dot live" aria-hidden="true"></span><span>Testing phase, live from 2 Nov</span></span>
       <span class="theme"><button data-t="light" aria-label="Light theme" aria-pressed="false"><svg width="14" height="14"><use href="#i-sun"/></svg></button><button data-t="dark" aria-label="Dark theme" aria-pressed="true"><svg width="14" height="14"><use href="#i-moon"/></svg></button></span></div>
     <section class="view" id="home">
-      <!-- DD1 first screen: who, what he built, both certifications, three proof sentences, three start-here links. The market sits below. -->
-      <div class="ov">
-        <p class="ov-k" id="ov-kick">Equity research candidate · data science + finance</p>
-        <h1 id="hello">Achintya Mishra</h1>
-        <p class="ov-what">I built <b>StockStalker</b>, a command-line research pipeline on Indian (NSE) market data, <span id="ov-built">plus research projects</span>, and a lab that tests rule-based strategies against the market's own base rate. Negative results are reported too.</p>
-        <p class="ov-cert" id="ov-cert">Certified: NISM Series XV · Research Analyst; NISM Series VIII · Equity Derivatives</p>
-        <h2 class="ov-h">What the testing showed</h2>
-        <ul class="proof">
-          <li id="proof-lab">The lab's evidence file is loading.</li>
-          <li data-card="Risk">Risk: a constant-volatility normal model failed its 99% test out of sample on GULFOILLUB (42 breaches vs about 25 expected); a GARCH-t model passed (21 vs about 25).</li>
-          <li data-card="Portfolio optimisation">Portfolio: on 29 large caps, equal weight compounded ahead of mean-variance optimisation out of sample over 127 folds, after costs (data to 30 Oct 2026); the gap is not statistically significant at the 252-day training window.</li>
-        </ul>
-        <nav class="start" aria-label="Start here"><a href="#findings">Browse the findings →</a><a href="#evidence">What survived the test →</a><a href="#wrong">What I got wrong →</a></nav>
+      <!-- First screen (AB, 10 Nov 2026): who in two lines, then the StockStalker market board. Projects, proof and the lab feed follow. -->
+      <div class="ov ov-c">
+        <div class="ov-id">
+          <p class="ov-k" id="ov-kick">Equity research candidate · data science + finance</p>
+          <h1 id="hello">Achintya Mishra</h1>
+        </div>
+        <div class="ov-tx">
+          <p class="ov-what">I built <b>StockStalker</b>: a research pipeline on Indian (NSE) market data, <span id="ov-built">plus research projects</span>, and a lab that tests rule-based strategies against the market's own base rate. Misses are reported too.</p>
+          <p class="ov-cert" id="ov-cert">Certified: NISM Series XV · Research Analyst; NISM Series VIII · Equity Derivatives</p>
+        </div>
       </div>
-      <h2 class="ov-sub">Latest from the research and the lab <small id="today"></small></h2>
-      <div class="hcols">
-        <div class="hmain">
-          <div class="hcard hnew"><h2>Newest findings <a href="#findings">Open Findings →</a></h2><div id="home-find" class="orows"><p class="note">Loading findings…</p></div></div>
-          <div class="hrow">
-            <div class="hcard"><h2>Strategies tested <a href="#evidence">Open Evidence →</a></h2><div id="strat"></div></div>
-            <div class="hcard"><h2>Lab journal this week <a href="https://github.com/Achintya1311/stockstalker-lab/blob/main/state/journal.md">Open journal →</a></h2><div id="journal" class="orows"></div></div>
-          </div>
-          <div class="hero">
-            <div class="hero-top"><span class="status"><i class="dot live"></i><span id="mkt-state">Closed</span></span><span class="asof">MARKET BREADTH <small id="asof"></small></span></div>
-            <p id="counts" class="counts" aria-live="polite"></p>
+
+      <div class="mb" id="board">
+        <div class="mb-top">
+          <span class="mb-name"><b>StockStalker</b> market board</span>
+          <span class="status"><i class="dot live"></i><span id="mkt-state">Closed</span></span>
+          <span class="asof">F&amp;O UNIVERSE <small id="asof"></small></span>
+          <p id="counts" class="counts" aria-live="polite"></p>
+        </div>
+        <div class="mb-grid">
+          <div class="mb-l">
+            <div id="cells" class="cells" role="group" aria-label="Every stock in the universe, ordered by its last session's move. Select one to inspect it."><p class="note">Loading the market…</p></div>
+            <p class="mb-key" aria-hidden="true"><span class="k-up"></span> rose <span class="k-dn"></span> fell <span class="k-pk"></span> picked by a lab rule <span class="k-n">colour depth = size of the open-to-close move</span></p>
             <div id="depth" class="depth"></div>
+          </div>
+          <div class="mb-r">
+            <div id="insp" class="insp" aria-live="polite"><p class="note">Select a stock on the board.</p></div>
             <div class="tb">
               <div class="tb-col up"><h2><svg width="14" height="14" aria-hidden="true"><use href="#i-chart"/></svg> TOP BULLISH</h2><div id="top-bull" class="trows"></div></div>
               <div class="tb-col dn"><h2>TOP BEARISH</h2><div id="top-bear" class="trows"></div></div>
             </div>
+            <div id="rec" class="rec"></div>
+          </div>
+        </div>
+        <p class="note mb-note">End-of-day data, not live prices. Model output in testing. Not investment advice or a recommendation. Not a SEBI-registered research analyst. Every pick is shown, including misses.</p>
+      </div>
+
+      <nav class="jump" aria-label="Go to">
+        <a href="#picks"><b>Live picks</b><small>every pick, scored after the close</small></a>
+        <a href="#xray"><b>Market X-Ray</b><small>each stock's rank, picked or not</small></a>
+        <a href="#evidence"><b>Evidence</b><small>which rules survived testing</small></a>
+        <a href="#findings"><b>Projects</b><small>eight research findings</small></a>
+        <a href="#wrong"><b>What I got wrong</b><small>and how it was fixed</small></a>
+      </nav>
+
+      <h2 class="ov-sub">Research projects <small>one question each, the answer it produced</small></h2>
+      <div id="proj" class="proj"><p class="note">Loading projects…</p></div>
+
+      <h2 class="ov-sub">What the testing showed</h2>
+      <ul class="proof">
+        <li id="proof-lab">The lab's evidence file is loading.</li>
+        <li data-card="Risk">Risk: a constant-volatility normal model failed its 99% test out of sample on GULFOILLUB (42 breaches vs about 25 expected); a GARCH-t model passed (21 vs about 25).</li>
+        <li data-card="Portfolio optimisation">Portfolio: on 29 large caps, equal weight compounded ahead of mean-variance optimisation out of sample over 127 folds, after costs (data to 30 Oct 2026); the gap is not statistically significant at the 252-day training window.</li>
+      </ul>
+
+      <h2 class="ov-sub">Latest from the lab <small id="today"></small></h2>
+      <div class="hcols">
+        <div class="hmain">
+          <div class="hrow">
+            <div class="hcard"><h2>Strategies tested <a href="#evidence">Open Evidence →</a></h2><div id="strat"></div></div>
+            <div class="hcard"><h2>Lab journal this week <a href="https://github.com/Achintya1311/stockstalker-lab/blob/main/state/journal.md">Open journal →</a></h2><div id="journal" class="orows"></div></div>
           </div>
         </div>
         <div class="hside">
-          <a class="scard" href="#picks"><span class="ico"><svg width="16" height="16"><use href="#i-book"/></svg></span><div><b>Pick record</b><small>Live since 2 Nov 2026: each pick is committed before the open and scored after the close against the market's base rate. Every pick stays, misses included.</small></div></a>
           <a class="scard learn" href="#evidence"><div class="thumb"><svg width="22" height="22"><use href="#i-flask"/></svg></div><div><span class="kick">START HERE</span><b>What survived the test</b><small id="surv-line">Evidence from the lab</small><i class="prog"><s id="surv-bar"></s></i></div></a>
           <div class="qa" aria-label="More from the lab" role="group">
-            <a href="#xray"><span class="ico"><svg width="16" height="16"><use href="#i-grid"/></svg></span><span><b>Market X-Ray</b><small>every stock's rank for the next session</small></span></a>
             <a href="https://github.com/Achintya1311/stockstalker-lab"><span class="ico"><svg width="16" height="16"><use href="#i-code"/></svg></span><span><b>The lab on GitHub</b><small>code, ledger, every trial</small></span></a>
+            <a href="https://github.com/Achintya1311/STOCKSTALKER"><span class="ico"><svg width="16" height="16"><use href="#i-code"/></svg></span><span><b>StockStalker on GitHub</b><small>the pipeline and its tear sheet</small></span></a>
           </div>
         </div>
       </div>
-      <p class="note">Model output in testing. Not investment advice or a recommendation. Not a SEBI-registered research analyst.</p>
     </section>
 
     <section class="view" id="findings">
@@ -156,6 +186,7 @@
 <script src="desk.js"></script>
 <script src="evidence.js"></script>
 <script src="home.js"></script>
+<script src="board.js"></script>
 <script>
 (async () => {
   const $ = (s, r = document) => r.querySelector(s), esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

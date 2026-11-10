@@ -138,7 +138,7 @@
 
       <article class="card">
         <h3>Portfolio optimisation</h3>
-        <p class="stat">+426% vs +228% <span>equal weight vs max-Sharpe, both after costs, 127 folds, fixtures to 30 Oct 2026</span></p>
+        <p class="stat">Equal weight ahead <span>of max-Sharpe out of sample, both after costs, 127 folds, fixtures to 30 Oct 2026</span></p>
         <p class="a">On 29 large caps, equal weight compounded ahead of mean-variance optimisation out of sample, and none of five pre-registered rules beat it.</p>
         <details class="more"><summary>Method and caveats</summary><p>On fixtures to 30 Oct 2026 (127 folds): +433% vs +278% before costs, +426% vs +228% after costs, with both portfolios paying to rebalance; at the 26 Oct refresh (126 folds) it was +427% vs +309% before costs. A weekly data refresh adds folds and rewrites adjusted prices, so the figures move a little each week. Costs widen the gap, since the optimizer&rsquo;s own turnover (54% per fold vs 5%) costs more than the raw cost-rate difference suggests. The gap is not statistically significant at the 252-day training window (Sharpe difference &minus;0.42, 95% interval &minus;0.96 to +0.02); equal weight stays ahead across the risk-free rates and training windows tried, and only the 126-day window separates them clearly.</p></details>
         <figure class="fig"><img src="assets/charts/markowitz.png" width="900" height="675" loading="lazy" alt="Efficient frontier, tangency portfolio and capital market line for 29 large-cap stocks."><figcaption>From <code>optimizer.report</code>&rsquo;s frontier plot (markowitz-portfolio-optimizer, main as of bf609d3, 17 Oct 2026); 29 large caps, daily bars 1 Jan 2015 to 15 Oct 2026.</figcaption></figure>
