@@ -182,20 +182,30 @@
       const pass = g.joint.stepm.includes(exp);
       return `<li><b>${sideName === 'bullish' ? 'Bullish' : 'Bearish'} side: ${esc(nm)}.</b> In the 2015 to 2020 train years its hit rate was ${Math.abs(pts(e.mean)).toFixed(2)} points ${e.mean >= 0 ? 'above' : 'below'} the market's own base rate (95% interval ${fmt(e.lo)} to ${fmt(e.hi)}); it ${pass ? 'passes' : 'does not pass'} the many-trials check (10% level). Train years only, not yet validated on unseen data.</li>`;
     };
-    const rules = `<h2 style="margin-top:14px">Rules ranking today</h2><ul class="rules">${rule('bullish', x.bullish_experiment, x.bullish_strategy)}${rule('bearish', x.bearish_experiment, x.bearish_strategy)}</ul><p class="note">Full results, failures included, are on <a href="#evidence">Evidence</a>.</p>`;
+    const rules = `<ul class="rules">${rule('bullish', x.bullish_experiment, x.bullish_strategy)}${rule('bearish', x.bearish_experiment, x.bearish_strategy)}</ul><p class="note">Full results, failures included, are on <a href="#evidence">Evidence</a>.</p>`;
+    // DD9 (W128): one lead item, the stocks the lab ranked for the next session; breadth, the rules and the full dot map are one-line rows that open in place
+    const T = r.data.tables || {}, pos = (sym, k) => { const l = T[k] || [], i = l.findIndex(p => p.symbol === sym); return i < 0 ? `not in the ${k} table` : `picked, ${k} #${i + 1} of ${l.length}`; };
+    const row = (s, k) => `<li class="xr-r ${k === 'b' ? 'up' : 'dn'}"><span class="badge">${k === 'b' ? '▲ BULLISH' : '▼ BEARISH'}</span><b>${esc(s.s)}</b><span class="num">rank p${k === 'b' ? s.b : s.d}</span><small>${pos(s.s, k === 'b' ? 'bullish' : 'bearish')}</small></li>`;
+    const TOP = 5, more = (l, w) => l.length > TOP ? `<li class="muted">${l.length - TOP} more ranked ${w}: see every stock as a dot below.</li>` : '';
+    const nm = (exp, strat) => exp ? pretty(exp) : String(strat || 'none').replace(/@v\d+$/, '').replace(/_/g, ' ');
     $('#xr-body').innerHTML = `
-      <div class="stats"><div class="stat"><b class="g">${b.up}</b><span>stocks closed above their open</span></div><div class="stat"><b class="r">${b.down}</b><span>closed below their open</span></div><div class="stat"><b>${bull.length}</b><span>ranked bullish</span></div><div class="stat"><b>${bear.length}</b><span>ranked bearish</span></div></div>
-      <div class="two"><div class="panel"><h2>Breadth: last session's moves across the universe</h2>${histogram(b)}</div>
-      <div class="panel"><h2>How to read the dots</h2><p>One dot per stock. Brighter means a higher rank among the names that strategy scores on that side. Ranks only: the page shows no prices and no levels.</p>
-        ${rules}
-        <input id="xr-find" class="find" placeholder="Find a stock, for example RELIANCE" aria-label="Find a stock"></div></div>
-      <div class="panel"><h2>Bullish ranks</h2><div class="dots">${bull.map(s => dot(s, 'up')).join('') || '<span class="muted">none</span>'}</div>
-        <h2 style="margin-top:16px">Bearish ranks</h2><div class="dots">${bear.map(s => dot(s, 'dn')).join('') || '<span class="muted">none</span>'}</div>
-        <h2 style="margin-top:16px">Not scored</h2><div class="dots">${none.map(s => dot(s, 'no')).join('') || '<span class="muted">none</span>'}</div>
-        <p class="note" id="xr-hit" aria-live="polite"></p></div>`;
+      <div class="panel xr-lead"><h2>Ranked for the next session</h2>
+        <p class="xr-head">The lab ranked <b>${bull.length}</b> ${bull.length === 1 ? 'stock' : 'stocks'} bullish and <b>${bear.length}</b> bearish; ${none.length} of ${x.n} were not scored, because neither rule fired on them.</p>
+        ${bull.length + bear.length ? `<ul class="xr-list">${bull.slice(0, TOP).map(s => row(s, 'b')).join('')}${more(bull, 'bullish')}${bear.slice(0, TOP).map(s => row(s, 'd')).join('')}${more(bear, 'bearish')}</ul>` : ''}
+        <input id="xr-find" class="find" placeholder="Find a stock, for example RELIANCE" aria-label="Find a stock"><p class="note" id="xr-hit" aria-live="polite"></p></div>
+      <div class="panel orows">
+        <details class="orow"><summary><span class="ot">Rules ranking today</span><span class="os">${esc(nm(x.bullish_experiment, x.bullish_strategy))} · ${esc(nm(x.bearish_experiment, x.bearish_strategy))}</span></summary><div class="ob">${rules}</div></details>
+        <details class="orow"><summary><span class="ot">Breadth, last session</span><span class="os"><span class="g">▲ ${Number(b.up)}</span> <span class="r">▼ ${Number(b.down)}</span> of ${Number(b.n)}</span></summary><div class="ob">${histogram(b)}</div></details>
+        <details class="orow" id="xr-map"><summary><span class="ot">Every stock as a dot</span><span class="os">brighter means a higher rank</span></summary><div class="ob">
+          <p>One dot per stock. Brighter means a higher rank among the names that rule scores on that side. Ranks only: the page shows no prices and no levels.</p>
+          <h2>Bullish ranks</h2><div class="dots">${bull.map(s => dot(s, 'up')).join('') || '<span class="muted">none</span>'}</div>
+          <h2 style="margin-top:16px">Bearish ranks</h2><div class="dots">${bear.map(s => dot(s, 'dn')).join('') || '<span class="muted">none</span>'}</div>
+          <h2 style="margin-top:16px">Not scored (${none.length})</h2><div class="dots">${none.map(s => dot(s, 'no')).join('') || '<span class="muted">none</span>'}</div></div></details>
+      </div>`;
     $('#xr-find').oninput = e => {
       const q = e.target.value.trim().toUpperCase(); let hit = null;
       document.querySelectorAll('.dot-s').forEach(d => { const m = q && d.dataset.s.includes(q); d.classList.toggle('hit', !!m); if (m && !hit) hit = d; });
+      if (hit) $('#xr-map').open = true;
       $('#xr-hit').textContent = !q ? '' : hit ? `${hit.dataset.s}: ${hit.title.split(' · ')[1]}` : 'No stock matches.';
     };
   }
