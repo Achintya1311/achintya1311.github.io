@@ -299,14 +299,14 @@ def check_desk_files(errors):
     ov = home[:home.find('<nav class="jump"')]
     if not ov or "NISM Series XV" not in ov or "NISM Series VIII" not in ov or "StockStalker" not in ov:
         errors.append("desk/index.html: first screen lost the name of StockStalker or a NISM certificate")
-    if 'id="cells"' not in ov or 'id="insp"' not in ov or "Not investment advice" not in ov:
-        errors.append("desk/index.html: first screen needs the market board, its inspector and the disclaimer")
+    if 'id="fl-svg"' not in ov or 'id="fl-cards"' not in ov or "Not investment advice" not in ov:
+        errors.append("desk/index.html: first screen needs the market flow, its pick cards and the disclaimer")
     jump = re.search(r'<nav class="jump"[^>]*>(.*?)</nav>', home, re.S)
     if home.count("<li") != 3 or not jump or jump.group(1).count("<a ") < 4 or 'id="proj"' not in home:
         errors.append("desk/index.html: the home view needs three proof items, the jump links and the project tiles")
     bjs = (DESK / "board.js").read_text()
-    if "NOT PICKED" not in bjs or "rule did not fire" not in bjs:
-        errors.append("desk/board.js: the inspector must say NOT PICKED and why for a stock no rule chose")
+    if "Not picked: no rule fired" not in bjs or "the rule fired on no stock" not in bjs or "not live" not in bjs:
+        errors.append("desk/board.js: the flow must say when a stock or a whole side is not picked and why, and that it is a replay, not live")
     # DD9 on X-Ray and Evidence (W128, W131), the honest empty side (W130) and the holiday check (W125), 10 Nov 2026
     evjs, hjs = (DESK / "evidence.js").read_text(), (DESK / "home.js").read_text()
     if not re.search(r'<details class="orow" id="xr-map">.*Not scored', evjs, re.S) or 'class="panel xr-lead"' not in evjs:

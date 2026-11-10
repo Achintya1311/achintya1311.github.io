@@ -67,20 +67,17 @@
           <span class="asof">F&amp;O UNIVERSE <small id="asof"></small></span>
           <p id="counts" class="counts" aria-live="polite"></p>
         </div>
-        <div class="mb-grid">
-          <div class="mb-l">
-            <div id="cells" class="cells" role="group" aria-label="Every stock in the universe, ordered by its last session's move. Select one to inspect it."><p class="note">Loading the market…</p></div>
-            <p class="mb-key" aria-hidden="true"><span class="k-up"></span> rose <span class="k-dn"></span> fell <span class="k-pk"></span> picked by a lab rule <span class="k-n">colour depth = size of the open-to-close move</span></p>
-            <div id="depth" class="depth"></div>
-          </div>
-          <div class="mb-r">
-            <div id="insp" class="insp" aria-live="polite"><p class="note">Select a stock on the board.</p></div>
-            <div class="tb">
-              <div class="tb-col up"><h2><svg width="14" height="14" aria-hidden="true"><use href="#i-chart"/></svg> TOP BULLISH</h2><div id="top-bull" class="trows"></div></div>
-              <div class="tb-col dn"><h2>TOP BEARISH</h2><div id="top-bear" class="trows"></div></div>
-            </div>
-            <div id="rec" class="rec"></div>
-          </div>
+        <div class="fl-heads" aria-hidden="true"><span>Every stock, open to close</span><span>Biggest moves</span><span>Scored by a lab rule</span><span>Picked for the next session</span></div>
+        <div class="fl" id="flow">
+          <div class="fl-svg" id="fl-svg"><p class="note">Loading the market…</p></div>
+          <div class="fl-cards" id="fl-cards"></div>
+          <div class="fl-tip" id="fl-tip" hidden></div>
+        </div>
+        <div class="fl-list" id="fl-list"></div>
+        <p class="fl-cap" id="fl-cap"></p>
+        <div class="mb-low">
+          <div id="rec" class="rec"></div>
+          <div><h2 class="mb-h">Spread of the last session's moves</h2><div id="depth" class="depth"></div></div>
         </div>
         <p class="note mb-note">End-of-day data, not live prices. Model output in testing. Not investment advice or a recommendation. Not a SEBI-registered research analyst. Every pick is shown, including misses.</p>
       </div>
