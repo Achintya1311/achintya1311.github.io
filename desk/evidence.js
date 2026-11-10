@@ -174,11 +174,20 @@
     const score = s => Math.max(s.b ?? -1, s.d ?? -1), side = s => (s.b ?? -1) >= (s.d ?? -1) ? 'b' : 'd';
     const bull = x.stocks.filter(s => s.b != null && side(s) === 'b').sort((a, c) => c.b - a.b), bear = x.stocks.filter(s => s.d != null && side(s) === 'd').sort((a, c) => c.d - a.d), none = x.stocks.filter(s => s.b == null && s.d == null);
     const dot = (s, k) => `<span class="dot-s ${k}" tabindex="0" role="img" aria-label="${esc(s.s)}, ${k === 'up' ? 'bullish rank ' + s.b : k === 'dn' ? 'bearish rank ' + s.d : 'not scored'}" data-s="${esc(s.s)}" title="${esc(s.s)} · ${k === 'up' ? 'bullish rank ' + s.b : k === 'dn' ? 'bearish rank ' + s.d : 'not scored'}" style="opacity:${k === 'no' ? .3 : (.3 + .7 * score(s) / 100).toFixed(2)}"></span>`;
+    // W127: name each side's rule in words and say what its train replay showed, instead of raw module ids
+    const ev = await window.deskEvLoad();
+    const rule = (sideName, exp, strat) => {
+      const g = ev && ev[`day/${sideName}`], e = g && exp && g.experiments[exp], nm = exp ? pretty(exp) + (NOTE[exp] ? `, ${NOTE[exp]}` : '') : String(strat || 'none').replace(/@v\d+$/, '').replace(/_/g, ' ');
+      if (!e) return `<li><b>${sideName === 'bullish' ? 'Bullish' : 'Bearish'} side: ${esc(nm)}.</b> No train replay for this rule in the lab's evidence file, so the page makes no edge claim for it.</li>`;
+      const pass = g.joint.stepm.includes(exp);
+      return `<li><b>${sideName === 'bullish' ? 'Bullish' : 'Bearish'} side: ${esc(nm)}.</b> In the 2015 to 2020 train years its hit rate was ${Math.abs(pts(e.mean)).toFixed(2)} points ${e.mean >= 0 ? 'above' : 'below'} the market's own base rate (95% interval ${fmt(e.lo)} to ${fmt(e.hi)}); it ${pass ? 'passes' : 'does not pass'} the many-trials check (10% level). Train years only, not yet validated on unseen data.</li>`;
+    };
+    const rules = `<h2 style="margin-top:14px">Rules ranking today</h2><ul class="rules">${rule('bullish', x.bullish_experiment, x.bullish_strategy)}${rule('bearish', x.bearish_experiment, x.bearish_strategy)}</ul><p class="note">Full results, failures included, are on <a href="#evidence">Evidence</a>.</p>`;
     $('#xr-body').innerHTML = `
       <div class="stats"><div class="stat"><b class="g">${b.up}</b><span>stocks closed above their open</span></div><div class="stat"><b class="r">${b.down}</b><span>closed below their open</span></div><div class="stat"><b>${bull.length}</b><span>ranked bullish</span></div><div class="stat"><b>${bear.length}</b><span>ranked bearish</span></div></div>
       <div class="two"><div class="panel"><h2>Breadth: last session's moves across the universe</h2>${histogram(b)}</div>
       <div class="panel"><h2>How to read the dots</h2><p>One dot per stock. Brighter means a higher rank among the names that strategy scores on that side. Ranks only: the page shows no prices and no levels.</p>
-        <p class="note">Strategies in use: bullish side ${esc(x.bullish_strategy)}, bearish side ${esc(x.bearish_strategy)}. The Evidence view shows what the lab has measured about strategies like these.</p>
+        ${rules}
         <input id="xr-find" class="find" placeholder="Find a stock, for example RELIANCE" aria-label="Find a stock"></div></div>
       <div class="panel"><h2>Bullish ranks</h2><div class="dots">${bull.map(s => dot(s, 'up')).join('') || '<span class="muted">none</span>'}</div>
         <h2 style="margin-top:16px">Bearish ranks</h2><div class="dots">${bear.map(s => dot(s, 'dn')).join('') || '<span class="muted">none</span>'}</div>

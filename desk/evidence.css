@@ -31,3 +31,5 @@ svg.ch.wide { min-width: 640px; }
 /* W126: X-Ray histogram axis in HTML, so it stays 12px at 360px (the SVG text scaled to about 5px) */
 .hax{position:relative;display:flex;justify-content:space-between;font:.75rem var(--mono);color:var(--muted);margin-top:2px}
 .hax .z{position:absolute;transform:translateX(-50%)}
+/* W127 */
+.rules{margin:6px 0 0;padding-left:18px;font-size:.9rem}.rules li+li{margin-top:6px}
