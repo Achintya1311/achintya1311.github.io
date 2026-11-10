@@ -32,7 +32,7 @@
       <div class="actions">
         <a class="button primary" href="https://github.com/Achintya1311">GitHub</a>
         <a class="button" href="research/craft.pdf">Research paper (PDF)</a>
-        <a class="button" href="desk/">Interactive view</a>
+        <a class="button" href="desk/">Live research desk</a>
       </div>
     </div>
     <dl class="facts">
@@ -48,8 +48,9 @@
   <section id="stockstalker" class="wrap section">
     <div class="section-head">
       <h2>StockStalker</h2>
-      <p>A command-line research pipeline. One command builds a tear sheet of price signals, risk, factor exposure, a reverse DCF from public financials, options for F&amp;O stocks and headline sentiment where its hand-written lookup knows the company (23 companies; none of the three verified names); full fundamentals are hand-built for one name. Verified end to end on an F&amp;O large-cap, a non-F&amp;O mid-cap and Gulf Oil Lubricants, the hand-researched subject. The three-statement model is built by hand for researched companies only.</p>
-      <p class="note">Three parts: <strong>Screen</strong>: 3 names, 1 of 3 held up. <strong>Tear sheet</strong>: one command, the modules above; verified on RELIANCE, CASTROLIND, GULFOILLUB. <strong>Lab</strong>: <a href="https://github.com/Achintya1311/stockstalker-lab">separate repo</a>, testing phase. <a href="https://github.com/Achintya1311/stockstalker-lab/blob/main/reports/evidence_train.md">Its evidence so far</a>: some one-day rules cleared the many-trials correction on the 2015-2020 training years, none on the one-week horizon; not yet tested on unseen years.</p>
+      <p>A command-line research pipeline on NSE data: one command builds a tear sheet for one stock from six research modules (signals, risk, factor exposure, reverse DCF, options, sentiment), plus a three-statement model built by hand for researched companies.</p>
+      <p class="note"><strong>Screen</strong>: 3 names, 1 of 3 held up. <strong>Tear sheet</strong>: verified on RELIANCE, CASTROLIND, GULFOILLUB. <strong>Lab</strong>: <a href="https://github.com/Achintya1311/stockstalker-lab">separate repo</a>; its rule-based bullish and bearish picks have been published every session since 2 Nov 2026, every pick shown including misses (<a href="desk/#picks">live record</a>). <a href="https://github.com/Achintya1311/stockstalker-lab/blob/main/reports/evidence_train.md">Evidence so far</a>: some one-day rules cleared the many-trials correction on the 2015-2020 training years, none on the one-week horizon.</p>
+      <details class="more"><summary>Scope and caveats</summary><p>Options run for F&amp;O stocks only. Headline sentiment runs where its hand-written lookup knows the company (23 companies; none of the three verified names). Full fundamentals are hand-built for one name, Gulf Oil Lubricants, the hand-researched subject. Verified end to end on an F&amp;O large-cap (RELIANCE), a non-F&amp;O mid-cap (CASTROLIND) and GULFOILLUB. The lab's picks are model output in testing from provisional rules: not investment advice or a recommendation.</p></details>
     </div>
     <ol class="pipeline">
       <li><a href="https://github.com/Achintya1311/STOCKSTALKER"><span class="step">Screen</span><span class="what">Trend, momentum, volume, liquidity</span></a></li>
@@ -76,7 +77,8 @@
       <article class="card">
         <h3>Reverse DCF</h3>
         <p class="stat">No constant growth rate <span>reproduces GULFOILLUB&rsquo;s price under the ROIC rule, valued at the FY2023-24 year end</span></p>
-        <p class="a">Once growth and reinvestment are tied together through return on capital &mdash; including in the terminal year, fixed to use the same rule &mdash; no constant growth rate reproduces the market price when the company is valued at the FY2023-24 year end, at the 12 Sep 2026 capture and the 26 Oct 2026 price alike. Valued at the price date instead, 10.3% a year does reproduce the 26 Oct price, so the answer depends on that timing convention.</p>
+        <p class="a">Once growth and reinvestment are tied together through return on capital &mdash; including in the terminal year, fixed to use the same rule &mdash; no constant growth rate reproduces the market price when the company is valued at the FY2023-24 year end, at the 12 Sep 2026 capture and the 26 Oct 2026 price alike.</p>
+        <details class="more"><summary>Method and caveats</summary><p>Valued at the price date instead, 10.3% a year does reproduce the 26 Oct price, so the answer depends on that timing convention.</p></details>
         <figure class="fig"><img src="assets/charts/reverse-dcf.png" width="900" height="450" loading="lazy" alt="Tornado chart of how implied 10-year growth moves when each DCF input is shocked across its historical range."><figcaption>Chart solved against the 12 Sep 2026 price capture.</figcaption></figure>
         <a class="repo" href="https://github.com/Achintya1311/reverse-dcf-engine">reverse-dcf-engine &rarr;</a>
       </article>
@@ -84,7 +86,8 @@
       <article class="card">
         <h3>Three-statement model</h3>
         <p class="stat">Domestic growth <span>in the top two of ten levers on GULFOILLUB&rsquo;s net debt/EBITDA under both shock sizes tried</span></p>
-        <p class="a">For Gulf Oil Lubricants (GULFOILLUB), which forecast assumption moves net debt/EBITDA most depends on how far each is shocked. With fixed hand-picked steps, dividend payout ranks first (0.34&times; impact) and domestic growth second (0.21&times;), but payout starts from an assumed 0% because the filings carry no dividend data; shocked by one standard deviation of each lever&rsquo;s own history, domestic growth ranks first (0.70&times;) and capex margin second (0.43&times;). The balance sheet balances every forecast year, enforced by a test.</p>
+        <p class="a">For Gulf Oil Lubricants (GULFOILLUB), which forecast assumption moves net debt/EBITDA most depends on how far each is shocked.</p>
+        <details class="more"><summary>Method and caveats</summary><p>With fixed hand-picked steps, dividend payout ranks first (0.34&times; impact) and domestic growth second (0.21&times;), but payout starts from an assumed 0% because the filings carry no dividend data; shocked by one standard deviation of each lever&rsquo;s own history, domestic growth ranks first (0.70&times;) and capex margin second (0.43&times;). The balance sheet balances every forecast year, enforced by a test.</p></details>
         <p class="fig-note">Output is a live-formula Excel workbook, so there is no chart.</p>
         <a class="repo" href="https://github.com/Achintya1311/three-statement-model">three-statement-model &rarr;</a>
       </article>
@@ -92,7 +95,8 @@
       <article class="card">
         <h3>Factor exposure</h3>
         <p class="stat">t = 1.0 <span>alpha not significant</span></p>
-        <p class="a">Gulf Oil Lubricants&rsquo; (GULFOILLUB) monthly returns against IIM Ahmedabad&rsquo;s Indian factors, Aug 2014 to Dec 2025 (137 months, three factors plus momentum): beta 0.80 and a clear small-cap tilt (SMB 0.47). Of its average excess return of 1.30 percentage points a month, the fit attributes 0.85 to alpha and 0.45 to those factor exposures, but the alpha is too noisy to tell apart from zero over 137 months (t &asymp; 1.0).</p>
+        <p class="a">Gulf Oil Lubricants&rsquo; (GULFOILLUB) monthly returns against IIM Ahmedabad&rsquo;s Indian factors, Aug 2014 to Dec 2025 (137 months, three factors plus momentum): beta 0.80 and a clear small-cap tilt (SMB 0.47).</p>
+        <details class="more"><summary>Method and caveats</summary><p>Of its average excess return of 1.30 percentage points a month, the fit attributes 0.85 to alpha and 0.45 to those factor exposures, but the alpha is too noisy to tell apart from zero over 137 months (t &asymp; 1.0).</p></details>
         <figure class="fig"><img src="assets/charts/factor-model.png" width="900" height="780" loading="lazy" alt="Rolling 60-month factor loadings with 95% bands, shown on an industry portfolio to illustrate the method."><figcaption>Method illustrated on an industry portfolio.</figcaption></figure>
         <a class="repo" href="https://github.com/Achintya1311/fama-french-factor-model">fama-french-factor-model &rarr;</a>
       </article>
@@ -100,7 +104,8 @@
       <article class="card">
         <h3>Risk</h3>
         <p class="stat">42 vs 25 <span>99% VaR breaches vs expected for the constant-volatility normal model, out of sample (pre-registered, GULFOILLUB)</span></p>
-        <p class="a">Tested out of sample on GULFOILLUB (pre-registered, 2,506 test days, refit every 20 days), the constant-volatility normal VaR fails at 99% (42 breaches vs about 25 expected, p = 0.002); a GARCH-t model passes (21 vs about 25, p = 0.40). In sample on RELIANCE the same normal model was breached 10 times against about 5 expected: Kupiec rejects it (p = 0.048), but that is one of four in-sample tests and does not survive a Holm correction (adjusted p = 0.096), so the out-of-sample test is the evidence that the tails are fatter than the model assumes.</p>
+        <p class="a">Tested out of sample on GULFOILLUB (pre-registered, 2,506 test days, refit every 20 days), the constant-volatility normal VaR fails at 99% (42 breaches vs about 25 expected, p = 0.002); a GARCH-t model passes (21 vs about 25, p = 0.40).</p>
+        <details class="more"><summary>Method and caveats</summary><p>In sample on RELIANCE the same normal model was breached 10 times against about 5 expected: Kupiec rejects it (p = 0.048), but that is one of four in-sample tests and does not survive a Holm correction (adjusted p = 0.096), so the out-of-sample test is the evidence that the tails are fatter than the model assumes.</p></details>
         <figure class="fig"><img src="assets/charts/risk-lab.png" width="900" height="643" loading="lazy" alt="Histogram of a million simulated 20-day maximum drawdowns on RELIANCE, with the median and worst path marked."><figcaption>From <code>python -m mcsim.portfolio --drawdown-plot</code> (monte-carlo-risk-lab, main as of 8796513, 17 Oct 2026); RELIANCE daily bars 4 Sep 2024 to 4 Sep 2026.</figcaption></figure>
         <a class="repo" href="https://github.com/Achintya1311/monte-carlo-risk-lab">monte-carlo-risk-lab &rarr;</a>
       </article>
@@ -108,7 +113,8 @@
       <article class="card">
         <h3>Options <span class="tag">NISM VIII</span></h3>
         <p class="stat">196 / 704 <span>NIFTY quotes break no-arbitrage on 16 Oct 2026 under one assumed forward; filtering is not optional</span></p>
-        <p class="a">On one real captured NSE option chain (16 Oct 2026; for RELIANCE 25 of 218 break the floor and 18 more have no two-sided quote), raw quotes violated no-arbitrage bounds routinely within it, so filtering is not optional. Every NIFTY batch captured since breaks the floor too: 49 / 704 (21 Oct), 89 / 288 (23 Oct, one expiry, intraday), 129 / 704 (23 Oct close) and 71 / 704 (27 Oct, intraday on an expiry day; another 288 contracts expire that day and have no implied vol). Five batches in under two weeks show it recurs, not that it always will. The counts assume one forward (r = 6.5%, q = 0); with a forward taken from each chain&rsquo;s own put-call parity they move both ways (196 &rarr; 126 on 16 Oct, 129 &rarr; 136 on 23 Oct), and breaks stay routine either way.</p>
+        <p class="a">On one real captured NSE option chain (16 Oct 2026; for RELIANCE 25 of 218 break the floor and 18 more have no two-sided quote), raw quotes violated no-arbitrage bounds routinely within it, so filtering is not optional.</p>
+        <details class="more"><summary>Method and caveats</summary><p>Every NIFTY batch captured since breaks the floor too: 49 / 704 (21 Oct), 89 / 288 (23 Oct, one expiry, intraday), 129 / 704 (23 Oct close) and 71 / 704 (27 Oct, intraday on an expiry day; another 288 contracts expire that day and have no implied vol). Five batches in under two weeks show it recurs, not that it always will. The counts assume one forward (r = 6.5%, q = 0); with a forward taken from each chain&rsquo;s own put-call parity they move both ways (196 &rarr; 126 on 16 Oct, 129 &rarr; 136 on 23 Oct), and breaks stay routine either way.</p></details>
         <figure class="fig"><img src="assets/charts/iv-surface.png" width="900" height="562" loading="lazy" alt="Implied volatility smile across strikes from a real captured option chain, one curve per expiry."><figcaption>RELIANCE, NSE chain captured 16 Oct 2026. From <code>python -m volsurface.solve --provider nse_raw --surface --plot</code> (implied-vol-surface, main as of 857e7e9).</figcaption></figure>
         <a class="repo" href="https://github.com/Achintya1311/implied-vol-surface">implied-vol-surface &rarr;</a>
       </article>
@@ -124,7 +130,8 @@
       <article class="card">
         <h3>Technical screen</h3>
         <p class="stat">1 of 3 <span>names beat buy-and-hold after costs</span></p>
-        <p class="a">Including Indian delivery costs (STT, stamp duty, slippage), the trend/momentum/volume screen mostly loses to simply holding. Its one surviving win also beats being long the same number of days at random: at the 90th percentile of 2,000 random draws, better than most random picks of the same exposure. With three names, one result that high happens by chance about a quarter of the time. A second apparent win, before costs, was itself that kind of random-exposure fluke (bottom 5th percentile) and didn&rsquo;t survive costs either.</p>
+        <p class="a">Including Indian delivery costs (STT, stamp duty, slippage), the trend/momentum/volume screen mostly loses to simply holding.</p>
+        <details class="more"><summary>Method and caveats</summary><p>Its one surviving win also beats being long the same number of days at random: at the 90th percentile of 2,000 random draws, better than most random picks of the same exposure. With three names, one result that high happens by chance about a quarter of the time. A second apparent win, before costs, was itself that kind of random-exposure fluke (bottom 5th percentile) and didn&rsquo;t survive costs either.</p></details>
         <figure class="fig"><img src="assets/charts/stockstalker-screen.png" width="900" height="270" loading="lazy" alt="For RELIANCE, TATACHEM and CROMPTON, histograms of 2,000 random same-size exposures with the screen's own return marked, before costs: 38th, 90th and 5th percentile."><figcaption>From <code>python -m stockstalker.backtest --offline --chart</code> (STOCKSTALKER 171a7d0), committed fixtures to 4 Sep 2026, before costs.</figcaption></figure>
         <a class="repo" href="https://github.com/Achintya1311/STOCKSTALKER">STOCKSTALKER &rarr;</a>
       </article>
@@ -132,7 +139,8 @@
       <article class="card">
         <h3>Portfolio optimisation</h3>
         <p class="stat">+426% vs +228% <span>equal weight vs max-Sharpe, both after costs, 127 folds, fixtures to 30 Oct 2026</span></p>
-        <p class="a">On 29 large caps, equal weight compounded ahead of mean-variance optimisation out of sample, and none of five pre-registered rules beat it. On fixtures to 30 Oct 2026 (127 folds): +433% vs +278% before costs, +426% vs +228% after costs, with both portfolios paying to rebalance; at the 26 Oct refresh (126 folds) it was +427% vs +309% before costs. A weekly data refresh adds folds and rewrites adjusted prices, so the figures move a little each week. Costs widen the gap, since the optimizer&rsquo;s own turnover (54% per fold vs 5%) costs more than the raw cost-rate difference suggests. The gap is not statistically significant at the 252-day training window (Sharpe difference &minus;0.42, 95% interval &minus;0.96 to +0.02); equal weight stays ahead across the risk-free rates and training windows tried, and only the 126-day window separates them clearly.</p>
+        <p class="a">On 29 large caps, equal weight compounded ahead of mean-variance optimisation out of sample, and none of five pre-registered rules beat it.</p>
+        <details class="more"><summary>Method and caveats</summary><p>On fixtures to 30 Oct 2026 (127 folds): +433% vs +278% before costs, +426% vs +228% after costs, with both portfolios paying to rebalance; at the 26 Oct refresh (126 folds) it was +427% vs +309% before costs. A weekly data refresh adds folds and rewrites adjusted prices, so the figures move a little each week. Costs widen the gap, since the optimizer&rsquo;s own turnover (54% per fold vs 5%) costs more than the raw cost-rate difference suggests. The gap is not statistically significant at the 252-day training window (Sharpe difference &minus;0.42, 95% interval &minus;0.96 to +0.02); equal weight stays ahead across the risk-free rates and training windows tried, and only the 126-day window separates them clearly.</p></details>
         <figure class="fig"><img src="assets/charts/markowitz.png" width="900" height="675" loading="lazy" alt="Efficient frontier, tangency portfolio and capital market line for 29 large-cap stocks."><figcaption>From <code>optimizer.report</code>&rsquo;s frontier plot (markowitz-portfolio-optimizer, main as of bf609d3, 17 Oct 2026); 29 large caps, daily bars 1 Jan 2015 to 15 Oct 2026.</figcaption></figure>
         <a class="repo" href="https://github.com/Achintya1311/markowitz-portfolio-optimizer">markowitz-portfolio-optimizer &rarr;</a>
       </article>
@@ -172,7 +180,7 @@
 <footer>
   <div class="wrap foot">
     <a href="https://github.com/Achintya1311">github.com/Achintya1311</a>
-    <p class="updated">Updated 6 Nov 2026</p>
+    <p class="updated">Updated 10 Nov 2026</p>
     <p class="disclaimer">Educational research on historical data. Not investment advice. Not a SEBI-registered research analyst.</p>
   </div>
 </footer>
