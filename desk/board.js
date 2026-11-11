@@ -89,7 +89,7 @@
       const vals = all.map(s => Math.abs(endOf(s)));
       vals.sort((a, b) => a - b); const top = vals[Math.floor(vals.length * .98)] || 4, CLIP = mode === 'path' ? Math.min(40, Math.max(10, Math.ceil(top / 5) * 5)) : Math.min(10, Math.max(2, Math.ceil(top)));
       const y = v => mid - Math.max(-CLIP, Math.min(CLIP, v)) / CLIP * (mid - 16);
-      const xL = 38, xR = narrow ? W - 6 : Math.round(W * .45), tA = narrow ? 0 : xR + Math.round(W * .075), gw = Math.round(W * .2), tB = tA + gw + 22, tw = W - tB - 16;
+      const xL = 38, xR = narrow ? W - 6 : Math.round(W * .4), xN = xR + Math.round(W * .05), nw = 6, xO = xN + nw, tA = narrow ? 0 : Math.round(W * .525), gw = Math.round(W * .2), tB = tA + gw + 22, tw = W - tB - 16;
       const line = s => { const a = series[s.s];
         if (a && a.length > 1) { let dd = '', pen = false; const n = a.length; a.forEach((v, i) => { if (v == null) return; dd += `${pen ? 'L' : 'M'}${(xL + i / (n - 1) * (xR - xL)).toFixed(1)},${y(v).toFixed(1)}`; pen = true; }); return dd; }
         const c = xL + (xR - xL) * .55, e = endOf(s); return `M${xL},${mid} C${c},${mid} ${c},${y(e).toFixed(1)} ${xR},${y(e).toFixed(1)}`; };
@@ -103,13 +103,19 @@
       let g = '', html = '';
       [-CLIP, -CLIP / 2, 0, CLIP / 2, CLIP].forEach(v => g += `<line class="fl-grid${v ? '' : ' z'}" x1="${xL}" x2="${xR}" y1="${y(v)}" y2="${y(v)}"/><text class="fl-ax" x="${xL - 6}" y="${y(v) + 3}" text-anchor="end">${v > 0 ? '+' : ''}${v}%</text>`);
       const ax = mode === 'day' ? [flow.times[0], flow.times[flow.times.length - 1]] : mode === 'path' ? [(pathDates && pathDates[0]) ? pathDates[0].slice(5) + ' open' : '20 sessions ago', x.asof.slice(5) + ' close'] : ['open', 'close'];
-      g += `<text class="fl-ax" x="${xL}" y="${H - 2}">${esc(ax[0])}</text><text class="fl-ax" x="${xR}" y="${H - 2}" text-anchor="end">${esc(ax[1])}</text>`;
-      // one line per stock, then its bend into the gate that scored it, or into the bundle of everything no rule fired on
+      g += `<text class="fl-ax" x="${xL}" y="${H - 2}">${esc(ax[0])}</text><text class="fl-ax" x="${xR - 4}" y="${H - 2}" text-anchor="end">${esc(ax[1])}</text>`;
+      // the neck: every line end squeezes into one narrow bar, ordered by where it ended (up stocks above the divider,
+      // down stocks below), and leaves the bar for the gate that scored it or for the bundle of everything no rule fired on
       const slotN = gates.map(() => 0), slotT = gates.map((_, gi) => Object.values(role).filter(a => a.some(o => o.gi === gi)).length);
-      all.slice().sort((a, b) => endOf(b) - endOf(a)).forEach(s => { const e = endOf(s), cls = e > 0 ? 'up' : e < 0 ? 'dn' : 'fl0', rs = role[s.s] || [], picked = rs.some(o => o.pos);
+      const ord = all.slice().sort((a, b) => endOf(b) - endOf(a)), nAbove = ord.filter(s => endOf(s) > 0).length, nBelow = ord.length - nAbove;
+      const rh = Math.min(2.4, (mid - 24) / Math.max(nAbove, nBelow, 1)), rowY = i => i < nAbove ? mid - (nAbove - i - .5) * rh : mid + (i - nAbove + .5) * rh;
+      if (!narrow) { g += `<line class="fl-cur" x1="${xR}" x2="${xR}" y1="4" y2="${H - 14}"/><text class="fl-ax fl-curt" x="${xR}" y="10" text-anchor="middle">${esc(x.asof)}</text>`;
+        g += `<rect class="fl-neck up" x="${xN}" y="${(mid - nAbove * rh - 2).toFixed(1)}" width="${nw}" height="${(nAbove * rh + 2).toFixed(1)}" rx="2"/><rect class="fl-neck dn" x="${xN}" y="${mid}" width="${nw}" height="${(nBelow * rh + 2).toFixed(1)}" rx="2"/>`; }
+      ord.forEach((s, i) => { const e = endOf(s), cls = e > 0 ? 'up' : e < 0 ? 'dn' : 'fl0', rs = role[s.s] || [], picked = rs.some(o => o.pos);
         let bend = '';
-        if (!narrow) { if (rs.length) rs.forEach(o => { const yy = gy(o.gi) + 10 + (gh - 20) * ((slotN[o.gi]++ + .5) / slotT[o.gi]); bend += `<path class="${gates[o.gi].up ? 'gu' : 'gd'}" d="${curve(xR, y(e), tA, yy)}"/>`; });
-          else bend = `<path class="bundle" d="${curve(xR, y(e), tA - 4, mid)}"/>`; }
+        if (!narrow) { const ny = rowY(i); bend = `<path class="nk" d="${curve(xR, y(e), xN, ny)}H${xO}"/>`;
+          if (rs.length) rs.forEach(o => { const yy = gy(o.gi) + 10 + (gh - 20) * ((slotN[o.gi]++ + .5) / slotT[o.gi]); bend += `<path class="${gates[o.gi].up ? 'gu' : 'gd'}" d="${curve(xO, ny, tA, yy)}"/>`; });
+          else bend += `<path class="bundle" d="${curve(xO, ny, tA - 4, mid)}"/>`; }
         g += `<g class="ln ${cls}${picked ? ' pk' : rs.length ? ' sc' : ''}" data-s="${esc(s.s)}"><path d="${line(s)}"/>${bend}</g>`; });
       if (flow && flow.market && flow.market.ret) { const n = flow.market.ret.length; let dd = ''; flow.market.ret.forEach((v, i) => { if (v != null) dd += `${dd ? 'L' : 'M'}${(xL + i / (n - 1) * (xR - xL)).toFixed(1)},${y(v).toFixed(1)}`; }); g += `<path class="mk" d="${dd}"/>`; }
       if (!narrow) {
@@ -134,7 +140,7 @@
     const half = up => { return `<div class="fc-half ${up ? 'up' : 'dn'}">${leads(up).map(o => card(o.G, o.q)).join('') || none(up)}</div>`; };
     cardsEl.innerHTML = half(true) + half(false);
 
-    $('#fl-cap').innerHTML = `${mode === 'day' ? `Each line is one stock's move through the session of ${esc(x.asof)} at 15-minute steps (${esc(flow.source || 'derived from 5-minute bars')}); the white line is the average.` : mode === 'path' ? `Each line is one stock's cumulative move over the 20 sessions to ${esc(x.asof)}, close to close.` : `Each line runs from the open to the stock's close move on ${esc(x.asof)}.`} Moves beyond the axis are drawn at its edge. A line bends into a gate only when that rule scored the stock; a rule is a fixed, pre-declared test, and its train result is shown on the gate. End-of-day data, a replay, not live. The line is the past, not the pick's result.`;
+    $('#fl-cap').innerHTML = `${mode === 'day' ? `Each line is one stock's move through the session of ${esc(x.asof)} at 15-minute steps (${esc(flow.source || 'derived from 5-minute bars')}); the white line is the average.` : mode === 'path' ? `Each line is one stock's cumulative move over the 20 sessions to ${esc(x.asof)}, close to close.` : `Each line runs from the open to the stock's close move on ${esc(x.asof)}.`} Moves beyond the axis are drawn at its edge. After the date line every stock squeezes into one bar, ordered by where it ended, and leaves it; a line bends into a gate only when that rule scored the stock; a rule is a fixed, pre-declared test, and its train result is shown on the gate. End-of-day data, a replay, not live. The line is the past, not the pick's result.`;
 
     // hover or focus a line, tile or card: light the stock's whole route and say what it is
     const lit = s => { wrap.querySelectorAll('.on').forEach(e => e.classList.remove('on')); wrap.classList.toggle('dim', !!s); if (s) wrap.querySelectorAll(`[data-s="${CSS.escape(s)}"]`).forEach(e => e.classList.add('on')); };
