@@ -18,6 +18,7 @@
     a05b: ['Max-effect rank', 'Ranks on the largest one-day gain of the past month against usual volatility.'],
     a01: ['Weekly reversal', 'Last week’s biggest winners score bearish for the coming week.'],
   };
+  const RANKN = 7; // ranked tiles per day rule (FL2)
   const ruleOf = s => { const base = String(s || '').replace(/@v\d+$/, ''), k = base.split('_')[0]; return RULES[k] || [base.replace(/_/g, ' '), '']; };
 
   // candles with the order-block zone as a band and the nearest swing highs and lows as dashed lines, from the
@@ -74,7 +75,8 @@
     // the four gates: day and week, bullish and bearish, each with the rule that owns it, what it scored and what it picked
     const tbl = (src, k) => (src && src.tables && src.tables[k]) || [];
     const gate = (hz, side, src, strat, scored) => { const list = tbl(src, side), sname = strat || (list[0] && list[0].strategy) || '', e = ev && sname ? window.deskEv(ev, sname, hz, side) : null;
-      return { hz, up: side === 'bullish', side, strat: sname, rule: ruleOf(sname), ev: e, scored, picks: list.map((q, i) => ({ s: q.symbol, pick: q, pos: i + 1 })) }; };
+      const ranked = hz === 'day' ? st.filter(s => (side === 'bullish' ? s.b : s.d) != null).sort((a, b) => (side === 'bullish' ? b.b - a.b : b.d - a.d)).slice(0, RANKN) : [];
+      return { hz, up: side === 'bullish', side, strat: sname, rule: ruleOf(sname), ev: e, scored, ranked, picks: list.map((q, i) => ({ s: q.symbol, pick: q, pos: i + 1 })) }; };
     const gates = [
       gate('day', 'bullish', d, x.bullish_strategy, st.filter(s => s.b != null).length),
       gate('week', 'bullish', wk, null, null),
@@ -96,7 +98,7 @@
       const vals = all.map(s => Math.abs(endOf(s)));
       vals.sort((a, b) => a - b); const top = vals[Math.floor(vals.length * .98)] || 4, CLIP = mode === 'path' ? Math.min(40, Math.max(10, Math.ceil(top / 5) * 5)) : Math.min(10, Math.max(2, Math.ceil(top)));
       const y = v => mid - Math.max(-CLIP, Math.min(CLIP, v)) / CLIP * (mid - 16);
-      const xL = 38, xR = narrow ? W - 6 : Math.round(W * .4), xN = xR + Math.round(W * .05), nw = 6, xO = xN + nw, tA = narrow ? 0 : Math.round(W * .525), gw = Math.round(W * .2), tB = tA + gw + 22, tw = W - tB - 16;
+      const xL = 38, xR = narrow ? W - 6 : Math.round(W * .31), xN = xR + Math.round(W * .025), xS = Math.round(W * .36), sw = Math.round(W * .14), nw = 6, xO = xN + nw, tA = narrow ? 0 : Math.round(W * .525), gw = Math.round(W * .2), tB = tA + gw + 22, tw = W - tB - 16;
       const line = s => { const a = series[s.s];
         if (a && a.length > 1) { let dd = '', pen = false; const n = a.length; a.forEach((v, i) => { if (v == null) return; dd += `${pen ? 'L' : 'M'}${(xL + i / (n - 1) * (xR - xL)).toFixed(1)},${y(v).toFixed(1)}`; pen = true; }); return dd; }
         const c = xL + (xR - xL) * .55, e = endOf(s); return `M${xL},${mid} C${c},${mid} ${c},${y(e).toFixed(1)} ${xR},${y(e).toFixed(1)}`; };
@@ -107,6 +109,9 @@
       const tiles = []; [0, 2].forEach(g0 => { const list = []; [g0, g0 + 1].forEach(gi => gates[gi].picks.forEach(q => list.push({ gi, ...q })));
         const rows = Math.max(list.length, 6), rh = (mid - 24) / rows; list.forEach((t, i) => tiles.push({ ...t, x: tB, y: (g0 ? mid + 16 : 8) + i * rh, h: Math.min(rh - 4, 34) })); });
       const tileOf = (s, gi) => tiles.find(t => t.s === s && t.gi === gi);
+      // the ranked stage (FL2): before a day gate, the stocks its rule scored, best rank first, at most seven, in the gate's own band
+      const rks = []; gates.forEach((G, gi) => { if (G.hz !== 'day') return; const rh2 = gh / RANKN; G.ranked.forEach((s, i) => rks.push({ gi, s: s.s, v: G.up ? s.b : s.d, i, picked: G.picks.some(q => q.s === s.s), y: gy(gi) + i * rh2 + 2, h: Math.min(rh2 - 4, 22) })); });
+      const rkOf = (s, gi) => rks.find(t => t.s === s && t.gi === gi);
       let g = '', html = '';
       [-CLIP, -CLIP / 2, 0, CLIP / 2, CLIP].forEach(v => g += `<line class="fl-grid${v ? '' : ' z'}" x1="${xL}" x2="${xR}" y1="${y(v)}" y2="${y(v)}"/><text class="fl-ax" x="${xL - 6}" y="${y(v) + 3}" text-anchor="end">${v > 0 ? '+' : ''}${v}%</text>`);
       const ax = mode === 'day' ? [flow.times[0], flow.times[flow.times.length - 1]] : mode === 'path' ? [(pathDates && pathDates[0]) ? pathDates[0].slice(5) + ' open' : '20 sessions ago', x.asof.slice(5) + ' close'] : ['open', 'close'];
@@ -121,13 +126,18 @@
       ord.forEach((s, i) => { const e = endOf(s), cls = e > 0 ? 'up' : e < 0 ? 'dn' : 'fl0', rs = role[s.s] || [], picked = rs.some(o => o.pos);
         let bend = '';
         if (!narrow) { const ny = rowY(i); bend = `<path class="nk" d="${curve(xR, y(e), xN, ny)}H${xO}"/>`;
-          if (rs.length) rs.forEach(o => { const yy = gy(o.gi) + 10 + (gh - 20) * ((slotN[o.gi]++ + .5) / slotT[o.gi]); bend += `<path class="${gates[o.gi].up ? 'gu' : 'gd'}" d="${curve(xO, ny, tA, yy)}"/>`; });
+          if (rs.length) rs.forEach(o => { const yy = gy(o.gi) + 10 + (gh - 20) * ((slotN[o.gi]++ + .5) / slotT[o.gi]), k = rkOf(s.s, o.gi), c = gates[o.gi].up ? 'gu' : 'gd';
+            bend += k ? `<path class="${c}" d="${curve(xO, ny, xS, k.y + k.h / 2)}"/><path class="${c}" d="${curve(xS + sw, k.y + k.h / 2, tA, yy)}"/>` : `<path class="${c}" d="${curve(xO, ny, tA, yy)}"/>`; });
           else bend += `<path class="bundle" d="${curve(xO, ny, tA - 4, mid)}"/>`; }
         g += `<g class="ln ${cls}${picked ? ' pk' : rs.length ? ' sc' : ''}" data-s="${esc(s.s)}"><path d="${line(s)}"/>${bend}</g>`; });
       if (flow && flow.market && flow.market.ret) { const n = flow.market.ret.length; let dd = ''; flow.market.ret.forEach((v, i) => { if (v != null) dd += `${dd ? 'L' : 'M'}${(xL + i / (n - 1) * (xR - xL)).toFixed(1)},${y(v).toFixed(1)}`; }); g += `<path class="mk" d="${dd}"/>`; }
       if (!narrow) {
         g += `<line class="fl-div" x1="${tA - 4}" x2="${W}" y1="${mid}" y2="${mid}"/><circle class="fl-dot" cx="${tA - 4}" cy="${mid}" r="3.5"/>`;
         g += `<text class="fl-ax" x="${tA + 6}" y="${mid - 5}">${all.length - Object.keys(role).length} stocks: no rule fired</text>`;
+        gates.forEach((G, gi) => { if (G.hz !== 'day' || G.ranked.length) return; const t = gy(gi) + 2;
+          g += `<g class="rk-e ${G.up ? 'up' : 'dn'}"><rect x="${xS}" y="${t}" width="${sw}" height="${Math.min(gh - 4, 50)}" rx="4"/><text x="${xS + 6}" y="${t + 14}">None ranked:</text><text x="${xS + 6}" y="${t + 28}">the rule fired</text><text x="${xS + 6}" y="${t + 42}">on no stock</text></g>`; });
+        rks.forEach(t => { const G = gates[t.gi], nm = t.s.length > 10 ? t.s.slice(0, 9) + '…' : t.s;
+          g += `<g class="tile rk ${G.up ? 'up' : 'dn'}${t.picked ? ' in' : ''}" data-s="${esc(t.s)}" tabindex="0" role="button" aria-label="${esc(t.s)}, ranked ${t.i + 1} by ${esc(G.rule[0])}, rank p${esc(t.v)}${t.picked ? ', picked' : ', not picked'}"><rect x="${xS}" y="${t.y}" width="${sw}" height="${t.h}" rx="4"/><text class="tn" x="${xS + 6}" y="${t.y + t.h / 2 + 3.5}">${esc(nm)}</text><text class="tv" x="${xS + sw - 5}" y="${t.y + t.h / 2 + 3.5}" text-anchor="end">p${esc(t.v)}</text></g>`; });
         gates.forEach((G, gi) => { const top = gy(gi), n = G.picks.length, e = G.ev;
           html += `<div class="gt ${G.up ? 'up' : 'dn'}" style="left:${tA}px;top:${top}px;width:${gw}px;height:${gh}px"><span class="gt-k">${G.hz.toUpperCase()} · ${G.up ? 'BULLISH' : 'BEARISH'}</span><b>${esc(G.rule[0] || 'No rule on file')}</b><span class="gt-r">${esc(G.rule[1])}</span><span class="gt-n">${G.scored != null ? `fired on ${G.scored} of ${st.length} · ` : ''}${n} picked</span>${e ? `<span class="gt-e ${e.superior ? 'ok' : ''}">train edge ${(e.mean * 100 >= 0 ? '+' : '') + (e.mean * 100).toFixed(2)} pts · ${e.superior ? 'passes' : 'fails'} many-trials check</span>` : '<span class="gt-e">no train replay on file</span>'}</div>`;
           G.picks.forEach((q, i) => { const t = tileOf(q.s, gi); if (t) g += `<path class="go ${G.up ? 'up' : 'dn'}" data-s="${esc(q.s)}" d="${curve(tA + gw, top + 10 + (gh - 20) * ((i + .5) / n), t.x, t.y + t.h / 2)}"/>`; }); });
@@ -147,7 +157,7 @@
     const half = up => { return `<div class="fc-half ${up ? 'up' : 'dn'}">${leads(up).map(o => card(o.G, o.q)).join('') || none(up)}</div>`; };
     cardsEl.innerHTML = half(true) + half(false);
 
-    $('#fl-cap').innerHTML = `${mode === 'day' ? `Each line is one stock's move through the session of ${esc(x.asof)} at 15-minute steps (${esc(flow.source || 'derived from 5-minute bars')}); the white line is the average.` : mode === 'path' ? `Each line is one stock's cumulative move over the 20 sessions to ${esc(x.asof)}, close to close.` : `Each line runs from the open to the stock's close move on ${esc(x.asof)}.`} Moves beyond the axis are drawn at its edge. After the date line every stock squeezes into one bar, ordered by where it ended, and leaves it; a line bends into a gate only when that rule scored the stock; a rule is a fixed, pre-declared test, and its train result is shown on the gate. End-of-day data, a replay, not live. The line is the past, not the pick's result. On a pick, “before” is the move that made the rule fire: three of the four rules are reversal rules, so a bearish pick usually follows a rise and a bullish pick a fall. ${hasAfter ? `The number after it is what the stock did in the session the pick was for (${esc(afterLbl)}), marked ✓ when it moved the picked way and ✗ when it did not.` : 'What the stock did after the pick joins here once that session’s 5-minute bars are archived.'}`;
+    $('#fl-cap').innerHTML = `${mode === 'day' ? `Each line is one stock's move through the session of ${esc(x.asof)} at 15-minute steps (${esc(flow.source || 'derived from 5-minute bars')}); the white line is the average.` : mode === 'path' ? `Each line is one stock's cumulative move over the 20 sessions to ${esc(x.asof)}, close to close.` : `Each line runs from the open to the stock's close move on ${esc(x.asof)}.`} Moves beyond the axis are drawn at its edge. After the date line every stock squeezes into one bar, ordered by where it ended, and leaves it; a line bends into a gate only when that rule scored the stock, and for the two day rules it first passes its ranked tile (the stocks the rule scored, best rank percentile first, at most seven; outlined when the table picked it); a rule is a fixed, pre-declared test, and its train result is shown on the gate. End-of-day data, a replay, not live. The line is the past, not the pick's result. On a pick, “before” is the move that made the rule fire: three of the four rules are reversal rules, so a bearish pick usually follows a rise and a bullish pick a fall. ${hasAfter ? `The number after it is what the stock did in the session the pick was for (${esc(afterLbl)}), marked ✓ when it moved the picked way and ✗ when it did not.` : 'What the stock did after the pick joins here once that session’s 5-minute bars are archived.'}`;
 
     // hover or focus a line, tile or card: light the stock's whole route and say what it is
     const lit = s => { wrap.querySelectorAll('.on').forEach(e => e.classList.remove('on')); wrap.classList.toggle('dim', !!s); if (s) wrap.querySelectorAll(`[data-s="${CSS.escape(s)}"]`).forEach(e => e.classList.add('on')); };

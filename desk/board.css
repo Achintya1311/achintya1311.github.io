@@ -9,7 +9,7 @@
 .mb-name{font-size:.82rem;color:var(--ink)} .mb-name b{color:var(--accent)}
 .mb-top .asof{margin-left:auto} .mb-top small{letter-spacing:0;text-transform:none;margin-left:6px}
 .mb-top .counts{flex-basis:100%;margin:2px 0 0;letter-spacing:0;text-transform:none}
-.fl-heads{display:grid;grid-template-columns:39% 15.5% 20.5% 25%;margin-top:12px;font:500 .64rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.fl-heads span{padding-right:8px}
+.fl-heads{display:grid;grid-template-columns:27% 12.5% 15.5% 20.5% 24.5%;margin-top:12px;font:500 .64rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.fl-heads span{padding-right:8px}
 .fl{position:relative;display:grid;grid-template-columns:minmax(0,75%) minmax(0,25%);margin-top:6px}
 .fl-svg{position:relative}.fl-svg svg{display:block;max-width:100%}
 .fl-grid{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4}.fl-grid.z{stroke:var(--muted);stroke-dasharray:none;opacity:.6}
@@ -26,6 +26,8 @@
 .tile.dn rect{fill:color-mix(in srgb,var(--down) 16%,var(--bg));stroke:color-mix(in srgb,var(--down) 45%,transparent)}
 .tile.pk rect{stroke:var(--ink);stroke-width:1.6;filter:drop-shadow(0 0 5px var(--ink))}
 .tile .tg{font:600 9px var(--mono);fill:var(--muted)}.tile.up .tg{fill:var(--up)}.tile.dn .tg{fill:var(--down)}.tile .tn{font:600 11px var(--mono);fill:var(--ink)}.tile .tv{font:500 10.5px var(--mono);fill:var(--ink);opacity:.9}
+.tile.rk rect{fill:var(--bg)}.tile.rk .tn{font-size:9.5px}.tile.rk .tv{font-size:9px;fill:var(--muted)}.tile.rk.in rect{stroke-width:1.5}.tile.rk.up.in rect{stroke:var(--up)}.tile.rk.dn.in rect{stroke:var(--down)}
+.rk-e rect{fill:var(--bg);stroke-dasharray:3 3;stroke-width:1}.rk-e.up rect{stroke:color-mix(in srgb,var(--up) 55%,transparent)}.rk-e.dn rect{stroke:color-mix(in srgb,var(--down) 55%,transparent)}.rk-e text{font:500 9px var(--mono);fill:var(--muted)}
 .tile:focus-visible rect{stroke:var(--accent);stroke-width:2}
 .tile-e{fill:none;stroke:var(--line);stroke-dasharray:3 4}
 .go{fill:none;stroke-width:1.6;opacity:.9}.go.up{stroke:var(--up)}.go.dn{stroke:var(--down)}
