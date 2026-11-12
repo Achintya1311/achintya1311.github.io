@@ -85,3 +85,7 @@
   .mb-low{grid-template-columns:1fr}.jump{grid-template-columns:1fr 1fr}.proj{grid-template-columns:1fr}
 }
 
+/* FL3: tile sparklines (shape only; no filter or transition, they sit under hover) */
+.tile .sp{fill:none;stroke:var(--muted);stroke-width:1.2;stroke-linejoin:round}.tile .sp.up{stroke:var(--up)}.tile .sp.dn{stroke:var(--down)}
+.tile .spb{opacity:.45}
+.tile .sp0{stroke:var(--line);stroke-width:.6;stroke-dasharray:2 2}
