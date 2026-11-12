@@ -92,3 +92,9 @@
 /* FT3: technical lines on a lead card, and the gate's link to its rule page */
 .fc-b{flex:none;font:.56rem var(--mono);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gt-l{font:600 .6rem var(--mono);color:var(--accent);text-decoration:none}.gt-l:hover{text-decoration:underline}
+/* FL4: breadth strip above the line field (one bar per stock by last-session move; replaces the big counts line) */
+.fl-br{margin-top:4px;min-height:30px}.fl-br svg{display:block;max-width:100%}
+.fl-br rect{shape-rendering:crispEdges}.fl-br rect.up{fill:var(--up)}.fl-br rect.dn{fill:var(--down)}.fl-br rect.fl0{fill:var(--muted)}
+.fl-br .br0{stroke:var(--muted);stroke-width:1;opacity:.5}
+.br-n{font:600 12px var(--mono)}.br-n.up{fill:var(--up)}.br-n.dn{fill:var(--down)}.br-k{font:500 9px var(--mono);fill:var(--muted);letter-spacing:.06em}
+.mb.has-br #counts{display:none}

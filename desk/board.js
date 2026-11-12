@@ -156,6 +156,24 @@
       }
       host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Market flow: ${all.length} stocks drawn as lines, ${nUp} up and ${nDn} down over the window. The lab's four live rules are the gates; ${nPicked} stocks are picked and the rest pass no rule.">${g}</svg>${html}`;
       cardsEl.style.height = narrow ? '' : H + 'px';
+      breadth(W, xL, narrow ? W - 96 : xR);
+    }
+
+    // breadth strip (FL4): one thin bar per stock, its last-session move (m), weakest on the left and strongest on the
+    // right, over the width of the line field, with the up and down counts at its end; it replaces the big counts line
+    const brEl = $('#fl-br'), brS = st.filter(s => typeof s.m === 'number').sort((a, b) => a.m - b.m);
+    function breadth(W, x0, x1) {
+      if (!brEl) return; if (!brS.length) { brEl.innerHTML = ''; return; }
+      const H = 30, base = 15, n = brS.length, bw = (x1 - x0) / n, mv = brS.map(s => Math.abs(s.m)).sort((a, b) => a - b), cap = Math.max(1, mv[Math.floor(n * .98)] || 1);
+      const up = brS.filter(s => s.m > 0).length, dn = brS.filter(s => s.m < 0).length, flat = n - up - dn;
+      let g = `<line class="br0" x1="${x0}" x2="${x1}" y1="${base}" y2="${base}"/>`;
+      brS.forEach((s, i) => { const h = Math.max(.6, Math.min(1, Math.abs(s.m) / cap) * (base - 2)), c = s.m > 0 ? 'up' : s.m < 0 ? 'dn' : 'fl0';
+        g += `<rect class="${c}" x="${(x0 + i * bw).toFixed(2)}" y="${(s.m > 0 ? base - h : base).toFixed(1)}" width="${Math.max(bw * .8, .5).toFixed(2)}" height="${h.toFixed(1)}"/>`; });
+      const tx = x1 + 10;
+      g += `<text class="br-n up" x="${tx}" y="12">▲ ${up}</text><text class="br-n dn" x="${tx}" y="27">▼ ${dn}</text>`;
+      if (W - tx > 240) g += `<text class="br-k" x="${tx + 52}" y="12">STOCKS UP / DOWN · ${esc(x.asof)}</text><text class="br-k" x="${tx + 52}" y="27">by price move, not picks${flat ? ` · ${flat} flat` : ''}</text>`;
+      brEl.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Breadth: ${up} of ${n} F&amp;O stocks closed up and ${dn} down in the session of ${esc(x.asof)}, one bar per stock, weakest to strongest">${g}</svg>`;
+      $('#board') && $('#board').classList.add('has-br');
     }
 
     // lead picks as cards (the first pick of each gate, then the next ones, three a side); an empty side says why (W130)
@@ -171,7 +189,7 @@
     const half = up => { return `<div class="fc-half ${up ? 'up' : 'dn'}">${leads(up).map(o => card(o.G, o.q)).join('') || none(up)}</div>`; };
     cardsEl.innerHTML = half(true) + half(false);
 
-    $('#fl-cap').innerHTML = `${mode === 'day' ? `Each line is one stock's move through the session of ${esc(x.asof)} at 15-minute steps (${esc(flow.source || 'derived from 5-minute bars')}); the white line is the average.` : mode === 'path' ? `Each line is one stock's cumulative move over the 20 sessions to ${esc(x.asof)}, close to close.` : `Each line runs from the open to the stock's close move on ${esc(x.asof)}.`} Moves beyond the axis are drawn at its edge. After the date line every stock squeezes into one bar, ordered by where it ended, and leaves it; a line bends into a gate only when that rule scored the stock, and for the two day rules it first passes its ranked tile (the stocks the rule scored, best rank percentile first, at most seven; outlined when the table picked it); the small line in each tile is that stock's own recent path, shape only (its last 20 closes when the feed has them); a rule is a fixed, pre-declared test, and its train result is shown on the gate. End-of-day data, a replay, not live. The line is the past, not the pick's result. On a pick, “before” is the move that made the rule fire: three of the four rules are reversal rules, so a bearish pick usually follows a rise and a bullish pick a fall. ${hasAfter ? `The number after it is what the stock did in the session the pick was for (${esc(afterLbl)}), marked ✓ when it moved the picked way and ✗ when it did not.` : 'What the stock did after the pick joins here once that session’s 5-minute bars are archived.'}`;
+    $('#fl-cap').innerHTML = `${mode === 'day' ? `Each line is one stock's move through the session of ${esc(x.asof)} at 15-minute steps (${esc(flow.source || 'derived from 5-minute bars')}); the white line is the average.` : mode === 'path' ? `Each line is one stock's cumulative move over the 20 sessions to ${esc(x.asof)}, close to close.` : `Each line runs from the open to the stock's close move on ${esc(x.asof)}.`} Moves beyond the axis are drawn at its edge. The strip above the lines is every stock's move in the session of ${esc(x.asof)}, one bar each, weakest left to strongest right, with the up and down counts at its end. After the date line every stock squeezes into one bar, ordered by where it ended, and leaves it; a line bends into a gate only when that rule scored the stock, and for the two day rules it first passes its ranked tile (the stocks the rule scored, best rank percentile first, at most seven; outlined when the table picked it); the small line in each tile is that stock's own recent path, shape only (its last 20 closes when the feed has them); a rule is a fixed, pre-declared test, and its train result is shown on the gate. End-of-day data, a replay, not live. The line is the past, not the pick's result. On a pick, “before” is the move that made the rule fire: three of the four rules are reversal rules, so a bearish pick usually follows a rise and a bullish pick a fall. ${hasAfter ? `The number after it is what the stock did in the session the pick was for (${esc(afterLbl)}), marked ✓ when it moved the picked way and ✗ when it did not.` : 'What the stock did after the pick joins here once that session’s 5-minute bars are archived.'}`;
 
     // hover or focus a line, tile or card: light the stock's whole route and say what it is
     const lit = s => { wrap.querySelectorAll('.on').forEach(e => e.classList.remove('on')); wrap.classList.toggle('dim', !!s); if (s) wrap.querySelectorAll(`[data-s="${CSS.escape(s)}"]`).forEach(e => e.classList.add('on')); };
