@@ -35,7 +35,7 @@
     <!-- DD1/DD8: five groups in story order; data-views lists the views each group holds (sub-views are tabs) -->
     <a class="nav" href="#home" data-views="home" aria-label="Market board"><svg><use href="#i-home"/></svg><span class="lbl">Market board</span></a>
     <a class="nav" href="#picks" data-views="picks xray lab" aria-label="Live lab"><svg><use href="#i-chart"/></svg><span class="lbl">Live lab</span></a>
-    <a class="nav" href="#evidence" data-views="evidence" aria-label="Evidence"><svg><use href="#i-flask"/></svg><span class="lbl">Evidence</span></a>
+    <a class="nav" href="#evidence" data-views="evidence rule-t04 rule-e2a rule-a05b rule-a01" aria-label="Evidence"><svg><use href="#i-flask"/></svg><span class="lbl">Evidence</span></a>
     <a class="nav" href="#findings" data-views="findings wrong" aria-label="Projects"><svg><use href="#i-grid"/></svg><span class="lbl">Projects</span></a>
     <a class="nav" href="#about" data-views="about" aria-label="About"><svg><use href="#i-user"/></svg><span class="lbl">About</span></a>
     <div class="grow"></div>
@@ -143,6 +143,7 @@
     </section>
 
     <section class="view" id="evidence">
+      <nav class="subtabs" aria-label="Evidence"><a href="#evidence">All results</a><a href="#rule-t04">Connors RSI-2</a><a href="#rule-e2a">Crowded-move reversal</a><a href="#rule-a05b">Max-effect rank</a><a href="#rule-a01">Weekly reversal</a></nav>
       <div class="top"><div><h1>Evidence</h1><p>What the lab measured, with the failures included. Train years 2015 to 2020, hit rate against the market's own base rate.</p></div><a class="btn ghost" href="https://github.com/Achintya1311/stockstalker-lab/blob/main/reports/evidence_train.md">Full report</a></div>
       <div class="stats" id="ev-sum"></div>
       <div class="chips" id="ev-chips"></div>
@@ -152,6 +153,30 @@
         <p><b>Why there is a correction.</b> The lab tried many variants. Run enough of them and some look good by luck, so every result here is checked again after counting how many were tried. Intervals are built so that days that move together are not counted as independent.</p>
         <details class="how"><summary>How this was tested</summary><p>The joint test is Hansen's SPA (read at 5%), the one-by-one check is the Romano-Wolf stepwise test (StepM, at 10%), and the model confidence set (MCS, at 10%) keeps the variants not clearly worse than the best. Intervals come from a stationary block bootstrap over dates.</p></details>
         <p><b>Limits.</b> Train years only, so none of the lab's strategy results here is validated on unseen data yet. <span id="ev-weekline">The weekly result is read from the lab's evidence file each time.</span> That file is rebuilt by the lab's own workflow and can lag behind its newest experiments, which are not counted here until the next successful build. This page reads the lab's file each time.</p></div>
+    </section>
+
+    <section class="view" id="rule-t04">
+      <nav class="subtabs" aria-label="Evidence"><a href="#evidence">All results</a><a href="#rule-t04">Connors RSI-2</a><a href="#rule-e2a">Crowded-move reversal</a><a href="#rule-a05b">Max-effect rank</a><a href="#rule-a01">Weekly reversal</a></nav>
+      <div class="top"><div><h1>Connors RSI-2</h1><p>Day · bullish picks · one of the lab's four live rules, as fixed before its replay. The train result, the audit, the costs and what would prove it wrong.</p></div></div>
+      <div id="rb-t04"><div class="empty">Loading the lab's replay…</div></div>
+    </section>
+
+    <section class="view" id="rule-e2a">
+      <nav class="subtabs" aria-label="Evidence"><a href="#evidence">All results</a><a href="#rule-t04">Connors RSI-2</a><a href="#rule-e2a">Crowded-move reversal</a><a href="#rule-a05b">Max-effect rank</a><a href="#rule-a01">Weekly reversal</a></nav>
+      <div class="top"><div><h1>Crowded-move reversal</h1><p>Day · bearish picks · one of the lab's four live rules, as fixed before its replay. The train result, the audit, the costs and what would prove it wrong.</p></div></div>
+      <div id="rb-e2a"><div class="empty">Loading the lab's replay…</div></div>
+    </section>
+
+    <section class="view" id="rule-a05b">
+      <nav class="subtabs" aria-label="Evidence"><a href="#evidence">All results</a><a href="#rule-t04">Connors RSI-2</a><a href="#rule-e2a">Crowded-move reversal</a><a href="#rule-a05b">Max-effect rank</a><a href="#rule-a01">Weekly reversal</a></nav>
+      <div class="top"><div><h1>Max-effect rank</h1><p>Week · bullish picks · one of the lab's four live rules, as fixed before its replay. The train result, the audit, the costs and what would prove it wrong.</p></div></div>
+      <div id="rb-a05b"><div class="empty">Loading the lab's replay…</div></div>
+    </section>
+
+    <section class="view" id="rule-a01">
+      <nav class="subtabs" aria-label="Evidence"><a href="#evidence">All results</a><a href="#rule-t04">Connors RSI-2</a><a href="#rule-e2a">Crowded-move reversal</a><a href="#rule-a05b">Max-effect rank</a><a href="#rule-a01">Weekly reversal</a></nav>
+      <div class="top"><div><h1>Weekly reversal</h1><p>Week · bearish picks · one of the lab's four live rules, as fixed before its replay. The train result, the audit, the costs and what would prove it wrong.</p></div></div>
+      <div id="rb-a01"><div class="empty">Loading the lab's replay…</div></div>
     </section>
 
     <section class="view" id="xray">
@@ -183,6 +208,7 @@
 <script src="desk.js"></script>
 <script src="evidence.js"></script>
 <script src="home.js"></script>
+<script src="rules.js"></script>
 <script src="board.js"></script>
 <script>
 (async () => {
@@ -274,7 +300,7 @@
   // DD9 (W110): the first pick on each side is the lead and shows its chart and reasoning; the rest are one-line rows that open on click or tap
   const result = p => p.hit != null ? `<span class="num ${p.hit ? 'g' : 'r'}" style="grid-column:1/-1">Result: ${p.hit ? 'moved the picked way' : 'moved the other way'} (open to close ${(+p.move_pct).toFixed(2)}%)${p.late ? ' · committed after the open, not counted in hit rates' : ''}</span>` : p.late ? '<span class="num" style="grid-column:1/-1">Committed after the open, not counted in hit rates</span>' : '';
   const head = (p, word) => `<span class="badge">${word}</span><span><strong>${esc(p.symbol)}</strong><small>${esc(p.strategy || '')}${rankTag(p, word)}</small></span>`;
-  const body = p => `${p.chart ? `<span style="grid-column:1/-1">${chart(p.chart)}${p.chart.zone ? `<small>Shaded: nearest ${p.chart.zone.side} order-block zone${p.chart.zone.retested ? ', retested' : ''}. Chart structure only, not the reason for the pick. Not a level to act on.</small>` : ''}</span>` : ''}<small style="grid-column:1/-1">${esc(window.deskNoLevels(p.reasoning || ''))}</small>`;
+  const body = p => `${p.chart ? `<span style="grid-column:1/-1">${chart(p.chart)}${p.chart.zone ? `<small>Shaded: nearest ${p.chart.zone.side} order-block zone${p.chart.zone.retested ? ', retested' : ''}. Chart structure only, not the reason for the pick. Not a level to act on.</small>` : ''}</span>` : ''}<small style="grid-column:1/-1">${esc(window.deskNoLevels(p.reasoning || ''))}</small><div style="grid-column:1/-1">${window.deskBehind(p, EV, HZ)}</div>`;
   const short = p => p.hit != null ? `<span class="num ${p.hit ? 'g' : 'r'}">${p.hit ? 'Moved the picked way' : 'Moved the other way'}</span>` : '';
   const tile = (p, cls, word, i) => i === 0
     ? `<div class="tile lead ${cls}" style="grid-template-columns:auto minmax(0,1fr)">${head(p, word)}${body(p)}${result(p)}</div>`

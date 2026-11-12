@@ -43,3 +43,6 @@ svg.ch.wide { min-width: 640px; }
 #xr-body .orow .ob h2{font-size:.75rem}
 /* DD9 (W131) */
 .allrows{margin-top:8px} .allrows .ob{color:var(--ink)}
+/* FT3: "Behind this pick" on the Picks view and the rule pages */
+.bh{border-top:1px dashed var(--line);padding-top:8px;font-size:.82rem}.bh-h{display:block;font:600 .7rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.bh ul,.rl{margin:0 0 6px;padding-left:18px}.bh li,.rl li{margin:2px 0}.bh p{margin:4px 0}.bh-n{color:var(--muted);font-size:.74rem}

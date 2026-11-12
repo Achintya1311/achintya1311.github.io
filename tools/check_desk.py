@@ -19,9 +19,9 @@ DESK = ROOT / "desk"
 LAB = "Achintya1311/stockstalker-lab"
 RAW = f"https://raw.githubusercontent.com/{LAB}/main/"
 ZONE_CAPTION = "Not a level to act on"
-# Fields the lab writes on a pick (picks/payload.py, picks/outcomes.py). Any other p.<name> reads undefined,
+# Fields the lab writes on a pick (picks/payload.py, picks/outcomes.py, picks/tech.py). Any other p.<name> reads undefined,
 # so scored picks would show nothing. open, close and move_rs are prices, which the desk never shows.
-PICK_FIELDS = {"symbol", "strategy", "reasoning", "chart", "late", "hit", "move_pct"}
+PICK_FIELDS = {"symbol", "strategy", "reasoning", "chart", "tech", "late", "hit", "move_pct"}
 PRICE_FIELDS = {"open", "close", "move_rs"}
 # "buy-and-hold" is a research benchmark, not a call, so it is allowed.
 BANNED = re.compile(r"\b(?:buy(?!-and-hold)|sell(?:ing)?|opportunit\w*|upside|stop[- ]?loss|entry price|price target|target price)\b|₹", re.I)
