@@ -98,3 +98,12 @@
 .fl-br .br0{stroke:var(--muted);stroke-width:1;opacity:.5}
 .br-n{font:600 12px var(--mono)}.br-n.up{fill:var(--up)}.br-n.dn{fill:var(--down)}.br-k{font:500 9px var(--mono);fill:var(--muted);letter-spacing:.06em}
 .mb.has-br #counts{display:none}
+/* FL5: rank percentile in a circle; the zone strip under the mini chart (S1 to R1, order block shaded, close tick) */
+.fc-sc{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 .6rem var(--mono);border:1.5px solid}.fc.up .fc-sc{border-color:var(--up);color:var(--up)}.fc.dn .fc-sc{border-color:var(--down);color:var(--down)}
+.fc-z{flex:none;display:flex;align-items:center;gap:5px;height:12px;min-width:0}.fc-z em{font:600 .5rem var(--mono);font-style:normal;letter-spacing:.04em}.fc-z em.s{color:var(--up)}.fc-z em.r{color:var(--down)}
+.fz-t{position:relative;flex:1;height:4px;border-radius:2px;background:linear-gradient(90deg,color-mix(in srgb,var(--up) 45%,var(--line)),var(--line) 50%,color-mix(in srgb,var(--down) 45%,var(--line)))}
+.fz-ob{position:absolute;top:-2px;bottom:-2px;border-radius:2px;opacity:.55}.fz-ob.up{background:var(--up)}.fz-ob.dn{background:var(--down)}
+.fz-c{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--ink);border-radius:1px}
+.fc-n{display:flex;align-items:center;gap:6px}.fc-n b{display:block;flex:0 1 auto;min-width:0}.fc-n .fc-st{flex:none}
+.fc-h .logo{width:22px;height:22px}.fc-sc{width:24px;height:24px}
+.fc-cw,.fc-ch{min-height:22px}
