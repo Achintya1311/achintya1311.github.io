@@ -114,3 +114,11 @@
 .fl-tip .tt-r{display:grid;grid-template-columns:52px 1fr 62px;align-items:center;gap:6px;font:500 .62rem var(--mono);margin:2px 0}.fl-tip .tt-r em{font-style:normal;color:var(--muted)}.fl-tip .tt-r em:last-child{text-align:right}
 .fl-tip .tt-b{display:block;height:6px;border-radius:3px;background:rgba(127,127,127,.22);overflow:hidden}.fl-tip .tt-b span{display:block;height:100%;border-radius:3px}.fl-tip .tt-b .up{background:var(--up)}.fl-tip .tt-b .dn{background:var(--down)}
 .fl-tip small:last-child{display:block;margin-top:4px}
+/* checks behind a pick (lab picks/checks.py): one compact row, marks only; no filter or transition */
+.fc-g{flex:none;display:flex;align-items:center;gap:5px;font:.56rem var(--mono);color:var(--muted);white-space:nowrap;overflow:hidden;min-width:0}.fc-g b{color:var(--ink);font-weight:600}
+.ck{display:inline-flex;gap:3px;align-items:center}
+.fc-g i,.tt-ck i{display:inline-block;width:7px;height:7px;border-radius:50%;box-sizing:border-box;border:1.5px solid var(--ink);flex:none;margin:0}
+.fc-g i.y,.tt-ck i.y{background:var(--ink)}.fc-g i.u,.tt-ck i.u{border:0;border-radius:0;height:1.5px;background:var(--muted)}
+.fc.has-ck{gap:2px;padding-top:5px;padding-bottom:5px}.fc.has-ck .fc-cw,.fc.has-ck .fc-ch{min-height:18px}
+.fl-tip .fc-g{margin:4px 0 2px;font:.62rem var(--mono)}.fl-tip .fc-g b{font:600 .62rem var(--mono);margin:0}.fl-tip .fc-g .ck,.fl-tip .tt-ck span{font:inherit}
+.fl-tip .tt-ck{display:grid;gap:1px;font:.6rem var(--mono);color:var(--muted);margin-bottom:2px}.tt-ck span{display:flex;align-items:center;gap:5px}
